@@ -1,0 +1,23 @@
+EESchema-DOCLIB  Version 2.0
+#
+$CMP LM3940
+D 1A Low-Dropout Regulator, 5V to 3.3V
+K dropout regulator
+$ENDCMP
+#
+$CMP MCP73837
+D Single cell, Li-Ion/Li-Po charge management controller, 4.5V, 2 Open-Drain Status Output Pins, in MSOP-10 package
+K battery charger lithium
+$ENDCMP
+#
+$CMP NTHD4P02F
+D Power MOSFET and Schottky Diode, −20 V, −3.0 A, Single P−Channel with 3.0 A Schottky Barrier Diode
+K power MOSFET schottky diode
+$ENDCMP
+#
+$CMP TPS63031
+D High Efficiency DC-DC Converter, 1.8-5.5V in, 3.3V, 800mA out
+K efficient voltage converter
+$ENDCMP
+#
+#End Doc Library
