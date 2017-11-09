@@ -103,7 +103,7 @@ encoding utf-8
 Sheet 1 1
 Title "Xling (Virtual Monster) Schematic"
 Date ""
-Rev "0.1.3"
+Rev "0.1.4"
 Comp ""
 Comment1 ""
 Comment2 ""
@@ -127,7 +127,7 @@ U 1 1 59FC873F
 P 2820 1920
 F 0 "J3" H 2620 2220 60  0000 C CNN
 F 1 "MCP73831" H 2820 1620 60  0000 C CNN
-F 2 "" H 2820 1920 60  0001 C CNN
+F 2 "Xling Footprints:MCP73831_SOT_23" H 2820 1920 60  0001 C CNN
 F 3 "" H 2820 1920 60  0001 C CNN
 	1    2820 1920
 	1    0    0    -1  
@@ -1088,7 +1088,7 @@ U 1 1 5A01BB17
 P 10520 6700
 F 0 "U1" H 9730 8200 60  0000 C CNN
 F 1 "SH1106G" H 11200 4990 60  0000 C CNN
-F 2 "" H 10820 7000 60  0001 C CNN
+F 2 "Xling Footprints:Connector_FFC_FPC_MOLEX_524353071_30-pins" H 10820 7000 60  0001 C CNN
 F 3 "" H 10820 7000 60  0001 C CNN
 	1    10520 6700
 	1    0    0    -1  
