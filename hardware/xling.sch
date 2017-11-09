@@ -103,7 +103,7 @@ encoding utf-8
 Sheet 1 1
 Title "Xling (Virtual Monster) Schematic"
 Date ""
-Rev "0.1.2"
+Rev "0.1.3"
 Comp ""
 Comment1 ""
 Comment2 ""
@@ -612,7 +612,7 @@ U 1 1 5A0083D0
 P 2840 6070
 F 0 "Y1" V 3060 6070 50  0000 C CNN
 F 1 "8MHz" V 2830 5830 50  0000 C CNN
-F 2 "" H 2840 6070 50  0001 C CNN
+F 2 "Crystals:Crystal_HC49-SD_SMD" H 2840 6070 50  0001 C CNN
 F 3 "" H 2840 6070 50  0001 C CNN
 	1    2840 6070
 	0    -1   -1   0   
@@ -1099,7 +1099,7 @@ U 1 1 5A01DA25
 P 9310 7250
 F 0 "JP1" H 9270 7200 50  0000 C CNN
 F 1 "D2D1" H 9310 7320 50  0000 C CNN
-F 2 "" H 9310 7250 50  0001 C CNN
+F 2 "Pin_Headers:Pin_Header_Straight_1x02" H 9310 7250 50  0001 C CNN
 F 3 "" H 9310 7250 50  0001 C CNN
 	1    9310 7250
 	-1   0    0    1   

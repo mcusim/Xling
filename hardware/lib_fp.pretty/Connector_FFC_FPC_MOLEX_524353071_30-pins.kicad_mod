@@ -1,0 +1,8 @@
+(module Connector_FFC_FPC_MOLEX_524353071_30-pins (layer F.Cu) (tedit 5A037864)
+  (fp_text reference REF** (at -39 -29) (layer F.SilkS)
+    (effects (font (size 1 1) (thickness 0.15)))
+  )
+  (fp_text value "Connector FFC(FPC) MOLEX 524353071 30-pins" (at 37 29) (layer F.Fab)
+    (effects (font (size 1 1) (thickness 0.15)))
+  )
+)

@@ -1,0 +1,3 @@
+(fp_lib_table
+  (lib (name "Xling Footprints")(type KiCad)(uri ${KIPRJMOD}/lib_fp.pretty)(options "")(descr "Footprints specific for Xling project"))
+)
