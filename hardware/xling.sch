@@ -103,7 +103,7 @@ encoding utf-8
 Sheet 1 1
 Title "Xling (Virtual Monster) Schematic"
 Date ""
-Rev "0.1.6"
+Rev "0.1.7"
 Comp ""
 Comment1 ""
 Comment2 ""
@@ -722,7 +722,7 @@ U 1 1 5A00DAAC
 P 4610 10280
 F 0 "J5" H 4660 10480 50  0000 C CNN
 F 1 "AVR ISP" H 4660 10080 50  0000 C CNN
-F 2 "Socket_Strips:Socket_Strip_Angled_2x03_Pitch2.54mm" H 4610 10280 50  0001 C CNN
+F 2 "Socket_Strips:Socket_Strip_Straight_2x03_Pitch2.54mm" H 4610 10280 50  0001 C CNN
 F 3 "" H 4610 10280 50  0001 C CNN
 	1    4610 10280
 	1    0    0    -1  
