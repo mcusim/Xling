@@ -1,8 +1,18 @@
 EESchema-DOCLIB  Version 2.0
 #
+$CMP DEP_128064I
+D Display Elektronik OLED 128x64 1.5" with SD1309ZC
+K Display Elektronik OLED 128x64
+$ENDCMP
+#
 $CMP LM3940
 D 1A Low-Dropout Regulator, 5V to 3.3V
 K dropout regulator
+$ENDCMP
+#
+$CMP LT1109CZ-12
+D Micropower DC/DC Converter Adjustable and Fixed 5V, 12V
+K DC converter 5V 12V
 $ENDCMP
 #
 $CMP MCP73837
