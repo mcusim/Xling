@@ -103,7 +103,7 @@ encoding utf-8
 Sheet 1 1
 Title "Xling (Virtual Monster) Schematic"
 Date ""
-Rev "0.1.10"
+Rev "0.1.11"
 Comp ""
 Comment1 ""
 Comment2 ""
