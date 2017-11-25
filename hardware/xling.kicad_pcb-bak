@@ -2621,7 +2621,7 @@
   (target plus (at 169 75) (size 5) (width 0.2) (layer Edge.Cuts) (tstamp 5A117A5C))
   (target plus (at 169 141) (size 5) (width 0.2) (layer Edge.Cuts))
   (target plus (at 114 141) (size 5) (width 0.2) (layer Edge.Cuts))
-  (gr_text "Xling (virtual monster)\nPCB version: 0.1.12" (at 126.1 135.2) (layer F.SilkS)
+  (gr_text "Xling (virtual monster)\nPCB version: 0.1.13" (at 126.1 135.2) (layer F.SilkS)
     (effects (font (size 1.2 1.2) (thickness 0.25)) (justify left))
   )
   (gr_arc (start 121 80) (end 119 80) (angle 90) (layer Edge.Cuts) (width 0.2))
