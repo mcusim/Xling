@@ -1,4 +1,4 @@
-update=2018 January 18, Thursday 21:38:31
+update=2018 January 23, Tuesday 11:44:00
 version=1
 last_client=kicad
 [pcbnew]
@@ -23,8 +23,6 @@ ModuleOutlineThickness=0.150000000000
 [cvpcb]
 version=1
 NetIExt=net
-[general]
-version=1
 [eeschema]
 version=1
 LibDir=
@@ -125,6 +123,8 @@ LibName93=Xicor
 LibName94=xilinx
 LibName95=zetex
 LibName96=Zilog
+[general]
+version=1
 [schematic_editor]
 version=1
 PageLayoutDescrFile=
