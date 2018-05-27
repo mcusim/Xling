@@ -103,8 +103,8 @@ encoding utf-8
 Sheet 1 1
 Title "Xling Schematic"
 Date ""
-Rev "0.1.18"
-Comp "Terrible Terminal Inc."
+Rev "0.1.20"
+Comp ""
 Comment1 ""
 Comment2 ""
 Comment3 ""
@@ -1551,7 +1551,7 @@ Buttons for microcontroller
 Text Notes 10500 1590 0    51   ~ 0
 This switch is based on N-Channel and\nP-Channel MOSFETs to power on and off\nOLED display. This is necessary to use\na logic level 3.3V to switch 12V and\nleave Vcc contact floating when\nNTR0202PL is closed.
 Text Notes 12340 3970 0    51   ~ 0
-*\n* Including model files\n*\n*.include NTA4001NT1.LIB\n.include NTA4153N.REV0.LIB\n.include NTR0202PL.REV0.LIB\n*\n* Components of the scheme\n*\nR1 0 1 100k\nR2 2 3 100k\n* R3 - pull-down resistor to prove an output is floating contact when\n* XQ2 is closed\n*R3 4 0 100k\nC1 4 0 1p\nXQ1 2 1 0 nta4153n\nXQ2 4 2 3 ntr0202plt1\nVIN 1 0 pulse (0 3.15 2ms 0ns 0ms 5ms 10ms)\nVDD 3 0 pwl (0 0 0ms 0 0ms 12v 20ms 12v)\n*\n* Transient analysis for 20ms, step size 0.02ms\n*\n.tran 0.02ms 20ms\n*\n* Defining the run-time control functions\n*\n.control\nrun\n*\n* Plotting input and output voltages\n*\nplot v(1) v(4)\n.endc\n.end
+*\n* Including model files\n*\n*.include NTA4001NT1.LIB\n.include NTA4153N.REV0.LIB\n.include NTR0202PL.REV0.LIB\n*\n* Components of the scheme\n*\nR10 0 1 100k\nR5 2 3 100k\n* R3 - pull-down resistor to prove an output is floating contact when\n* XQ2 is closed\n*R3 4 0 100k\nC9 4 0 1p\nXQ3 2 1 0 nta4153n\nXQ2 4 2 3 ntr0202plt1\nVIN 1 0 pulse (0 3.15 2ms 0ns 0ms 5ms 10ms)\nVDD 3 0 pwl (0 0 0ms 0 0ms 12v 20ms 12v)\n*\n* Transient analysis for 20ms, step size 0.02ms\n*\n.tran 0.02ms 20ms\n*\n* Defining the run-time control functions\n*\n.control\nrun\n*\n* Plotting input and output voltages\n*\nplot v(1) v(4)\n.endc\n.end
 Wire Notes Line
 	12230 780  12230 4080
 Wire Notes Line

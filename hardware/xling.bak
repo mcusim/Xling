@@ -1,100 +1,5 @@
 EESchema Schematic File Version 2
 LIBS:xling
-LIBS:74xgxx
-LIBS:74xx
-LIBS:ac-dc
-LIBS:actel
-LIBS:adc-dac
-LIBS:allegro
-LIBS:Altera
-LIBS:analog_devices
-LIBS:analog_switches
-LIBS:atmel
-LIBS:audio
-LIBS:battery_management
-LIBS:bbd
-LIBS:bosch
-LIBS:brooktre
-LIBS:cmos_ieee
-LIBS:cmos4000
-LIBS:conn
-LIBS:contrib
-LIBS:cypress
-LIBS:dc-dc
-LIBS:device
-LIBS:digital-audio
-LIBS:diode
-LIBS:display
-LIBS:dsp
-LIBS:elec-unifil
-LIBS:ESD_Protection
-LIBS:ftdi
-LIBS:gennum
-LIBS:graphic_symbols
-LIBS:hc11
-LIBS:infineon
-LIBS:intel
-LIBS:interface
-LIBS:intersil
-LIBS:ir
-LIBS:Lattice
-LIBS:leds
-LIBS:LEM
-LIBS:linear
-LIBS:logic_programmable
-LIBS:maxim
-LIBS:mechanical
-LIBS:memory
-LIBS:microchip_dspic33dsc
-LIBS:microchip_pic10mcu
-LIBS:microchip_pic12mcu
-LIBS:microchip_pic16mcu
-LIBS:microchip_pic18mcu
-LIBS:microchip_pic24mcu
-LIBS:microchip_pic32mcu
-LIBS:microchip
-LIBS:microcontrollers
-LIBS:modules
-LIBS:motor_drivers
-LIBS:motorola
-LIBS:motors
-LIBS:msp430
-LIBS:nordicsemi
-LIBS:nxp_armmcu
-LIBS:nxp
-LIBS:onsemi
-LIBS:opto
-LIBS:Oscillators
-LIBS:philips
-LIBS:Power_Management
-LIBS:power
-LIBS:powerint
-LIBS:pspice
-LIBS:references
-LIBS:regul
-LIBS:relays
-LIBS:rfcom
-LIBS:RFSolutions
-LIBS:sensors
-LIBS:silabs
-LIBS:siliconi
-LIBS:stm8
-LIBS:stm32
-LIBS:supertex
-LIBS:switches
-LIBS:texas
-LIBS:transf
-LIBS:transistors
-LIBS:triac_thyristor
-LIBS:ttl_ieee
-LIBS:valves
-LIBS:video
-LIBS:wiznet
-LIBS:Worldsemi
-LIBS:Xicor
-LIBS:xilinx
-LIBS:zetex
-LIBS:Zilog
 LIBS:xling-cache
 EELAYER 25 0
 EELAYER END
@@ -1551,7 +1456,7 @@ Buttons for microcontroller
 Text Notes 10500 1590 0    51   ~ 0
 This switch is based on N-Channel and\nP-Channel MOSFETs to power on and off\nOLED display. This is necessary to use\na logic level 3.3V to switch 12V and\nleave Vcc contact floating when\nNTR0202PL is closed.
 Text Notes 12340 3970 0    51   ~ 0
-*\n* Including model files\n*\n*.include NTA4001NT1.LIB\n.include NTA4153N.REV0.LIB\n.include NTR0202PL.REV0.LIB\n*\n* Components of the scheme\n*\nR1 0 1 100k\nR2 2 3 100k\n* R3 - pull-down resistor to prove an output is floating contact when\n* XQ2 is closed\n*R3 4 0 100k\nC1 4 0 1p\nXQ1 2 1 0 nta4153n\nXQ2 4 2 3 ntr0202plt1\nVIN 1 0 pulse (0 3.15 2ms 0ns 0ms 5ms 10ms)\nVDD 3 0 pwl (0 0 0ms 0 0ms 12v 20ms 12v)\n*\n* Transient analysis for 20ms, step size 0.02ms\n*\n.tran 0.02ms 20ms\n*\n* Defining the run-time control functions\n*\n.control\nrun\n*\n* Plotting input and output voltages\n*\nplot v(1) v(4)\n.endc\n.end
+*\n* Including model files\n*\n*.include NTA4001NT1.LIB\n.include NTA4153N.REV0.LIB\n.include NTR0202PL.REV0.LIB\n*\n* Components of the scheme\n*\nR10 0 1 100k\nR5 2 3 100k\n* R3 - pull-down resistor to prove an output is floating contact when\n* XQ2 is closed\n*R3 4 0 100k\nC9 4 0 1p\nXQ3 2 1 0 nta4153n\nXQ2 4 2 3 ntr0202plt1\nVIN 1 0 pulse (0 3.15 2ms 0ns 0ms 5ms 10ms)\nVDD 3 0 pwl (0 0 0ms 0 0ms 12v 20ms 12v)\n*\n* Transient analysis for 20ms, step size 0.02ms\n*\n.tran 0.02ms 20ms\n*\n* Defining the run-time control functions\n*\n.control\nrun\n*\n* Plotting input and output voltages\n*\nplot v(1) v(4)\n.endc\n.end
 Wire Notes Line
 	12230 780  12230 4080
 Wire Notes Line
@@ -1560,8 +1465,8 @@ Wire Notes Line
 	15680 4080 15680 780 
 Wire Notes Line
 	15680 780  12230 780 
-Text Notes 12800 980  0    98   ~ 20
-12V OLED Vcc switch (SPICE scheme)
+Text Notes 12520 990  0    98   ~ 20
+12V OLED Vcc switch (transient analysis)
 Connection ~ 6260 3450
 Wire Wire Line
 	6420 3720 5370 3720
