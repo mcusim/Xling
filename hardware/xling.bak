@@ -1,5 +1,100 @@
 EESchema Schematic File Version 2
 LIBS:xling
+LIBS:74xgxx
+LIBS:74xx
+LIBS:ac-dc
+LIBS:actel
+LIBS:adc-dac
+LIBS:allegro
+LIBS:Altera
+LIBS:analog_devices
+LIBS:analog_switches
+LIBS:atmel
+LIBS:audio
+LIBS:battery_management
+LIBS:bbd
+LIBS:bosch
+LIBS:brooktre
+LIBS:cmos_ieee
+LIBS:cmos4000
+LIBS:conn
+LIBS:contrib
+LIBS:cypress
+LIBS:dc-dc
+LIBS:device
+LIBS:digital-audio
+LIBS:diode
+LIBS:display
+LIBS:dsp
+LIBS:elec-unifil
+LIBS:ESD_Protection
+LIBS:ftdi
+LIBS:gennum
+LIBS:graphic_symbols
+LIBS:hc11
+LIBS:infineon
+LIBS:intel
+LIBS:interface
+LIBS:intersil
+LIBS:ir
+LIBS:Lattice
+LIBS:leds
+LIBS:LEM
+LIBS:linear
+LIBS:logic_programmable
+LIBS:maxim
+LIBS:mechanical
+LIBS:memory
+LIBS:microchip_dspic33dsc
+LIBS:microchip_pic10mcu
+LIBS:microchip_pic12mcu
+LIBS:microchip_pic16mcu
+LIBS:microchip_pic18mcu
+LIBS:microchip_pic24mcu
+LIBS:microchip_pic32mcu
+LIBS:microchip
+LIBS:microcontrollers
+LIBS:modules
+LIBS:motor_drivers
+LIBS:motorola
+LIBS:motors
+LIBS:msp430
+LIBS:nordicsemi
+LIBS:nxp_armmcu
+LIBS:nxp
+LIBS:onsemi
+LIBS:opto
+LIBS:Oscillators
+LIBS:philips
+LIBS:Power_Management
+LIBS:power
+LIBS:powerint
+LIBS:pspice
+LIBS:references
+LIBS:regul
+LIBS:relays
+LIBS:rfcom
+LIBS:RFSolutions
+LIBS:sensors
+LIBS:silabs
+LIBS:siliconi
+LIBS:stm8
+LIBS:stm32
+LIBS:supertex
+LIBS:switches
+LIBS:texas
+LIBS:transf
+LIBS:transistors
+LIBS:triac_thyristor
+LIBS:ttl_ieee
+LIBS:valves
+LIBS:video
+LIBS:wiznet
+LIBS:Worldsemi
+LIBS:Xicor
+LIBS:xilinx
+LIBS:zetex
+LIBS:Zilog
 LIBS:xling-cache
 EELAYER 25 0
 EELAYER END
@@ -8,8 +103,8 @@ encoding utf-8
 Sheet 1 1
 Title "Xling Schematic"
 Date ""
-Rev "0.1.18"
-Comp "Terrible Terminal Inc."
+Rev "0.1.21"
+Comp ""
 Comment1 ""
 Comment2 ""
 Comment3 ""
@@ -159,7 +254,7 @@ F 0 "C13" V 4270 2940 50  0000 L CNN
 F 1 "22pF" V 4420 2940 50  0000 L CNN
 F 2 "Capacitors_SMD:C_0805" H 4388 2720 50  0001 C CNN
 F 3 "" H 4350 2870 50  0001 C CNN
-F 4 "C0805C220J5GACTU" V 4350 2870 60  0001 C CNN "Model"
+F 4 "CL21C220JBANNNC" V 4350 2870 60  0001 C CNN "Model"
 	1    4350 2870
 	0    -1   1    0   
 $EndComp
@@ -171,7 +266,7 @@ F 0 "C15" V 4260 3240 50  0000 L CNN
 F 1 "22pF" V 4420 3240 50  0000 L CNN
 F 2 "Capacitors_SMD:C_0805" H 4388 3020 50  0001 C CNN
 F 3 "" H 4350 3170 50  0001 C CNN
-F 4 "C0805C220J5GACTU" V 4350 3170 60  0001 C CNN "Model"
+F 4 "CL21C220JBANNNC" V 4350 3170 60  0001 C CNN "Model"
 	1    4350 3170
 	0    -1   1    0   
 $EndComp
@@ -194,7 +289,7 @@ F 0 "C8" H 1835 1710 50  0000 L CNN
 F 1 "100nF" H 1835 1510 50  0000 L CNN
 F 2 "Capacitors_SMD:C_0805" H 1848 1460 50  0001 C CNN
 F 3 "" H 1810 1610 50  0001 C CNN
-F 4 "08055C104K4T2A" H 1810 1610 60  0001 C CNN "Model"
+F 4 "CL21B104JBCNNNC" H 1810 1610 60  0001 C CNN "Model"
 	1    1810 1610
 	1    0    0    -1  
 $EndComp
@@ -267,7 +362,7 @@ F 0 "C7" H 1525 1710 50  0000 L CNN
 F 1 "4.7nF" H 1525 1510 50  0000 L CNN
 F 2 "Capacitors_SMD:C_0805" H 1538 1460 50  0001 C CNN
 F 3 "" H 1500 1610 50  0001 C CNN
-F 4 "C0805C472K5RACTU" H 1500 1610 60  0001 C CNN "Model"
+F 4 "CC0805KRX7R9BB472" H 1500 1610 60  0001 C CNN "Model"
 	1    1500 1610
 	1    0    0    -1  
 $EndComp
@@ -303,7 +398,7 @@ F 0 "C18" H 9315 4400 50  0000 L CNN
 F 1 "4.7nF" H 9315 4200 50  0000 L CNN
 F 2 "Capacitors_SMD:C_0805" H 9328 4150 50  0001 C CNN
 F 3 "" H 9290 4300 50  0001 C CNN
-F 4 "C0805C472K5RACTU" H 9290 4300 60  0001 C CNN "Model"
+F 4 "CC0805KRX7R9BB472" H 9290 4300 60  0001 C CNN "Model"
 	1    9290 4300
 	1    0    0    -1  
 $EndComp
@@ -375,7 +470,7 @@ F 0 "C19" H 10585 4390 50  0000 L CNN
 F 1 "4.7nF" H 10585 4190 50  0000 L CNN
 F 2 "Capacitors_SMD:C_0805" H 10598 4140 50  0001 C CNN
 F 3 "" H 10560 4290 50  0001 C CNN
-F 4 "C0805C472K5RACTU" H 10560 4290 60  0001 C CNN "Model"
+F 4 "CC0805KRX7R9BB472" H 10560 4290 60  0001 C CNN "Model"
 	1    10560 4290
 	1    0    0    -1  
 $EndComp
@@ -447,7 +542,7 @@ F 0 "C20" H 11795 4380 50  0000 L CNN
 F 1 "4.7nF" H 11795 4180 50  0000 L CNN
 F 2 "Capacitors_SMD:C_0805" H 11808 4130 50  0001 C CNN
 F 3 "" H 11770 4280 50  0001 C CNN
-F 4 "C0805C472K5RACTU" H 11770 4280 60  0001 C CNN "Model"
+F 4 "CC0805KRX7R9BB472" H 11770 4280 60  0001 C CNN "Model"
 	1    11770 4280
 	1    0    0    -1  
 $EndComp
@@ -897,6 +992,7 @@ F 0 "R1" V 5960 1970 50  0000 C CNN
 F 1 "100K" V 6130 1970 50  0000 C CNN
 F 2 "Resistors_SMD:R_1206" V 5980 1970 50  0001 C CNN
 F 3 "" H 6050 1970 50  0001 C CNN
+F 4 "CRCW1206100KFKTABC" V 6050 1970 60  0001 C CNN "Model"
 	1    6050 1970
 	1    0    0    -1  
 $EndComp
@@ -938,6 +1034,7 @@ F 0 "R10" V 8950 2330 50  0000 C CNN
 F 1 "100K" V 9110 2330 50  0000 C CNN
 F 2 "Resistors_SMD:R_1206" V 8960 2330 50  0001 C CNN
 F 3 "" H 9030 2330 50  0001 C CNN
+F 4 "CRCW1206100KFKTABC" V 9030 2330 60  0001 C CNN "Model"
 	1    9030 2330
 	1    0    0    -1  
 $EndComp
@@ -949,6 +1046,7 @@ F 0 "R5" V 9440 1570 50  0000 C CNN
 F 1 "100K" V 9600 1570 50  0000 C CNN
 F 2 "Resistors_SMD:R_1206" V 9450 1570 50  0001 C CNN
 F 3 "" H 9520 1570 50  0001 C CNN
+F 4 "CRCW1206100KFKTABC" V 9520 1570 60  0001 C CNN "Model"
 	1    9520 1570
 	1    0    0    -1  
 $EndComp
@@ -971,6 +1069,7 @@ F 0 "C9" H 10145 2410 50  0000 L CNN
 F 1 "1pF" H 10145 2210 50  0000 L CNN
 F 2 "Capacitors_SMD:C_0805" H 10158 2160 50  0001 C CNN
 F 3 "" H 10120 2310 50  0001 C CNN
+F 4 "CL21C010BBANNNC" H 10120 2310 60  0001 C CNN "Model"
 	1    10120 2310
 	1    0    0    -1  
 $EndComp
