@@ -1,0 +1,30 @@
+Current Direction Control Circuit based on a single P-Channel MOSFET
+
+* Including model files
+*.include NTA4001NT1.LIB
+.include NTA4153N.REV0.LIB
+.include NTR0202PL.REV0.LIB
+.include 1N5819.LIB
+
+* Components of the scheme
+R1 0 1 100k
+R2 0 2 12
+C1 0 3 4.7u
+C2 0 2 4.7u
+XQ1 3 1 2 ntr0202plt1
+D1 1 2 D1n5819
+VIN 1 0 pulse (0 4.95 2ms 0ns 0ms 5ms 10ms)
+VDD 3 0 pwl (0 0 0ms 0 0ms 3.2v 20ms 3.2v)
+
+* Transient analysis for 20ms, step size 0.02ms
+.tran 0.02ms 20ms
+
+* Defining the run-time control functions
+.control
+run
+
+* Plotting input and output voltages
+plot v(1) v(3) v(2)
+.endc
+.end
+
