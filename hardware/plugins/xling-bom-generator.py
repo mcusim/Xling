@@ -29,6 +29,7 @@ html = """
     <h1><!--SOURCE--></h1>
     <p><!--DATE--></p>
     <p><!--TOOL--></p>
+    <p><!--REV--></p>
     <p><!--COMPCOUNT--></p>
     <table>
     <!--TABLEROW-->
@@ -86,7 +87,8 @@ except IOError:
 html = html.replace('<!--SOURCE-->', net.getSource())
 html = html.replace('<!--DATE-->', net.getDate())
 html = html.replace('<!--TOOL-->', net.getTool())
-html = html.replace('<!--COMPCOUNT-->', "<b>Component Count:</b>" + \
+html = html.replace('<!--REV-->', "<b>Revision: </b>" + net.getRev())
+html = html.replace('<!--COMPCOUNT-->', "<b>Component Count: </b>" + \
     str(len(net.components)))
 
 row  = "<tr><th style='width:640px'>Ref</th>" + "<th>Qnty</th>"

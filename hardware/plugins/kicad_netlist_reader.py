@@ -425,6 +425,7 @@ class netlist():
 
         """
         self.design = None
+        self.title_block = None
         self.components = []
         self.libparts = []
         self.libraries = []
@@ -476,6 +477,10 @@ class netlist():
         if self._curr_element.name == "library":
             self.libraries.append(self._curr_element)
 
+        # Assign the title block
+        if self._curr_element.name == "title_block":
+            self.title_block = self._curr_element
+
         return self._curr_element
 
     def endDocument(self):
@@ -520,6 +525,10 @@ class netlist():
     def getTool(self):
         """Return the tool string which was used to create the netlist tree"""
         return self.design.get("tool")
+
+    def getRev(self):
+        """Return a revision of the first page of schematic"""
+        return self.title_block.get("rev")
 
     def gatherComponentFieldUnion(self, components=None):
         """Gather the complete 'set' of unique component fields, fields found in any component.

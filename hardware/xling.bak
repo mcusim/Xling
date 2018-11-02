@@ -6,8 +6,8 @@ $Descr A3 16535 11693
 encoding utf-8
 Sheet 1 1
 Title "Xling Schematic"
-Date "2018-08-28"
-Rev "0.2.0"
+Date "2018-11-02"
+Rev "0.2.1"
 Comp "MCUSim"
 Comment1 ""
 Comment2 ""
@@ -41,12 +41,12 @@ $EndComp
 $Comp
 L xling:GND #PWR01
 U 1 1 59FC89D1
-P 3390 7810
-F 0 "#PWR01" H 3390 7560 50  0001 C CNN
-F 1 "GND" H 3390 7660 50  0000 C CNN
-F 2 "" H 3390 7810 50  0001 C CNN
-F 3 "" H 3390 7810 50  0001 C CNN
-	1    3390 7810
+P 3570 7810
+F 0 "#PWR01" H 3570 7560 50  0001 C CNN
+F 1 "GND" H 3570 7660 50  0000 C CNN
+F 2 "" H 3570 7810 50  0001 C CNN
+F 3 "" H 3570 7810 50  0001 C CNN
+	1    3570 7810
 	1    0    0    -1  
 $EndComp
 Text Notes 790  5200 0    98   ~ 20
@@ -462,9 +462,9 @@ U 1 1 5A020B3D
 P 4190 7400
 F 0 "J6" H 4190 7520 50  0000 C CNN
 F 1 "Battery" H 4160 7170 50  0000 C CNN
-F 2 "Xling Footprints:Pin_Header_Straight_1x02" H 4190 7400 50  0001 C CNN
+F 2 "Xling Footprints:PinHeader_1x02_P2.54mm_Horizontal" H 4190 7400 50  0001 C CNN
 F 3 "" H 4190 7400 50  0001 C CNN
-F 4 "None" H 4190 7400 60  0001 C CNN "Model"
+F 4 "DS1022-1*20RDF1-1" H 4190 7400 60  0001 C CNN "Model"
 	1    4190 7400
 	1    0    0    -1  
 $EndComp
@@ -855,7 +855,7 @@ Current Direction Control Circuit based on a single P-Channel MOSFET\n\n* Includ
 Text Notes 12285 4360 0    98   ~ 20
 Current Direction (Q1 based, ngspice .cir)
 Text Notes 3820 6270 0    51   ~ 0
-Charge current regulator R3:\n\nIreg = 1000V/Rprog, where\nIreg - charge current, in mA\nRprog - resistor value (R3), in kOhm.\n\nRprog = 1000/250 = 4kOhm,\nStandard value is 4.3kOhm, Ireg ~~ 232mA
+Battery (charge) current regulator\nbased on a resistor R3:\n\nIreg = 1000V/Rprog, where\nIreg - charge current, in mA\nRprog - resistor value (R3), in kOhm.\n\nRprog = 1000/250 = 4kOhm,\nStandard value is 4.3kOhm, Ireg ~~ 232mA
 Text Label 8660 5590 0    60   ~ 0
 OLED_VCC
 Wire Wire Line
@@ -1428,7 +1428,7 @@ U 1 1 5B877C3A
 P 6480 7030
 F 0 "U5" H 6280 7450 60  0000 C CNN
 F 1 "AP3401_TSOT26" H 6480 6610 60  0000 C CNN
-F 2 "" H 6480 7030 60  0001 C CNN
+F 2 "Xling Footprints:AP3401_TSOT26" H 6480 7030 60  0001 C CNN
 F 3 "" H 6480 7030 60  0001 C CNN
 F 4 "AP3401KTTR-G1" H 6480 7030 50  0001 C CNN "Model"
 	1    6480 7030
@@ -1589,7 +1589,7 @@ Wire Wire Line
 	3040 3620 3840 3620
 Connection ~ 4290 3770
 Text Notes 900  5580 0    51   ~ 0
-The main idea of a scheme is to produce 3.3V and charge\na battery sharing load between a USB power and a power\nobtained from the battery.
+The main idea of a scheme is to produce 3.3V and charge\na battery while sharing load between a USB power and a power\nobtained from the battery.
 Wire Wire Line
 	6930 6980 7000 6980
 Wire Wire Line
@@ -1642,7 +1642,7 @@ Wire Wire Line
 Wire Wire Line
 	3230 6780 3750 6780
 Wire Wire Line
-	3390 7810 3750 7810
+	3390 7810 3570 7810
 Wire Wire Line
 	3750 7580 3750 7810
 Connection ~ 3750 7810
@@ -1678,4 +1678,7 @@ Wire Wire Line
 	3200 1495 3385 1495
 Wire Wire Line
 	3385 1595 2755 1595
+Connection ~ 3570 7810
+Wire Wire Line
+	3570 7810 3750 7810
 $EndSCHEMATC
