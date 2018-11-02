@@ -17,7 +17,7 @@ C1 4 0 1p
 XQ1 2 1 0 nta4153n
 XQ2 4 2 3 ntr0202plt1
 VIN 1 0 pulse (0 3.15 2ms 0ns 0ms 5ms 10ms)
-VDD 3 0 pwl (0 0 0ms 0 0ms 12v 20ms 12v)
+VDD 3 0 pwl (0 0 0ms 0 0ms 3.3v 20ms 3.3v)
 *
 * Transient analysis for 20ms, step size 0.02ms
 *

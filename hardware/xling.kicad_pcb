@@ -1,9 +1,6 @@
-(kicad_pcb (version 4) (host pcbnew 4.0.7)
+(kicad_pcb (version 20171130) (host pcbnew "(5.0.0-3-g5ebb6b6)")
 
   (general
-    (links 136)
-    (no_connects 0)
-    (area 106.72 63.54 170.14 139.66)
     (thickness 1.6)
     (drawings 18)
     (tracks 670)
@@ -15,8 +12,8 @@
   (page A4)
   (title_block
     (title "Xling PCB")
-    (date 2018-07-12)
-    (rev 0.1.22)
+    (date 2018-08-28)
+    (rev 0.2.0)
     (company MCUSim)
   )
 
@@ -75,6 +72,9 @@
     (pcbplotparams
       (layerselection 0x010fc_80000001)
       (usegerberextensions true)
+      (usegerberattributes false)
+      (usegerberadvancedattributes false)
+      (creategerberjobfile false)
       (excludeedgelayer true)
       (linewidth 0.100000)
       (plotframeref false)
@@ -83,8 +83,7 @@
       (useauxorigin false)
       (hpglpennumber 1)
       (hpglpenspeed 20)
-      (hpglpendiameter 15)
-      (hpglpenoverlay 2)
+      (hpglpendiameter 15.000000)
       (psnegative false)
       (psa4output false)
       (plotreference true)
@@ -96,7 +95,7 @@
       (mirror false)
       (drillshape 0)
       (scaleselection 1)
-      (outputdirectory gerber/0.1.22/))
+      (outputdirectory "gerber/0.1.22/"))
   )
 
   (net 0 "")
@@ -252,7 +251,7 @@
     (tags "Crystal Quarz HC49-SD SMD")
     (path /5A0083D0)
     (attr smd)
-    (fp_text reference Y1 (at -8.636 0 360) (layer F.SilkS)
+    (fp_text reference Y1 (at -8.636 0) (layer F.SilkS)
       (effects (font (size 1 1) (thickness 0.15)))
     )
     (fp_text value 8MHz (at -0.02286 0 270) (layer F.Fab)
@@ -459,7 +458,7 @@
     (tags "capacitor 0805")
     (path /5AAFBAC6)
     (attr smd)
-    (fp_text reference C9 (at -3.556 0 360) (layer F.SilkS) hide
+    (fp_text reference C9 (at -3.556 0) (layer F.SilkS) hide
       (effects (font (size 1 1) (thickness 0.15)))
     )
     (fp_text value 1pF (at 0 1.75 270) (layer F.Fab)
@@ -792,7 +791,7 @@
     (descr "D, DO-41_SOD81 series, Axial, Horizontal, pin pitch=7.62mm, , length*diameter=5.2*2.7mm^2, , http://www.diodes.com/_files/packages/DO-41%20(Plastic).pdf")
     (tags "D DO-41_SOD81 series Axial Horizontal pin pitch 7.62mm  length 5.2mm diameter 2.7mm")
     (path /5A05A5FD)
-    (fp_text reference D5 (at -2.286 0 540) (layer F.SilkS)
+    (fp_text reference D5 (at -2.286 0 180) (layer F.SilkS)
       (effects (font (size 1 1) (thickness 0.15)))
     )
     (fp_text value 1N5818 (at 3.81 0 270) (layer F.Fab)
@@ -833,7 +832,7 @@
   (module "Xling Footprints:MCP73831_SOT_23" (layer F.Cu) (tedit 5B3E5D22) (tstamp 5AB01AD2)
     (at 152.4 110.744 180)
     (path /59FC873F)
-    (fp_text reference J3 (at 0 3.556 360) (layer F.SilkS)
+    (fp_text reference J3 (at 0 3.556) (layer F.SilkS)
       (effects (font (size 1 1) (thickness 0.15)))
     )
     (fp_text value MCP73831 (at 0 3.2 180) (layer F.Fab)
@@ -938,7 +937,7 @@
     (pad 6 thru_hole oval (at -2.54 5.08 180) (size 1.7 1.7) (drill 1) (layers *.Cu *.Mask)
       (net 1 +3V3))
     (model ${KISYS3DMOD}/Socket_Strips.3dshapes/Socket_Strip_Straight_2x03_Pitch2.54mm.wrl
-      (at (xyz -0.05 -0.1 0))
+      (offset (xyz -1.269999980926514 -2.539999961853027 0))
       (scale (xyz 1 1 1))
       (rotate (xyz 0 0 270))
     )
@@ -1036,7 +1035,7 @@
     (fp_text value NTR0202PL (at 0 -2.5 90) (layer B.Fab)
       (effects (font (size 1 1) (thickness 0.15)) (justify mirror))
     )
-    (fp_text user %R (at 0 0 360) (layer B.Fab)
+    (fp_text user %R (at 0 0) (layer B.Fab)
       (effects (font (size 0.5 0.5) (thickness 0.075)) (justify mirror))
     )
     (fp_line (start -0.7 0.95) (end -0.7 -1.5) (layer B.Fab) (width 0.1))
@@ -1472,7 +1471,7 @@
     (tags "resistor 0603")
     (path /5A015157)
     (attr smd)
-    (fp_text reference R15 (at 1.016 2.286 360) (layer F.SilkS) hide
+    (fp_text reference R15 (at 1.016 2.286) (layer F.SilkS) hide
       (effects (font (size 1 1) (thickness 0.15)))
     )
     (fp_text value 27K (at 0 1.5 270) (layer F.Fab)
@@ -1671,7 +1670,7 @@
     (pad 3 thru_hole oval (at 0 0 180) (size 0.89916 1.50114) (drill 0.6) (layers *.Cu *.Mask)
       (net 23 +12V))
     (model TO_SOT_Packages_THT.3dshapes/TO-92_Inline_Narrow_Oval.wrl
-      (at (xyz 0.05 0 0))
+      (offset (xyz 1.269999980926514 0 0))
       (scale (xyz 1 1 1))
       (rotate (xyz 0 0 -90))
     )
@@ -1859,13 +1858,13 @@
     (tags SOT-23-6)
     (path /5A0D6820)
     (attr smd)
-    (fp_text reference U4 (at 0 2.794 360) (layer B.SilkS)
+    (fp_text reference U4 (at 0 2.794) (layer B.SilkS)
       (effects (font (size 1 1) (thickness 0.15)) (justify mirror))
     )
     (fp_text value MCP1640B-CH (at 0 -2.9 180) (layer B.Fab)
       (effects (font (size 1 1) (thickness 0.15)) (justify mirror))
     )
-    (fp_text user %R (at 0 0 450) (layer B.Fab)
+    (fp_text user %R (at 0 0 90) (layer B.Fab)
       (effects (font (size 0.5 0.5) (thickness 0.075)) (justify mirror))
     )
     (fp_line (start -0.9 -1.61) (end 0.9 -1.61) (layer B.SilkS) (width 0.12))
@@ -1906,7 +1905,7 @@
     (fp_text reference J6 (at 2.286 1.27 180) (layer F.SilkS) hide
       (effects (font (size 1 1) (thickness 0.15)))
     )
-    (fp_text value Battery (at 2.794 1.27 360) (layer F.SilkS)
+    (fp_text value Battery (at 2.794 1.27) (layer F.SilkS)
       (effects (font (size 1 1) (thickness 0.15)))
     )
     (fp_line (start 1.27 1.27) (end 1.27 3.81) (layer F.SilkS) (width 0.15))
@@ -1925,7 +1924,7 @@
     (pad 2 thru_hole oval (at 0 2.54 90) (size 2.032 2.032) (drill 1.016) (layers *.Cu *.Mask)
       (net 2 GND))
     (model Pin_Headers.3dshapes/Pin_Header_Straight_1x02.wrl
-      (at (xyz 0 -0.05 0))
+      (offset (xyz 0 -1.269999980926514 0))
       (scale (xyz 1 1 1))
       (rotate (xyz 0 0 90))
     )
@@ -2075,7 +2074,7 @@
   (module "Xling Footprints:SC-75_SOT-416" (layer F.Cu) (tedit 5AB38315) (tstamp 5B3E5AB5)
     (at 139.7 99.568 270)
     (path /5B3E89E3)
-    (fp_text reference Q3 (at -2.286 0 360) (layer F.SilkS)
+    (fp_text reference Q3 (at -2.286 0) (layer F.SilkS)
       (effects (font (size 1 1) (thickness 0.15)))
     )
     (fp_text value NTA4153N (at 0 1.7 270) (layer F.Fab) hide
@@ -2168,10 +2167,10 @@
   (module lib_fp:oshw (layer B.Cu) (tedit 0) (tstamp 5B6C8869)
     (at 127 100.838 180)
     (fp_text reference G*** (at 0 0 180) (layer B.SilkS) hide
-      (effects (font (thickness 0.3)) (justify mirror))
+      (effects (font (size 1.524 1.524) (thickness 0.3)) (justify mirror))
     )
     (fp_text value LOGO (at 0.75 0 180) (layer B.SilkS) hide
-      (effects (font (thickness 0.3)) (justify mirror))
+      (effects (font (size 1.524 1.524) (thickness 0.3)) (justify mirror))
     )
     (fp_poly (pts (xy 0.076709 2.31107) (xy 0.145144 2.310553) (xy 0.206566 2.309759) (xy 0.259081 2.308727)
       (xy 0.300797 2.307496) (xy 0.329822 2.306105) (xy 0.344263 2.304593) (xy 0.345351 2.304214)

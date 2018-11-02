@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <export version="D">
   <design>
-    <source>/Users/dsalychev/git/xling/hardware/xling.sch</source>
-    <date>2018 January 15, Monday 15:30:54</date>
-    <tool>Eeschema 4.0.7</tool>
+    <source>/home/dsl/git/xling/hardware/xling.sch</source>
+    <date>Fri Nov  2 12:41:06 2018</date>
+    <tool>Eeschema 5.0.1</tool>
     <sheet number="1" name="/" tstamps="/">
       <title_block>
-        <title>Xling (Virtual Monster) Schematic</title>
-        <company/>
-        <rev>0.1.16</rev>
-        <date/>
+        <title>Xling Schematic</title>
+        <company>MCUSim</company>
+        <rev>0.2.0</rev>
+        <date>2018-08-28</date>
         <source>xling.sch</source>
         <comment number="1" value=""/>
         <comment number="2" value=""/>
@@ -19,402 +19,566 @@
     </sheet>
   </design>
   <components>
-    <comp ref="J3">
-      <value>MCP73831</value>
-      <footprint>Xling Footprints:MCP73831_SOT_23</footprint>
-      <fields>
-        <field name="Model">MCP73831T-2AT</field>
-      </fields>
-      <libsource lib="xling" part="MCP73831"/>
-      <sheetpath names="/" tstamps="/"/>
-      <tstamp>59FC873F</tstamp>
-    </comp>
     <comp ref="R3">
-      <value>2K2</value>
-      <footprint>Resistors_SMD:R_1206</footprint>
-      <libsource lib="device" part="R"/>
+      <value>4K3</value>
+      <footprint>Xling Footprints:R_0603_1608Metric</footprint>
+      <fields>
+        <field name="Model">0603SAJ0432T5E</field>
+      </fields>
+      <libsource lib="xling" part="R" description=""/>
       <sheetpath names="/" tstamps="/"/>
       <tstamp>59FC8778</tstamp>
     </comp>
-    <comp ref="R5">
-      <value>470R</value>
-      <footprint>Resistors_SMD:R_1206</footprint>
-      <fields>
-        <field name="Model">CRCW1206470RFKTABC</field>
-      </fields>
-      <libsource lib="device" part="R"/>
-      <sheetpath names="/" tstamps="/"/>
-      <tstamp>59FC87A3</tstamp>
-    </comp>
-    <comp ref="R1">
-      <value>470R</value>
-      <footprint>Resistors_SMD:R_1206</footprint>
-      <fields>
-        <field name="Model">CRCW1206470RFKTABC</field>
-      </fields>
-      <libsource lib="device" part="R"/>
-      <sheetpath names="/" tstamps="/"/>
-      <tstamp>59FC87D6</tstamp>
-    </comp>
-    <comp ref="C3">
-      <value>4.7uF</value>
-      <footprint>Capacitors_SMD:CP_Elec_4x5.3</footprint>
-      <fields>
-        <field name="Model">UWX1V4R7MCL1GB</field>
-      </fields>
-      <libsource lib="device" part="CP"/>
-      <sheetpath names="/" tstamps="/"/>
-      <tstamp>59FC8802</tstamp>
-    </comp>
-    <comp ref="C6">
-      <value>4.7uF</value>
-      <footprint>Capacitors_SMD:CP_Elec_4x5.3</footprint>
-      <fields>
-        <field name="Model">UWX1V4R7MCL1GB</field>
-      </fields>
-      <libsource lib="device" part="CP"/>
-      <sheetpath names="/" tstamps="/"/>
-      <tstamp>59FC8830</tstamp>
-    </comp>
-    <comp ref="D2">
-      <value>charged</value>
-      <footprint>LEDs:LED_0805</footprint>
-      <fields>
-        <field name="Model">EL17-215SYGC</field>
-      </fields>
-      <libsource lib="device" part="LED"/>
-      <sheetpath names="/" tstamps="/"/>
-      <tstamp>59FC8872</tstamp>
-    </comp>
-    <comp ref="D1">
-      <value>charging</value>
-      <footprint>LEDs:LED_0603</footprint>
-      <fields>
-        <field name="Model">TLMS1100-GS08</field>
-      </fields>
-      <libsource lib="device" part="LED"/>
-      <sheetpath names="/" tstamps="/"/>
-      <tstamp>59FC88AD</tstamp>
-    </comp>
     <comp ref="J4">
       <value>USB_OTG</value>
-      <footprint>Connectors:USB_Mini-B</footprint>
+      <footprint>Xling Footprints:USB_Mini-B_Lumberg_2486_01_Horizontal</footprint>
       <fields>
-        <field name="Model">675031020</field>
+        <field name="Model">Molex 67503-1020</field>
       </fields>
-      <libsource lib="conn" part="USB_OTG"/>
+      <libsource lib="xling" part="USB_OTG" description=""/>
       <sheetpath names="/" tstamps="/"/>
       <tstamp>59FC88F3</tstamp>
     </comp>
     <comp ref="R4">
       <value>100K</value>
-      <footprint>Resistors_SMD:R_1206</footprint>
-      <libsource lib="device" part="R"/>
+      <footprint>Xling Footprints:R_1206_3216Metric</footprint>
+      <fields>
+        <field name="Model">CRCW1206100KFKTABC</field>
+      </fields>
+      <libsource lib="xling" part="R" description=""/>
       <sheetpath names="/" tstamps="/"/>
       <tstamp>59FE800F</tstamp>
     </comp>
-    <comp ref="L1">
-      <value>4.7uH</value>
-      <footprint>Inductors_SMD:L_1210</footprint>
-      <libsource lib="device" part="L"/>
-      <sheetpath names="/" tstamps="/"/>
-      <tstamp>59FF5879</tstamp>
-    </comp>
     <comp ref="C5">
       <value>4.7uF</value>
-      <footprint>Capacitors_SMD:C_0201</footprint>
-      <libsource lib="device" part="C"/>
+      <footprint>Xling Footprints:C_1206_3216Metric</footprint>
+      <fields>
+        <field name="Model">CL31B475KAHNNNE</field>
+      </fields>
+      <libsource lib="xling" part="C" description=""/>
       <sheetpath names="/" tstamps="/"/>
       <tstamp>59FF5F5A</tstamp>
     </comp>
-    <comp ref="C1">
-      <value>10uF</value>
-      <footprint>Capacitors_SMD:C_0805</footprint>
-      <libsource lib="device" part="C"/>
-      <sheetpath names="/" tstamps="/"/>
-      <tstamp>59FF71A2</tstamp>
-    </comp>
     <comp ref="R8">
       <value>1K</value>
-      <footprint>Resistors_SMD:R_0603</footprint>
-      <libsource lib="device" part="R"/>
+      <footprint>Xling Footprints:R_0603_1608Metric</footprint>
+      <fields>
+        <field name="Model">CRCW06031K00JNTABC</field>
+      </fields>
+      <libsource lib="xling" part="R" description=""/>
       <sheetpath names="/" tstamps="/"/>
       <tstamp>59FF6B80</tstamp>
     </comp>
     <comp ref="R9">
       <value>1K</value>
-      <footprint>Resistors_SMD:R_0603</footprint>
-      <libsource lib="device" part="R"/>
+      <footprint>Xling Footprints:R_0603_1608Metric</footprint>
+      <fields>
+        <field name="Model">CRCW06031K00JNTABC</field>
+      </fields>
+      <libsource lib="xling" part="R" description=""/>
       <sheetpath names="/" tstamps="/"/>
       <tstamp>59FF6C05</tstamp>
     </comp>
     <comp ref="C13">
       <value>22pF</value>
-      <footprint>Capacitors_SMD:C_0402</footprint>
-      <libsource lib="device" part="C"/>
+      <footprint>Xling Footprints:C_0805_2012Metric</footprint>
+      <fields>
+        <field name="Model">CL21C220JBANNNC</field>
+      </fields>
+      <libsource lib="xling" part="C" description=""/>
       <sheetpath names="/" tstamps="/"/>
       <tstamp>5A008587</tstamp>
     </comp>
     <comp ref="C15">
       <value>22pF</value>
-      <footprint>Capacitors_SMD:C_0402</footprint>
-      <libsource lib="device" part="C"/>
+      <footprint>Xling Footprints:C_0805_2012Metric</footprint>
+      <fields>
+        <field name="Model">CL21C220JBANNNC</field>
+      </fields>
+      <libsource lib="xling" part="C" description=""/>
       <sheetpath names="/" tstamps="/"/>
       <tstamp>5A00862C</tstamp>
     </comp>
     <comp ref="C8">
       <value>100nF</value>
-      <footprint>Capacitors_SMD:C_0201</footprint>
-      <libsource lib="device" part="C"/>
+      <footprint>Xling Footprints:C_0805_2012Metric</footprint>
+      <fields>
+        <field name="Model">CL21B104JBCNNNC</field>
+      </fields>
+      <libsource lib="xling" part="C" description=""/>
       <sheetpath names="/" tstamps="/"/>
       <tstamp>5A00C900</tstamp>
     </comp>
     <comp ref="J5">
       <value>AVR ISP</value>
-      <footprint>Socket_Strips:Socket_Strip_Straight_2x03_Pitch2.54mm</footprint>
-      <libsource lib="conn" part="Conn_02x03_Odd_Even"/>
+      <footprint>Xling Footprints:IDC-Header_2x03_P2.54mm_Vertical</footprint>
+      <fields>
+        <field name="Model">T821106A1S100CEU</field>
+      </fields>
+      <libsource lib="xling" part="Conn_02x03_Odd_Even" description=""/>
       <sheetpath names="/" tstamps="/"/>
       <tstamp>5A00DAAC</tstamp>
     </comp>
     <comp ref="C7">
       <value>4.7nF</value>
-      <footprint>Capacitors_SMD:C_0402</footprint>
-      <libsource lib="device" part="C"/>
+      <footprint>Xling Footprints:C_0805_2012Metric</footprint>
+      <fields>
+        <field name="Model">CC0805KRX7R9BB472</field>
+      </fields>
+      <libsource lib="xling" part="C" description=""/>
       <sheetpath names="/" tstamps="/"/>
       <tstamp>5A01213D</tstamp>
     </comp>
     <comp ref="R14">
       <value>27K</value>
-      <footprint>Resistors_SMD:R_0603</footprint>
-      <libsource lib="device" part="R"/>
+      <footprint>Xling Footprints:R_0603_1608Metric</footprint>
+      <fields>
+        <field name="Model">CRCW060327K0FKTABC</field>
+      </fields>
+      <libsource lib="xling" part="R" description=""/>
       <sheetpath names="/" tstamps="/"/>
       <tstamp>5A0129A2</tstamp>
     </comp>
     <comp ref="R17">
       <value>100K</value>
-      <footprint>Resistors_SMD:R_1206</footprint>
-      <libsource lib="device" part="R"/>
+      <footprint>Xling Footprints:R_1206_3216Metric</footprint>
+      <fields>
+        <field name="Model">CRCW1206100KFKTABC</field>
+      </fields>
+      <libsource lib="xling" part="R" description=""/>
       <sheetpath names="/" tstamps="/"/>
       <tstamp>5A012A39</tstamp>
     </comp>
     <comp ref="C18">
       <value>4.7nF</value>
-      <footprint>Capacitors_SMD:C_0402</footprint>
-      <libsource lib="device" part="C"/>
+      <footprint>Xling Footprints:C_0805_2012Metric</footprint>
+      <fields>
+        <field name="Model">CC0805KRX7R9BB472</field>
+      </fields>
+      <libsource lib="xling" part="C" description=""/>
       <sheetpath names="/" tstamps="/"/>
       <tstamp>5A012B2D</tstamp>
     </comp>
     <comp ref="SW2">
-      <value>Up</value>
-      <footprint>Buttons_Switches_SMD:SW_SPST_PTS645</footprint>
-      <libsource lib="switches" part="SW_Push"/>
+      <value>BTN</value>
+      <footprint>Xling Footprints:SW_SPST_PTS645</footprint>
+      <fields>
+        <field name="Model">KSC241JLFS</field>
+        <field name="Note">UP button</field>
+      </fields>
+      <libsource lib="xling" part="SW_Push" description=""/>
       <sheetpath names="/" tstamps="/"/>
       <tstamp>5A012D9B</tstamp>
     </comp>
     <comp ref="R15">
       <value>27K</value>
-      <footprint>Resistors_SMD:R_0603</footprint>
-      <libsource lib="device" part="R"/>
+      <footprint>Xling Footprints:R_0603_1608Metric</footprint>
+      <fields>
+        <field name="Model">CRCW060327K0FKTABC</field>
+      </fields>
+      <libsource lib="xling" part="R" description=""/>
       <sheetpath names="/" tstamps="/"/>
       <tstamp>5A015157</tstamp>
     </comp>
     <comp ref="R18">
       <value>100K</value>
-      <footprint>Resistors_SMD:R_1206</footprint>
-      <libsource lib="device" part="R"/>
+      <footprint>Xling Footprints:R_1206_3216Metric</footprint>
+      <fields>
+        <field name="Model">CRCW1206100KFKTABC</field>
+      </fields>
+      <libsource lib="xling" part="R" description=""/>
       <sheetpath names="/" tstamps="/"/>
       <tstamp>5A01515D</tstamp>
     </comp>
     <comp ref="C19">
       <value>4.7nF</value>
-      <footprint>Capacitors_SMD:C_0402</footprint>
-      <libsource lib="device" part="C"/>
+      <footprint>Xling Footprints:C_0805_2012Metric</footprint>
+      <fields>
+        <field name="Model">CC0805KRX7R9BB472</field>
+      </fields>
+      <libsource lib="xling" part="C" description=""/>
       <sheetpath names="/" tstamps="/"/>
       <tstamp>5A015163</tstamp>
     </comp>
     <comp ref="SW3">
-      <value>Select</value>
-      <footprint>Buttons_Switches_SMD:SW_SPST_PTS645</footprint>
-      <libsource lib="switches" part="SW_Push"/>
+      <value>BTN</value>
+      <footprint>Xling Footprints:SW_SPST_PTS645</footprint>
+      <fields>
+        <field name="Model">KSC241JLFS</field>
+        <field name="Note">SELECT Button</field>
+      </fields>
+      <libsource lib="xling" part="SW_Push" description=""/>
       <sheetpath names="/" tstamps="/"/>
       <tstamp>5A015175</tstamp>
     </comp>
     <comp ref="R16">
       <value>27K</value>
-      <footprint>Resistors_SMD:R_0603</footprint>
-      <libsource lib="device" part="R"/>
+      <footprint>Xling Footprints:R_0603_1608Metric</footprint>
+      <fields>
+        <field name="Model">CRCW060327K0FKTABC</field>
+      </fields>
+      <libsource lib="xling" part="R" description=""/>
       <sheetpath names="/" tstamps="/"/>
       <tstamp>5A015271</tstamp>
     </comp>
     <comp ref="R19">
       <value>100K</value>
-      <footprint>Resistors_SMD:R_1206</footprint>
-      <libsource lib="device" part="R"/>
+      <footprint>Xling Footprints:R_1206_3216Metric</footprint>
+      <fields>
+        <field name="Model">CRCW1206100KFKTABC</field>
+      </fields>
+      <libsource lib="xling" part="R" description=""/>
       <sheetpath names="/" tstamps="/"/>
       <tstamp>5A015277</tstamp>
     </comp>
     <comp ref="C20">
       <value>4.7nF</value>
-      <footprint>Capacitors_SMD:C_0402</footprint>
-      <libsource lib="device" part="C"/>
+      <footprint>Xling Footprints:C_0805_2012Metric</footprint>
+      <fields>
+        <field name="Model">CC0805KRX7R9BB472</field>
+      </fields>
+      <libsource lib="xling" part="C" description=""/>
       <sheetpath names="/" tstamps="/"/>
       <tstamp>5A01527D</tstamp>
     </comp>
     <comp ref="SW4">
-      <value>Down</value>
-      <footprint>Buttons_Switches_SMD:SW_SPST_PTS645</footprint>
-      <libsource lib="switches" part="SW_Push"/>
+      <value>BTN</value>
+      <footprint>Xling Footprints:SW_SPST_PTS645</footprint>
+      <fields>
+        <field name="Model">KSC241JLFS</field>
+        <field name="Note">DOWN Button</field>
+      </fields>
+      <libsource lib="xling" part="SW_Push" description=""/>
       <sheetpath names="/" tstamps="/"/>
       <tstamp>5A01528F</tstamp>
     </comp>
     <comp ref="J6">
       <value>Battery</value>
-      <footprint>Pin_Headers:Pin_Header_Straight_1x02</footprint>
-      <libsource lib="conn" part="Conn_01x02"/>
+      <footprint>Xling Footprints:Pin_Header_Straight_1x02</footprint>
+      <fields>
+        <field name="Model">None</field>
+      </fields>
+      <libsource lib="xling" part="Conn_01x02" description=""/>
       <sheetpath names="/" tstamps="/"/>
       <tstamp>5A020B3D</tstamp>
     </comp>
-    <comp ref="Q1">
-      <value>TP0610T</value>
-      <footprint>TO_SOT_Packages_SMD:SOT-23</footprint>
-      <libsource lib="transistors" part="TP0610T"/>
-      <sheetpath names="/" tstamps="/"/>
-      <tstamp>5A057EB3</tstamp>
-    </comp>
     <comp ref="D5">
       <value>1N5818</value>
-      <footprint>Diodes_THT:D_DO-41_SOD81_P7.62mm_Horizontal</footprint>
+      <footprint>Xling Footprints:D_DO-41_SOD81_P7.62mm_Horizontal</footprint>
       <fields>
         <field name="Model">1N5819</field>
       </fields>
-      <libsource lib="diode" part="B320"/>
+      <libsource lib="xling" part="1N5818" description=""/>
       <sheetpath names="/" tstamps="/"/>
       <tstamp>5A05A5FD</tstamp>
     </comp>
     <comp ref="U2">
       <value>ATMEGA328P-AU</value>
-      <footprint>Housings_QFP:TQFP-32_7x7mm_Pitch0.8mm</footprint>
-      <libsource lib="atmel" part="ATMEGA328P-AU"/>
+      <footprint>Xling Footprints:TQFP-32_7x7mm_P0.8mm</footprint>
+      <fields>
+        <field name="Model">ATMEGA328P-AU</field>
+      </fields>
+      <libsource lib="xling" part="ATMEGA328P-AU" description=""/>
       <sheetpath names="/" tstamps="/"/>
       <tstamp>5A096E7F</tstamp>
     </comp>
     <comp ref="U3">
       <value>DEP_128064I</value>
       <footprint>Xling Footprints:XF2M_24151AR100_SMD_1x24_Pitch_0.5mm</footprint>
-      <libsource lib="xling" part="DEP_128064I"/>
+      <fields>
+        <field name="Model">XF2M24151AR100, DEP128064I-Y</field>
+      </fields>
+      <libsource lib="xling" part="DEP_128064I" description="Display Elektronik OLED 128x64 1.5&quot; with SD1309ZC"/>
       <sheetpath names="/" tstamps="/"/>
       <tstamp>5A09DE1E</tstamp>
     </comp>
     <comp ref="U1">
       <value>LT1109CZ-12</value>
-      <footprint>TO_SOT_Packages_THT:TO-92_Inline_Narrow_Oval</footprint>
-      <libsource lib="xling" part="LT1109CZ-12"/>
+      <footprint>Xling Footprints:TO-92_LT1109CZ</footprint>
+      <fields>
+        <field name="Model">LT1109CZ-12PBF</field>
+      </fields>
+      <libsource lib="xling" part="LT1109CZ-12" description="Micropower DC/DC Converter Adjustable and Fixed 5V, 12V"/>
       <sheetpath names="/" tstamps="/"/>
       <tstamp>5A0ABBC5</tstamp>
     </comp>
     <comp ref="D3">
       <value>1N5818</value>
-      <footprint>Diodes_THT:D_DO-41_SOD81_P7.62mm_Horizontal</footprint>
+      <footprint>Xling Footprints:D_DO-41_SOD81_P7.62mm_Horizontal</footprint>
       <fields>
         <field name="Model">1N5819</field>
       </fields>
-      <libsource lib="diode" part="1N5818"/>
+      <libsource lib="xling" part="1N5818" description=""/>
       <sheetpath names="/" tstamps="/"/>
       <tstamp>5A0ABC52</tstamp>
     </comp>
     <comp ref="L2">
       <value>22uH</value>
-      <footprint>Inductors_SMD:L_7.3x7.3_H3.5</footprint>
-      <libsource lib="device" part="L_Core_Ferrite"/>
+      <footprint>Xling Footprints:L_7.3x7.3_H3.5</footprint>
+      <fields>
+        <field name="Model">DE0703-22</field>
+      </fields>
+      <libsource lib="xling" part="L_Core_Ferrite" description=""/>
       <sheetpath names="/" tstamps="/"/>
       <tstamp>5A0ABF6C</tstamp>
     </comp>
     <comp ref="C10">
       <value>33uF</value>
-      <footprint>Capacitors_Tantalum_SMD:CP_Tantalum_Case-C_EIA-6032-28_Reflow</footprint>
-      <libsource lib="device" part="CP"/>
+      <footprint>Xling Footprints:CP_EIA-6032-20_AVX-F</footprint>
+      <fields>
+        <field name="Model">TPSC336K016R0150</field>
+      </fields>
+      <libsource lib="xling" part="CP" description=""/>
       <sheetpath names="/" tstamps="/"/>
       <tstamp>5A0AC21A</tstamp>
     </comp>
     <comp ref="R2">
       <value>910K</value>
-      <footprint>Resistors_SMD:R_1206</footprint>
-      <libsource lib="device" part="R"/>
+      <footprint>Xling Footprints:R_1206_3216Metric</footprint>
+      <fields>
+        <field name="Model">1206S4F9103T5E</field>
+      </fields>
+      <libsource lib="xling" part="R" description=""/>
       <sheetpath names="/" tstamps="/"/>
       <tstamp>5A0BDAED</tstamp>
     </comp>
-    <comp ref="C12">
-      <value>2.2uF</value>
-      <footprint>Capacitors_SMD:C_0603</footprint>
-      <libsource lib="device" part="C"/>
-      <sheetpath names="/" tstamps="/"/>
-      <tstamp>5A0BFB83</tstamp>
-    </comp>
     <comp ref="C11">
       <value>2.2uF</value>
-      <footprint>Capacitors_SMD:C_0603</footprint>
-      <libsource lib="device" part="C"/>
+      <footprint>Xling Footprints:C_0603_1608Metric</footprint>
+      <fields>
+        <field name="Model">0603ZD225KAT2A</field>
+      </fields>
+      <libsource lib="xling" part="C" description=""/>
       <sheetpath names="/" tstamps="/"/>
       <tstamp>5A0C00CE</tstamp>
     </comp>
-    <comp ref="U4">
-      <value>MCP1640B-CH</value>
-      <footprint>TO_SOT_Packages_SMD:SOT-23-6</footprint>
-      <libsource lib="dc-dc" part="MCP1640B-CH"/>
-      <sheetpath names="/" tstamps="/"/>
-      <tstamp>5A0D6820</tstamp>
-    </comp>
-    <comp ref="R6">
-      <value>191K</value>
-      <footprint>Resistors_SMD:R_0805</footprint>
-      <libsource lib="device" part="R"/>
-      <sheetpath names="/" tstamps="/"/>
-      <tstamp>5A0D8CE3</tstamp>
-    </comp>
-    <comp ref="R7">
-      <value>110K</value>
-      <footprint>Resistors_SMD:R_0805</footprint>
-      <libsource lib="device" part="R"/>
-      <sheetpath names="/" tstamps="/"/>
-      <tstamp>5A0D8DA0</tstamp>
-    </comp>
     <comp ref="Y1">
       <value>8MHz</value>
-      <footprint>Crystals:Crystal_HC49-SD_SMD</footprint>
-      <libsource lib="device" part="Crystal"/>
+      <footprint>Xling Footprints:Crystal_HC49-SD_SMD</footprint>
+      <fields>
+        <field name="Model">LF XTAL003151</field>
+      </fields>
+      <libsource lib="xling" part="Crystal" description=""/>
       <sheetpath names="/" tstamps="/"/>
       <tstamp>5A0083D0</tstamp>
     </comp>
-    <comp ref="U5">
-      <value>LM1117-3.3</value>
+    <comp ref="C3">
+      <value>4.7uF</value>
+      <footprint>Xling Footprints:C_1206_3216Metric</footprint>
       <fields>
-        <field name="Model">LM1117IMP-3.3/NOPB</field>
+        <field name="Model">CL31B475KAHNNNE</field>
       </fields>
-      <libsource lib="regul" part="LM1117-3.3"/>
+      <libsource lib="xling" part="C" description=""/>
       <sheetpath names="/" tstamps="/"/>
-      <tstamp>5A384373</tstamp>
+      <tstamp>5A657A90</tstamp>
     </comp>
-    <comp ref="C4">
-      <value>10uF</value>
+    <comp ref="C6">
+      <value>4.7uF</value>
+      <footprint>Xling Footprints:C_1206_3216Metric</footprint>
       <fields>
-        <field name="Model">AVX TAJB106K006RNJ</field>
+        <field name="Model">CL31B475KAHNNNE</field>
       </fields>
-      <libsource lib="device" part="CP"/>
+      <libsource lib="xling" part="C" description=""/>
       <sheetpath names="/" tstamps="/"/>
-      <tstamp>5A3800FE</tstamp>
+      <tstamp>5A657DFD</tstamp>
+    </comp>
+    <comp ref="R1">
+      <value>100K</value>
+      <footprint>Xling Footprints:R_1206_3216Metric</footprint>
+      <fields>
+        <field name="Model">CRCW1206100KFKTABC</field>
+      </fields>
+      <libsource lib="xling" part="R" description=""/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamp>5AABB267</tstamp>
+    </comp>
+    <comp ref="Q2">
+      <value>NTR0202PL</value>
+      <footprint>Xling Footprints:SOT-23</footprint>
+      <fields>
+        <field name="Model">NTR0202PLT1G</field>
+      </fields>
+      <libsource lib="xling" part="NTR2101P" description=""/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamp>5AAEB4E3</tstamp>
+    </comp>
+    <comp ref="R10">
+      <value>100K</value>
+      <footprint>Xling Footprints:R_1206_3216Metric</footprint>
+      <fields>
+        <field name="Model">CRCW1206100KFKTABC</field>
+      </fields>
+      <libsource lib="xling" part="R" description=""/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamp>5AAEF25A</tstamp>
+    </comp>
+    <comp ref="R5">
+      <value>100K</value>
+      <footprint>Xling Footprints:R_1206_3216Metric</footprint>
+      <fields>
+        <field name="Model">CRCW1206100KFKTABC</field>
+      </fields>
+      <libsource lib="xling" part="R" description=""/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamp>5AAEF30D</tstamp>
+    </comp>
+    <comp ref="C9">
+      <value>1pF</value>
+      <footprint>Xling Footprints:C_0805_2012Metric</footprint>
+      <fields>
+        <field name="Model">CL21C010BBANNNC</field>
+      </fields>
+      <libsource lib="xling" part="C" description=""/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamp>5AAFBAC6</tstamp>
+    </comp>
+    <comp ref="Q3">
+      <value>NTA4153N</value>
+      <footprint>Xling Footprints:SC-75_SOT-416</footprint>
+      <fields>
+        <field name="Model">NTA4153NT1G</field>
+      </fields>
+      <libsource lib="xling" part="NTA4153N" description=""/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamp>5B3E89E3</tstamp>
+    </comp>
+    <comp ref="Q1">
+      <value>NTR0202PL</value>
+      <footprint>Xling Footprints:SOT-23</footprint>
+      <fields>
+        <field name="Model">NTR0202PLT1G</field>
+      </fields>
+      <libsource lib="xling" part="NTR2101P" description=""/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamp>5B447641</tstamp>
+    </comp>
+    <comp ref="R11">
+      <value>191K</value>
+      <footprint>Xling Footprints:R_0805_2012Metric</footprint>
+      <fields>
+        <field name="Model">RC0805FR-07196KL</field>
+      </fields>
+      <libsource lib="xling" part="R" description=""/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamp>5B48ABDB</tstamp>
+    </comp>
+    <comp ref="R12">
+      <value>110K</value>
+      <footprint>Xling Footprints:R_0805_2012Metric</footprint>
+      <fields>
+        <field name="Model">CRCW0805110KJNTABC</field>
+      </fields>
+      <libsource lib="xling" part="R" description=""/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamp>5B48AD6F</tstamp>
+    </comp>
+    <comp ref="U5">
+      <value>AP3401_TSOT26</value>
+      <fields>
+        <field name="Model">AP3401KTTR-G1</field>
+      </fields>
+      <libsource lib="xling" part="AP3401_TSOT26" description="1.5MHz, 1A DC-DC Buck Converter"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamp>5B877C3A</tstamp>
+    </comp>
+    <comp ref="R13">
+      <value>100K</value>
+      <footprint>Xling Footprints:R_1206_3216Metric</footprint>
+      <fields>
+        <field name="Model">CRCW1206100KFKTABC</field>
+      </fields>
+      <libsource lib="xling" part="R" description=""/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamp>5B89D268</tstamp>
+    </comp>
+    <comp ref="R6">
+      <value>100K</value>
+      <footprint>Xling Footprints:R_1206_3216Metric</footprint>
+      <fields>
+        <field name="Model">CRCW1206100KFKTABC</field>
+      </fields>
+      <libsource lib="xling" part="R" description=""/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamp>5B91EE31</tstamp>
+    </comp>
+    <comp ref="L1">
+      <value>2.2uH</value>
+      <footprint>Xling Footprints:L_1210_3225Metric</footprint>
+      <fields>
+        <field name="Model">NLV10JT2R2</field>
+      </fields>
+      <libsource lib="xling" part="L" description=""/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamp>5B946209</tstamp>
+    </comp>
+    <comp ref="C1">
+      <value>22pF</value>
+      <footprint>Xling Footprints:C_0805_2012Metric</footprint>
+      <fields>
+        <field name="Model">CL21C220JBANNNC</field>
+      </fields>
+      <libsource lib="xling" part="C" description=""/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamp>5B95A9C3</tstamp>
+    </comp>
+    <comp ref="R20">
+      <value>110K</value>
+      <footprint>Xling Footprints:R_0805_2012Metric</footprint>
+      <fields>
+        <field name="Model">CRCW0805110KJNTABC</field>
+      </fields>
+      <libsource lib="xling" part="R" description=""/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamp>5B982FB6</tstamp>
+    </comp>
+    <comp ref="R7">
+      <value>510K</value>
+      <footprint>Xling Footprints:R_0603_1608Metric</footprint>
+      <fields>
+        <field name="Model">0603SAJ0514T5E</field>
+      </fields>
+      <libsource lib="xling" part="R" description=""/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamp>5B983FAB</tstamp>
     </comp>
     <comp ref="C2">
-      <value>10uF</value>
+      <value>4.7uF</value>
+      <footprint>Xling Footprints:C_1206_3216Metric</footprint>
       <fields>
-        <field name="Model">AVX TAJB106K006RNJ</field>
+        <field name="Model">CL31B475KAHNNNE</field>
       </fields>
-      <libsource lib="device" part="CP"/>
+      <libsource lib="xling" part="C" description=""/>
       <sheetpath names="/" tstamps="/"/>
-      <tstamp>5A3801E1</tstamp>
+      <tstamp>5B984F9C</tstamp>
+    </comp>
+    <comp ref="U4">
+      <value>MCP73831</value>
+      <footprint>Xling Footprints:MCP73831_SOT_23</footprint>
+      <fields>
+        <field name="Model">MCP73831T-2AT</field>
+      </fields>
+      <libsource lib="xling" part="MCP73831" description=""/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamp>5B87B2E9</tstamp>
     </comp>
   </components>
   <libparts>
-    <libpart lib="atmel" part="ATMEGA168A-AU">
+    <libpart lib="xling" part="AP3401_TSOT26">
+      <description>1.5MHz, 1A DC-DC Buck Converter</description>
+      <fields>
+        <field name="Reference">U</field>
+        <field name="Value">AP3401_TSOT26</field>
+      </fields>
+      <pins>
+        <pin num="1" name="EN" type="input"/>
+        <pin num="2" name="GND" type="input"/>
+        <pin num="3" name="LX" type="input"/>
+        <pin num="4" name="VIN" type="input"/>
+        <pin num="5" name="PG" type="input"/>
+        <pin num="6" name="FB" type="input"/>
+      </pins>
+    </libpart>
+    <libpart lib="xling" part="ATMEGA168A-AU">
       <aliases>
         <alias>ATMEGA48A-AU</alias>
         <alias>ATMEGA48PA-AU</alias>
@@ -424,8 +588,6 @@
         <alias>ATMEGA328-AU</alias>
         <alias>ATMEGA328P-AU</alias>
       </aliases>
-      <description>TQFP32, 16k Flash, 1kB SRAM, 512B EEPROM</description>
-      <docs>http://www.atmel.com/images/atmel-8271-8-bit-avr-microcontroller-atmega48a-48pa-88a-88pa-168a-168pa-328-328p_datasheet.pdf</docs>
       <footprints>
         <fp>TQFP*7x7mm*Pitch0.8mm*</fp>
       </footprints>
@@ -469,33 +631,7 @@
         <pin num="32" name="(PCINT18/INT0)PD2" type="BiDi"/>
       </pins>
     </libpart>
-    <libpart lib="diode" part="B320">
-      <aliases>
-        <alias>B330</alias>
-        <alias>B340</alias>
-        <alias>B350</alias>
-        <alias>B360</alias>
-      </aliases>
-      <description>20V 3A Schottky Barrier Rectifier Diode, SMC</description>
-      <docs>http://www.jameco.com/Jameco/Products/ProdDS/1538777.pdf</docs>
-      <footprints>
-        <fp>D*DO?214AC*</fp>
-        <fp>D*SMA*</fp>
-        <fp>DO?214AC*</fp>
-        <fp>SMA*</fp>
-      </footprints>
-      <fields>
-        <field name="Reference">D</field>
-        <field name="Value">B320</field>
-        <field name="Footprint">Diodes_SMD:SMC_Standard</field>
-      </fields>
-      <pins>
-        <pin num="1" name="K" type="passive"/>
-        <pin num="2" name="A" type="passive"/>
-      </pins>
-    </libpart>
-    <libpart lib="device" part="C">
-      <description>Unpolarized capacitor</description>
+    <libpart lib="xling" part="C">
       <footprints>
         <fp>C_*</fp>
       </footprints>
@@ -508,8 +644,7 @@
         <pin num="2" name="~" type="passive"/>
       </pins>
     </libpart>
-    <libpart lib="device" part="CP">
-      <description>Polarised capacitor</description>
+    <libpart lib="xling" part="CP">
       <footprints>
         <fp>CP_*</fp>
       </footprints>
@@ -522,9 +657,7 @@
         <pin num="2" name="~" type="passive"/>
       </pins>
     </libpart>
-    <libpart lib="conn" part="Conn_01x02">
-      <description>Generic connector, single row, 01x02</description>
-      <docs>~</docs>
+    <libpart lib="xling" part="Conn_01x02">
       <footprints>
         <fp>Connector*:*_??x*mm*</fp>
         <fp>Connector*:*1x??x*mm*</fp>
@@ -542,9 +675,7 @@
         <pin num="2" name="Pin_2" type="passive"/>
       </pins>
     </libpart>
-    <libpart lib="conn" part="Conn_02x03_Odd_Even">
-      <description>Generic connector, double row, 02x03, odd/even pin numbering scheme (row 1 odd numbers, row 2 even numbers)</description>
-      <docs>~</docs>
+    <libpart lib="xling" part="Conn_02x03_Odd_Even">
       <footprints>
         <fp>Connector*:*2x??x*mm*</fp>
         <fp>Connector*:*2x???Pitch*</fp>
@@ -566,8 +697,7 @@
         <pin num="6" name="Pin_6" type="passive"/>
       </pins>
     </libpart>
-    <libpart lib="device" part="Crystal">
-      <description>Two pin crystal</description>
+    <libpart lib="xling" part="Crystal">
       <footprints>
         <fp>Crystal*</fp>
       </footprints>
@@ -613,8 +743,7 @@
         <pin num="24" name="NC(GND)" type="input"/>
       </pins>
     </libpart>
-    <libpart lib="device" part="L">
-      <description>Inductor</description>
+    <libpart lib="xling" part="L">
       <footprints>
         <fp>Choke_*</fp>
         <fp>*Coil*</fp>
@@ -630,49 +759,6 @@
         <pin num="2" name="2" type="passive"/>
       </pins>
     </libpart>
-    <libpart lib="device" part="LED">
-      <description>LED generic</description>
-      <footprints>
-        <fp>LED*</fp>
-      </footprints>
-      <fields>
-        <field name="Reference">D</field>
-        <field name="Value">LED</field>
-      </fields>
-      <pins>
-        <pin num="1" name="K" type="passive"/>
-        <pin num="2" name="A" type="passive"/>
-      </pins>
-    </libpart>
-    <libpart lib="regul" part="LM1117-1.8">
-      <aliases>
-        <alias>LM1117-2.5</alias>
-        <alias>LM1117-3.3</alias>
-        <alias>LM1117-5.0</alias>
-        <alias>TLV1117-15</alias>
-        <alias>TLV1117-18</alias>
-        <alias>TLV1117-25</alias>
-        <alias>TLV1117-33</alias>
-        <alias>TLV1117-50</alias>
-      </aliases>
-      <description>800mA Low-Dropout Linear Regulator, 1.8V fixed output, TO-220/TO-252/TO-263/SOT-223</description>
-      <docs>http://www.ti.com/lit/ds/symlink/lm1117.pdf</docs>
-      <footprints>
-        <fp>SOT?223*</fp>
-        <fp>TO?263*</fp>
-        <fp>TO?252*</fp>
-        <fp>TO?220*</fp>
-      </footprints>
-      <fields>
-        <field name="Reference">U</field>
-        <field name="Value">LM1117-1.8</field>
-      </fields>
-      <pins>
-        <pin num="1" name="GND" type="power_in"/>
-        <pin num="2" name="VO" type="power_out"/>
-        <pin num="3" name="VI" type="power_in"/>
-      </pins>
-    </libpart>
     <libpart lib="xling" part="LT1109CZ-12">
       <description>Micropower DC/DC Converter Adjustable and Fixed 5V, 12V</description>
       <fields>
@@ -685,8 +771,7 @@
         <pin num="3" name="VOUT" type="input"/>
       </pins>
     </libpart>
-    <libpart lib="device" part="L_Core_Ferrite">
-      <description>Inductor with Ferrite Core</description>
+    <libpart lib="xling" part="L_Core_Ferrite">
       <footprints>
         <fp>Choke_*</fp>
         <fp>*Coil*</fp>
@@ -702,34 +787,9 @@
         <pin num="2" name="2" type="passive"/>
       </pins>
     </libpart>
-    <libpart lib="dc-dc" part="MCP1640-CH">
-      <aliases>
-        <alias>MCP1640B-CH</alias>
-        <alias>MCP1640C-CH</alias>
-        <alias>MCP1640D-CH</alias>
-      </aliases>
-      <description>Synchronous Boost Regulator, Adjustable Output 2.0V-5.5V, PWM/PFM True Disconnect, SOT23</description>
-      <docs>http://ww1.microchip.com/downloads/en/DeviceDoc/20002234D.pdf</docs>
-      <footprints>
-        <fp>SOT?23*</fp>
-      </footprints>
-      <fields>
-        <field name="Reference">U</field>
-        <field name="Value">MCP1640-CH</field>
-        <field name="Footprint">TO_SOT_Packages_SMD:SOT-23-6</field>
-      </fields>
-      <pins>
-        <pin num="1" name="SW" type="input"/>
-        <pin num="2" name="GND" type="power_in"/>
-        <pin num="3" name="EN" type="input"/>
-        <pin num="4" name="VFB" type="input"/>
-        <pin num="5" name="VOUT" type="power_out"/>
-        <pin num="6" name="VIN" type="power_in"/>
-      </pins>
-    </libpart>
     <libpart lib="xling" part="MCP73831">
       <fields>
-        <field name="Reference">J</field>
+        <field name="Reference">U</field>
         <field name="Value">MCP73831</field>
       </fields>
       <pins>
@@ -740,8 +800,22 @@
         <pin num="5" name="PROG" type="input"/>
       </pins>
     </libpart>
-    <libpart lib="device" part="R">
-      <description>Resistor</description>
+    <libpart lib="xling" part="NTA4153N">
+      <footprints>
+        <fp>TO?92*</fp>
+      </footprints>
+      <fields>
+        <field name="Reference">Q</field>
+        <field name="Value">NTA4153N</field>
+        <field name="Footprint">TO_SOT_Packages_THT:TO-92_Molded_Narrow</field>
+      </fields>
+      <pins>
+        <pin num="1" name="G" type="input"/>
+        <pin num="2" name="S" type="passive"/>
+        <pin num="3" name="D" type="passive"/>
+      </pins>
+    </libpart>
+    <libpart lib="xling" part="R">
       <footprints>
         <fp>R_*</fp>
         <fp>R_*</fp>
@@ -755,7 +829,7 @@
         <pin num="2" name="~" type="passive"/>
       </pins>
     </libpart>
-    <libpart lib="diode" part="SB120">
+    <libpart lib="xling" part="SB120">
       <aliases>
         <alias>SB130</alias>
         <alias>SB140</alias>
@@ -765,8 +839,6 @@
         <alias>1N5818</alias>
         <alias>1N5819</alias>
       </aliases>
-      <description>20V 1A Schottky Barrier Rectifier Diode, DO-41</description>
-      <docs>http://www.diodes.com/_files/datasheets/ds23022.pdf</docs>
       <footprints>
         <fp>D*SOD81*</fp>
         <fp>D*DO?41*</fp>
@@ -781,8 +853,7 @@
         <pin num="2" name="A" type="passive"/>
       </pins>
     </libpart>
-    <libpart lib="switches" part="SW_Push">
-      <description>Push button switch, generic, two pins</description>
+    <libpart lib="xling" part="SW_Push">
       <fields>
         <field name="Reference">SW</field>
         <field name="Value">SW_Push</field>
@@ -792,15 +863,13 @@
         <pin num="2" name="2" type="passive"/>
       </pins>
     </libpart>
-    <libpart lib="transistors" part="TP0610T">
+    <libpart lib="xling" part="TP0610T">
       <aliases>
         <alias>VP0610T</alias>
         <alias>BSS84</alias>
         <alias>NTR2101P</alias>
         <alias>BSS83P</alias>
       </aliases>
-      <description>-60V Vds, -0.18A Id, P-Channel MOSFET, SOT-23-3</description>
-      <docs>http://www.vishay.com/docs/70209/70209.pdf</docs>
       <footprints>
         <fp>SOT?23*</fp>
       </footprints>
@@ -815,8 +884,7 @@
         <pin num="3" name="D" type="passive"/>
       </pins>
     </libpart>
-    <libpart lib="conn" part="USB_OTG">
-      <description>USB mini/micro connector</description>
+    <libpart lib="xling" part="USB_OTG">
       <footprints>
         <fp>USB*</fp>
       </footprints>
@@ -836,305 +904,288 @@
   </libparts>
   <libraries>
     <library logical="xling">
-      <uri>/Users/dsalychev/git/xling/hardware/lib_sch/xling.lib</uri>
-    </library>
-    <library logical="atmel">
-      <uri>/Library/Application Support/kicad/library/atmel.lib</uri>
-    </library>
-    <library logical="dc-dc">
-      <uri>/Library/Application Support/kicad/library/dc-dc.lib</uri>
-    </library>
-    <library logical="device">
-      <uri>/Library/Application Support/kicad/library/device.lib</uri>
-    </library>
-    <library logical="conn">
-      <uri>/Library/Application Support/kicad/library/conn.lib</uri>
-    </library>
-    <library logical="diode">
-      <uri>/Library/Application Support/kicad/library/diode.lib</uri>
-    </library>
-    <library logical="regul">
-      <uri>/Library/Application Support/kicad/library/regul.lib</uri>
-    </library>
-    <library logical="switches">
-      <uri>/Library/Application Support/kicad/library/switches.lib</uri>
-    </library>
-    <library logical="transistors">
-      <uri>/Library/Application Support/kicad/library/transistors.lib</uri>
+      <uri>/home/dsl/git/xling/hardware/lib_sch/xling.lib</uri>
     </library>
   </libraries>
   <nets>
-    <net code="1" name="/ISP_PDI_MOSI">
+    <net code="1" name="Net-(R3-Pad1)">
+      <node ref="R3" pin="1"/>
+      <node ref="U4" pin="5"/>
+    </net>
+    <net code="2" name="Net-(J4-Pad2)">
+      <node ref="J4" pin="2"/>
+    </net>
+    <net code="3" name="Net-(J4-Pad3)">
+      <node ref="J4" pin="3"/>
+    </net>
+    <net code="4" name="Net-(J4-Pad4)">
+      <node ref="J4" pin="4"/>
+    </net>
+    <net code="5" name="/ISP_SCK">
+      <node ref="U2" pin="17"/>
+      <node ref="J5" pin="3"/>
+    </net>
+    <net code="6" name="/ISP_RST">
+      <node ref="U2" pin="29"/>
+      <node ref="J5" pin="1"/>
+    </net>
+    <net code="7" name="Net-(U2-Pad10)">
+      <node ref="U2" pin="10"/>
+    </net>
+    <net code="8" name="Net-(U2-Pad11)">
+      <node ref="U2" pin="11"/>
+    </net>
+    <net code="9" name="Net-(U2-Pad12)">
+      <node ref="U2" pin="12"/>
+    </net>
+    <net code="10" name="Net-(U2-Pad13)">
+      <node ref="U2" pin="13"/>
+    </net>
+    <net code="11" name="Net-(U2-Pad14)">
+      <node ref="U2" pin="14"/>
+    </net>
+    <net code="12" name="/ISP_PDI_MOSI">
       <node ref="U2" pin="15"/>
       <node ref="J5" pin="4"/>
     </net>
-    <net code="2" name="/ISP_SCK">
-      <node ref="J5" pin="3"/>
-      <node ref="U2" pin="17"/>
-    </net>
-    <net code="3" name="/ISP_PDO_MISO">
-      <node ref="J5" pin="1"/>
+    <net code="13" name="/ISP_PDO_MISO">
       <node ref="U2" pin="16"/>
-    </net>
-    <net code="4" name="/ISP_RST">
-      <node ref="U2" pin="29"/>
       <node ref="J5" pin="5"/>
     </net>
-    <net code="5" name="Net-(D3-Pad2)">
-      <node ref="L2" pin="2"/>
-      <node ref="D3" pin="2"/>
-      <node ref="U1" pin="2"/>
+    <net code="14" name="+3V3">
+      <node ref="R5" pin="1"/>
+      <node ref="C7" pin="1"/>
+      <node ref="Q2" pin="2"/>
+      <node ref="R14" pin="1"/>
+      <node ref="R1" pin="1"/>
+      <node ref="J5" pin="6"/>
+      <node ref="R15" pin="1"/>
+      <node ref="R16" pin="1"/>
+      <node ref="C8" pin="1"/>
+      <node ref="U3" pin="6"/>
+      <node ref="R9" pin="1"/>
+      <node ref="U3" pin="5"/>
+      <node ref="R8" pin="1"/>
+      <node ref="U2" pin="18"/>
+      <node ref="L1" pin="2"/>
+      <node ref="U3" pin="10"/>
+      <node ref="C1" pin="1"/>
+      <node ref="R7" pin="2"/>
+      <node ref="C2" pin="1"/>
+      <node ref="U2" pin="6"/>
+      <node ref="U2" pin="4"/>
     </net>
-    <net code="6" name="+12V">
+    <net code="15" name="Net-(U2-Pad19)">
+      <node ref="U2" pin="19"/>
+    </net>
+    <net code="16" name="Net-(U2-Pad22)">
+      <node ref="U2" pin="22"/>
+    </net>
+    <net code="17" name="Net-(U2-Pad24)">
+      <node ref="U2" pin="24"/>
+    </net>
+    <net code="18" name="Net-(U2-Pad25)">
+      <node ref="U2" pin="25"/>
+    </net>
+    <net code="19" name="Net-(U2-Pad26)">
+      <node ref="U2" pin="26"/>
+    </net>
+    <net code="20" name="Net-(C13-Pad1)">
+      <node ref="Y1" pin="2"/>
+      <node ref="U2" pin="7"/>
+      <node ref="C13" pin="1"/>
+    </net>
+    <net code="21" name="Net-(U3-Pad1)">
+      <node ref="U3" pin="1"/>
+    </net>
+    <net code="22" name="/OLED_SCL">
+      <node ref="U2" pin="28"/>
+      <node ref="U3" pin="13"/>
+      <node ref="R9" pin="2"/>
+    </net>
+    <net code="23" name="Net-(R2-Pad2)">
+      <node ref="R2" pin="2"/>
+      <node ref="U3" pin="21"/>
+    </net>
+    <net code="24" name="Net-(C11-Pad1)">
+      <node ref="U3" pin="22"/>
+      <node ref="C11" pin="1"/>
+    </net>
+    <net code="25" name="Net-(U3-Pad24)">
+      <node ref="U3" pin="24"/>
+    </net>
+    <net code="26" name="Net-(U3-Pad4)">
+      <node ref="U3" pin="4"/>
+    </net>
+    <net code="27" name="Net-(C15-Pad1)">
+      <node ref="C15" pin="1"/>
+      <node ref="Y1" pin="1"/>
+      <node ref="U2" pin="8"/>
+    </net>
+    <net code="28" name="/BAT_STAT">
+      <node ref="U4" pin="1"/>
+      <node ref="U2" pin="9"/>
+    </net>
+    <net code="29" name="/OLED_PWR">
+      <node ref="Q3" pin="1"/>
+      <node ref="U2" pin="2"/>
+      <node ref="R10" pin="1"/>
+    </net>
+    <net code="30" name="Net-(C3-Pad1)">
+      <node ref="C3" pin="1"/>
+      <node ref="U4" pin="4"/>
+      <node ref="R4" pin="1"/>
+      <node ref="Q1" pin="1"/>
+      <node ref="D5" pin="2"/>
+      <node ref="J4" pin="1"/>
+    </net>
+    <net code="31" name="/OLED_VCC">
+      <node ref="L2" pin="1"/>
+      <node ref="C9" pin="1"/>
+      <node ref="Q2" pin="3"/>
+    </net>
+    <net code="32" name="Net-(Q2-Pad1)">
+      <node ref="R5" pin="2"/>
+      <node ref="Q2" pin="1"/>
+      <node ref="Q3" pin="3"/>
+    </net>
+    <net code="33" name="/OLED_RES">
+      <node ref="U2" pin="1"/>
+      <node ref="U3" pin="9"/>
+      <node ref="R1" pin="2"/>
+    </net>
+    <net code="34" name="/OLED_SDA">
+      <node ref="R8" pin="2"/>
+      <node ref="U3" pin="15"/>
+      <node ref="U3" pin="14"/>
+      <node ref="U2" pin="27"/>
+    </net>
+    <net code="35" name="Net-(D3-Pad2)">
+      <node ref="U1" pin="2"/>
+      <node ref="D3" pin="2"/>
+      <node ref="L2" pin="2"/>
+    </net>
+    <net code="36" name="+12V">
       <node ref="C10" pin="1"/>
-      <node ref="C12" pin="1"/>
       <node ref="D3" pin="1"/>
       <node ref="U1" pin="3"/>
       <node ref="U3" pin="23"/>
     </net>
-    <net code="7" name="/BTN3">
+    <net code="37" name="/BTN3">
       <node ref="U2" pin="32"/>
-      <node ref="C20" pin="1"/>
       <node ref="R19" pin="1"/>
+      <node ref="C20" pin="1"/>
     </net>
-    <net code="8" name="/BTN2">
-      <node ref="R18" pin="1"/>
-      <node ref="C19" pin="1"/>
-      <node ref="U2" pin="31"/>
-    </net>
-    <net code="9" name="/OLED_SCL">
-      <node ref="U2" pin="28"/>
-      <node ref="R9" pin="2"/>
-      <node ref="U3" pin="13"/>
-    </net>
-    <net code="10" name="/OLED_SDA">
-      <node ref="U2" pin="27"/>
-      <node ref="R8" pin="2"/>
-      <node ref="U3" pin="14"/>
-      <node ref="U3" pin="15"/>
-    </net>
-    <net code="11" name="Net-(J3-Pad5)">
-      <node ref="R3" pin="1"/>
-      <node ref="J3" pin="5"/>
-    </net>
-    <net code="12" name="Net-(D2-Pad1)">
-      <node ref="D2" pin="1"/>
-      <node ref="R5" pin="2"/>
-    </net>
-    <net code="13" name="Net-(R16-Pad2)">
-      <node ref="SW4" pin="1"/>
+    <net code="38" name="Net-(R16-Pad2)">
       <node ref="R16" pin="2"/>
       <node ref="R19" pin="2"/>
+      <node ref="SW4" pin="1"/>
     </net>
-    <net code="14" name="Net-(R15-Pad2)">
-      <node ref="R15" pin="2"/>
-      <node ref="R18" pin="2"/>
+    <net code="39" name="/BTN2">
+      <node ref="U2" pin="31"/>
+      <node ref="C19" pin="1"/>
+      <node ref="R18" pin="1"/>
+    </net>
+    <net code="40" name="Net-(R15-Pad2)">
       <node ref="SW3" pin="1"/>
+      <node ref="R18" pin="2"/>
+      <node ref="R15" pin="2"/>
     </net>
-    <net code="15" name="/BTN1">
+    <net code="41" name="/BTN1">
       <node ref="U2" pin="30"/>
       <node ref="C18" pin="1"/>
       <node ref="R17" pin="1"/>
     </net>
-    <net code="16" name="Net-(R14-Pad2)">
+    <net code="42" name="Net-(R14-Pad2)">
       <node ref="SW2" pin="1"/>
       <node ref="R17" pin="2"/>
       <node ref="R14" pin="2"/>
     </net>
-    <net code="17" name="Net-(R6-Pad2)">
-      <node ref="R6" pin="2"/>
-      <node ref="R7" pin="1"/>
-      <node ref="U4" pin="4"/>
-    </net>
-    <net code="18" name="Net-(C6-Pad1)">
-      <node ref="Q1" pin="3"/>
-      <node ref="J6" pin="1"/>
-      <node ref="J3" pin="3"/>
-      <node ref="C6" pin="1"/>
-    </net>
-    <net code="19" name="Net-(L1-Pad2)">
-      <node ref="L1" pin="2"/>
-      <node ref="U4" pin="1"/>
-    </net>
-    <net code="20" name="Net-(C5-Pad1)">
-      <node ref="U4" pin="6"/>
-      <node ref="Q1" pin="2"/>
-      <node ref="L1" pin="1"/>
-      <node ref="C5" pin="1"/>
-      <node ref="U4" pin="3"/>
-    </net>
-    <net code="21" name="Net-(C4-Pad1)">
-      <node ref="U5" pin="3"/>
-      <node ref="C4" pin="1"/>
-      <node ref="Q1" pin="1"/>
-      <node ref="R4" pin="1"/>
-      <node ref="D5" pin="1"/>
-      <node ref="R1" pin="1"/>
-    </net>
-    <net code="22" name="+3V3">
-      <node ref="C7" pin="1"/>
-      <node ref="R14" pin="1"/>
-      <node ref="U2" pin="18"/>
-      <node ref="U3" pin="5"/>
-      <node ref="U3" pin="6"/>
-      <node ref="U3" pin="9"/>
-      <node ref="U3" pin="10"/>
-      <node ref="U2" pin="4"/>
-      <node ref="U2" pin="6"/>
-      <node ref="U4" pin="5"/>
-      <node ref="R6" pin="1"/>
-      <node ref="L2" pin="1"/>
-      <node ref="R16" pin="1"/>
-      <node ref="R15" pin="1"/>
+    <net code="43" name="GND">
+      <node ref="C8" pin="2"/>
+      <node ref="R3" pin="2"/>
       <node ref="J5" pin="2"/>
-      <node ref="C8" pin="1"/>
-      <node ref="R9" pin="1"/>
-      <node ref="R8" pin="1"/>
-      <node ref="C1" pin="1"/>
-      <node ref="U5" pin="2"/>
-      <node ref="C2" pin="1"/>
-    </net>
-    <net code="23" name="GND">
+      <node ref="R12" pin="2"/>
+      <node ref="C15" pin="2"/>
+      <node ref="C13" pin="2"/>
+      <node ref="C7" pin="2"/>
+      <node ref="C18" pin="2"/>
+      <node ref="J4" pin="6"/>
+      <node ref="Q3" pin="2"/>
+      <node ref="C9" pin="2"/>
+      <node ref="R10" pin="2"/>
+      <node ref="C6" pin="2"/>
+      <node ref="C3" pin="2"/>
+      <node ref="C11" pin="2"/>
+      <node ref="R2" pin="1"/>
       <node ref="C10" pin="2"/>
       <node ref="U1" pin="1"/>
+      <node ref="U3" pin="8"/>
+      <node ref="U3" pin="7"/>
+      <node ref="U3" pin="3"/>
+      <node ref="U3" pin="20"/>
+      <node ref="U3" pin="2"/>
       <node ref="U3" pin="19"/>
       <node ref="U3" pin="18"/>
+      <node ref="SW2" pin="2"/>
       <node ref="U3" pin="17"/>
       <node ref="U3" pin="16"/>
-      <node ref="C13" pin="2"/>
-      <node ref="C1" pin="2"/>
-      <node ref="C5" pin="2"/>
-      <node ref="R4" pin="2"/>
-      <node ref="C11" pin="2"/>
-      <node ref="U3" pin="3"/>
-      <node ref="C12" pin="2"/>
-      <node ref="R2" pin="1"/>
-      <node ref="U3" pin="7"/>
-      <node ref="U3" pin="8"/>
-      <node ref="U2" pin="21"/>
-      <node ref="U2" pin="20"/>
-      <node ref="U2" pin="5"/>
-      <node ref="U2" pin="3"/>
-      <node ref="J6" pin="2"/>
       <node ref="U3" pin="12"/>
-      <node ref="U3" pin="11"/>
-      <node ref="U3" pin="20"/>
-      <node ref="R7" pin="2"/>
-      <node ref="U4" pin="2"/>
-      <node ref="U3" pin="2"/>
-      <node ref="J5" pin="6"/>
-      <node ref="U5" pin="1"/>
-      <node ref="C4" pin="2"/>
-      <node ref="C2" pin="2"/>
-      <node ref="SW4" pin="2"/>
-      <node ref="C20" pin="2"/>
-      <node ref="SW2" pin="2"/>
-      <node ref="C18" pin="2"/>
-      <node ref="C7" pin="2"/>
-      <node ref="J3" pin="2"/>
-      <node ref="J4" pin="6"/>
-      <node ref="R3" pin="2"/>
-      <node ref="R5" pin="1"/>
-      <node ref="J4" pin="5"/>
-      <node ref="C3" pin="2"/>
-      <node ref="C6" pin="2"/>
-      <node ref="SW3" pin="2"/>
-      <node ref="C15" pin="2"/>
-      <node ref="C8" pin="2"/>
       <node ref="C19" pin="2"/>
+      <node ref="U5" pin="2"/>
+      <node ref="SW3" pin="2"/>
+      <node ref="C20" pin="2"/>
+      <node ref="U3" pin="11"/>
+      <node ref="SW4" pin="2"/>
+      <node ref="R20" pin="1"/>
+      <node ref="J6" pin="2"/>
+      <node ref="C5" pin="2"/>
+      <node ref="U2" pin="20"/>
+      <node ref="C2" pin="2"/>
+      <node ref="U2" pin="21"/>
+      <node ref="R4" pin="2"/>
+      <node ref="U2" pin="3"/>
+      <node ref="J4" pin="5"/>
+      <node ref="U2" pin="5"/>
+      <node ref="U4" pin="2"/>
     </net>
-    <net code="24" name="Net-(R2-Pad2)">
-      <node ref="U3" pin="21"/>
-      <node ref="R2" pin="2"/>
-    </net>
-    <net code="25" name="Net-(C11-Pad1)">
-      <node ref="U3" pin="22"/>
-      <node ref="C11" pin="1"/>
-    </net>
-    <net code="26" name="Net-(J4-Pad4)">
-      <node ref="J4" pin="4"/>
-    </net>
-    <net code="27" name="Net-(J4-Pad3)">
-      <node ref="J4" pin="3"/>
-    </net>
-    <net code="28" name="Net-(J4-Pad2)">
-      <node ref="J4" pin="2"/>
-    </net>
-    <net code="29" name="Net-(D1-Pad1)">
-      <node ref="D1" pin="1"/>
-      <node ref="J3" pin="1"/>
-      <node ref="D2" pin="2"/>
-    </net>
-    <net code="30" name="Net-(D1-Pad2)">
-      <node ref="R1" pin="2"/>
-      <node ref="D1" pin="2"/>
-    </net>
-    <net code="31" name="Net-(C3-Pad1)">
-      <node ref="J3" pin="4"/>
-      <node ref="C3" pin="1"/>
-      <node ref="J4" pin="1"/>
-      <node ref="D5" pin="2"/>
-    </net>
-    <net code="32" name="Net-(U3-Pad24)">
-      <node ref="U3" pin="24"/>
-    </net>
-    <net code="33" name="Net-(C13-Pad1)">
-      <node ref="U2" pin="7"/>
-      <node ref="C13" pin="1"/>
-      <node ref="Y1" pin="2"/>
-    </net>
-    <net code="34" name="Net-(C15-Pad1)">
-      <node ref="Y1" pin="1"/>
-      <node ref="C15" pin="1"/>
-      <node ref="U2" pin="8"/>
-    </net>
-    <net code="35" name="Net-(U2-Pad23)">
+    <net code="44" name="/BAT_LVL">
+      <node ref="R11" pin="2"/>
+      <node ref="R12" pin="1"/>
       <node ref="U2" pin="23"/>
     </net>
-    <net code="36" name="Net-(U2-Pad13)">
-      <node ref="U2" pin="13"/>
+    <net code="45" name="Net-(L1-Pad1)">
+      <node ref="U5" pin="3"/>
+      <node ref="L1" pin="1"/>
     </net>
-    <net code="37" name="Net-(U2-Pad22)">
-      <node ref="U2" pin="22"/>
+    <net code="46" name="Net-(R13-Pad1)">
+      <node ref="U5" pin="5"/>
+      <node ref="R13" pin="1"/>
     </net>
-    <net code="38" name="Net-(U2-Pad12)">
-      <node ref="U2" pin="12"/>
+    <net code="47" name="Net-(R6-Pad1)">
+      <node ref="U5" pin="1"/>
+      <node ref="R6" pin="1"/>
     </net>
-    <net code="39" name="Net-(U2-Pad11)">
-      <node ref="U2" pin="11"/>
+    <net code="48" name="Net-(C5-Pad1)">
+      <node ref="R6" pin="2"/>
+      <node ref="R13" pin="2"/>
+      <node ref="D5" pin="1"/>
+      <node ref="U5" pin="4"/>
+      <node ref="C5" pin="1"/>
+      <node ref="Q1" pin="2"/>
     </net>
-    <net code="40" name="Net-(U2-Pad10)">
-      <node ref="U2" pin="10"/>
+    <net code="49" name="Net-(C1-Pad2)">
+      <node ref="R20" pin="2"/>
+      <node ref="C1" pin="2"/>
+      <node ref="U5" pin="6"/>
+      <node ref="R7" pin="1"/>
     </net>
-    <net code="41" name="Net-(U2-Pad9)">
-      <node ref="U2" pin="9"/>
-    </net>
-    <net code="42" name="Net-(U2-Pad2)">
-      <node ref="U2" pin="2"/>
-    </net>
-    <net code="43" name="Net-(U2-Pad1)">
-      <node ref="U2" pin="1"/>
-    </net>
-    <net code="44" name="Net-(U3-Pad4)">
-      <node ref="U3" pin="4"/>
-    </net>
-    <net code="45" name="Net-(U3-Pad1)">
-      <node ref="U3" pin="1"/>
-    </net>
-    <net code="46" name="Net-(U2-Pad19)">
-      <node ref="U2" pin="19"/>
-    </net>
-    <net code="47" name="Net-(U2-Pad26)">
-      <node ref="U2" pin="26"/>
-    </net>
-    <net code="48" name="Net-(U2-Pad25)">
-      <node ref="U2" pin="25"/>
-    </net>
-    <net code="49" name="Net-(U2-Pad24)">
-      <node ref="U2" pin="24"/>
-    </net>
-    <net code="50" name="Net-(U2-Pad14)">
-      <node ref="U2" pin="14"/>
+    <net code="50" name="Net-(C6-Pad1)">
+      <node ref="U4" pin="3"/>
+      <node ref="Q1" pin="3"/>
+      <node ref="J6" pin="1"/>
+      <node ref="C6" pin="1"/>
+      <node ref="R11" pin="1"/>
     </net>
   </nets>
 </export>
