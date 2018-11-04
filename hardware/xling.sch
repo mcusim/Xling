@@ -6,8 +6,8 @@ $Descr A3 16535 11693
 encoding utf-8
 Sheet 1 1
 Title "Xling Schematic"
-Date "2018-11-03"
-Rev "0.2.0002"
+Date "2018-11-04"
+Rev "0.2.0003"
 Comp "MCUSim"
 Comment1 ""
 Comment2 ""
