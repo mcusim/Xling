@@ -7,7 +7,7 @@ encoding utf-8
 Sheet 1 1
 Title "Xling Schematic"
 Date "2018-11-04"
-Rev "0.2.0003"
+Rev "0.2.0004"
 Comp "MCUSim"
 Comment1 ""
 Comment2 ""
