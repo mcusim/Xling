@@ -1,8 +1,8 @@
-(kicad_pcb (version 20171130) (host pcbnew 5.0.1)
+(kicad_pcb (version 20171130) (host pcbnew 5.0.2)
 
   (general
     (thickness 1.6)
-    (drawings 19)
+    (drawings 18)
     (tracks 685)
     (zones 0)
     (modules 58)
@@ -67,7 +67,7 @@
     (pad_to_mask_clearance 0.2)
     (solder_mask_min_width 0.1)
     (pad_to_paste_clearance_ratio -0.05)
-    (aux_axis_origin 109.22 137.16)
+    (aux_axis_origin 121.92 76.2)
     (visible_elements FFFFF77F)
     (pcbplotparams
       (layerselection 0x010fc_80000001)
@@ -2932,7 +2932,6 @@
   (gr_line (start 156 116.9) (end 156 121.5) (layer Edge.Cuts) (width 0.2))
   (target plus (at 167.64 66.04) (size 5) (width 0.2) (layer Edge.Cuts) (tstamp 5B635A0C))
   (target plus (at 167.64 137.16) (size 5) (width 0.2) (layer Edge.Cuts) (tstamp 5B635A0B))
-  (target plus (at 109.22 137.16) (size 5) (width 0.2) (layer Edge.Cuts))
   (gr_text "Xling\n0.2.0004\nMCUSim.org" (at 144 82.6) (layer B.SilkS) (tstamp 5BE1B2C3)
     (effects (font (size 1.5 1.5) (thickness 0.3)) (justify left mirror))
   )

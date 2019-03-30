@@ -1,31 +1,40 @@
 #ifndef XLING_TWI_H_
 #define XLING_TWI_H_ 1
 
+#include <stdint.h>
+
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-struct XL_TWI {
-	unsigned int clk;		/* Clock frequency of TWI */
-	unsigned char addr;		/* Address of a slave device */
+/* Structure to deal with TWI.*/
+struct XG_TWI {
+	uint32_t clk;		/* Clock frequency of TWI */
+	uint8_t addr;		/* Address of a slave device */
+
+	/* The next fields are for bit-bang TWI only. */
+	volatile uint8_t *port;	/* TWI port (PORTC, PORTD, etc.) */
+	volatile uint8_t *ddr;	/* TWI data direction (DDRC, DDRD, etc.) */
+	uint8_t sda;		/* SDA pin number of the TWI port */
+	uint8_t scl;		/* SCL pin number of the TWI port */
 };
 
 /* Function to initialize TWI interface using address of a device,
  * CPU clock and TWI clock frequencies. */
-void XL_TWIInit(struct XL_TWI *twi, unsigned char addr,
-                unsigned int cpu_clk, unsigned int twi_clk);
+void XG_TWIInit(struct XG_TWI *twi, uint8_t addr, uint32_t cpu_clk,
+                uint32_t twi_clk);
 
 /* Function to prepare TWI to transmit data. */
-int XL_TWIStart(struct XL_TWI *twi);
+int XG_TWIStart(struct XG_TWI *twi);
 
 /* Function to stop TWI transmittion. */
-int XL_TWIStop(struct XL_TWI *twi);
+int XG_TWIStop(struct XG_TWI *twi);
 
 /* Function to write a byte to TWI. */
-int XL_TWIWrite(struct XL_TWI *twi, unsigned char v);
+int XG_TWIWrite(struct XG_TWI *twi, uint8_t v);
 
 /* Function to write array of bytes to TWI. */
-int XL_TWIWriteData(struct XL_TWI *twi, unsigned char *data, int len);
+int XG_TWIWriteData(struct XG_TWI *twi, uint8_t *data, uint32_t len);
 
 #ifdef __cplusplus
 }

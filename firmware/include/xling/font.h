@@ -1,42 +1,44 @@
 #ifndef XLING_FONT_H_
 #define XLING_FONT_H_ 1
 
+#include <stdint.h>
+
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 /* Figures 6x8 pixels */
-static const unsigned char mark_zero[] = {
+static uint8_t mark_zero[] = {
 	0x00, 0x3C, 0x42, 0x42, 0x3C, 0x00
 };
-static const unsigned char mark_one[] = {
+static uint8_t mark_one[] = {
 	0x00, 0x00, 0x04, 0x7E, 0x00, 0x00
 };
-static const unsigned char mark_two[] = {
+static uint8_t mark_two[] = {
 	0x00, 0x44, 0x62, 0x52, 0x4C, 0x00
 };
-static const unsigned char mark_three[] = {
+static uint8_t mark_three[] = {
 	0x00, 0x24, 0x42, 0x4A, 0x34, 0x00
 };
-static const unsigned char mark_four[] = {
+static uint8_t mark_four[] = {
 	0x00, 0x18, 0x14, 0x7E, 0x10, 0x00
 };
-static const unsigned char mark_five[] = {
+static uint8_t mark_five[] = {
 	0x00, 0x2E, 0x4A, 0x4A, 0x32, 0x00
 };
-static const unsigned char mark_six[] = {
+static uint8_t mark_six[] = {
 	0x00, 0x3C, 0x4A, 0x4A, 0x30, 0x00
 };
-static const unsigned char mark_seven[] = {
+static uint8_t mark_seven[] = {
 	0x00, 0x02, 0x62, 0x1A, 0x06, 0x00
 };
-static const unsigned char mark_eight[] = {
+static uint8_t mark_eight[] = {
 	0x00, 0x34, 0x4A, 0x4A, 0x34, 0x00
 };
-static const unsigned char mark_nine[] = {
+static uint8_t mark_nine[] = {
 	0x00, 0x0C, 0x52, 0x52, 0x3C, 0x00
 };
-static const unsigned char mark_dot[] = {
+static uint8_t mark_dot[] = {
 	0x00, 0x00, 0x40, 0x00, 0x00, 0x00
 };
 

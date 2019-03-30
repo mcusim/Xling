@@ -1,13 +1,13 @@
 EESchema-DOCLIB  Version 2.0
 #
+$CMP AP3401_TSOT26
+D 1.5MHz, 1A DC-DC Buck Converter
+K 1A DC-DC Buck Converter
+$ENDCMP
+#
 $CMP DEP_128064I
 D Display Elektronik OLED 128x64 1.5" with SD1309ZC
 K Display Elektronik OLED 128x64
-$ENDCMP
-#
-$CMP LM3940
-D 1A Low-Dropout Regulator, 5V to 3.3V
-K dropout regulator
 $ENDCMP
 #
 $CMP LT1109CZ-12
@@ -15,19 +15,9 @@ D Micropower DC/DC Converter Adjustable and Fixed 5V, 12V
 K DC converter 5V 12V
 $ENDCMP
 #
-$CMP MCP73837
-D Single cell, Li-Ion/Li-Po charge management controller, 4.5V, 2 Open-Drain Status Output Pins, in MSOP-10 package
-K battery charger lithium
-$ENDCMP
-#
-$CMP NTHD4P02F
-D Power MOSFET and Schottky Diode, −20 V, −3.0 A, Single P−Channel with 3.0 A Schottky Barrier Diode
-K power MOSFET schottky diode
-$ENDCMP
-#
-$CMP TPS63031
-D High Efficiency DC-DC Converter, 1.8-5.5V in, 3.3V, 800mA out
-K efficient voltage converter
+$CMP LTC3440
+D Micropower Synchronous Buck-Boost DC/DC Converter with user controlled Burst Mode
+K Micropower Synchronous Buck-Boost DC/DC Converter
 $ENDCMP
 #
 #End Doc Library

@@ -1,8 +1,36 @@
+#
+# Copyright (c) 2017, 2018, The MCUSim Contributors
+# All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are met:
+#     * Redistributions of source code must retain the above copyright
+#       notice, this list of conditions and the following disclaimer.
+#     * Redistributions in binary form must reproduce the above copyright
+#       notice, this list of conditions and the following disclaimer in the
+#       documentation and/or other materials provided with the distribution.
+#     * Neither the name of the MCUSim or its parts nor the
+#       names of its contributors may be used to endorse or promote products
+#       derived from this software without specific prior written permission.
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+# THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+# PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL COPYRIGHT HOLDER OR CONTRIBUTORS
+# BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+# CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+# POSSIBILITY OF SUCH DAMAGE.
+#
+# Xling firmware build configuration.
+#
 cmake_minimum_required(VERSION 3.2)
-project(helloavr)
+project(xling)
 
 # Set common variables
-set(TARGET_OUTPUT_BASENAME "xling-firmware")
+set(TARGET_OUTPUT_BASENAME "xling")
 set(TARGET_OUTPUT_FILE "${TARGET_OUTPUT_BASENAME}.elf")
 set(TARGET_OUTPUT_DIR "${CMAKE_CURRENT_BINARY_DIR}")
 set(AVR_MCU "atmega328p")
@@ -67,11 +95,13 @@ include_directories("../")
 include_directories("include/")
 
 # Set sources here
-set(HELLOAVR_SRC	fuse.c
-			main.c
-			twi.c)
+set(XLING_SRC	src/xling_fuse.c
+		src/xling_main.c
+		src/xling_twibb.c
+		#src/xling_twi.c
+		src/hw/hw_ssd1309.c)
 
-add_executable(${TARGET_OUTPUT_FILE} ${HELLOAVR_SRC})
+add_executable(${TARGET_OUTPUT_FILE} ${XLING_SRC})
 add_custom_target("upload")
 
 # Prepare files for MCU
@@ -109,4 +139,4 @@ add_custom_command(
 add_custom_command(
 	TARGET "upload" POST_BUILD
 	#COMMAND ${AVR_DUDE} -p m328p -b 115200 -P /dev/pts/4 -c avrispv2 -Uflash:w:${TARGET_OUTPUT_DIR}/${TARGET_OUTPUT_BASENAME}.hex -U lfuse:w:0x6D:m)
-	COMMAND ${AVR_DUDE} -p m328p -b 57600 -P /dev/pts/6 -c stk500v1 -Uflash:w:${TARGET_OUTPUT_DIR}/${TARGET_OUTPUT_BASENAME}.hex -U lfuse:w:0x6D:m)
+	COMMAND ${AVR_DUDE} -p m328p -b 115200 -P /dev/ttyU0 -c avrispv2 -Uflash:w:${TARGET_OUTPUT_DIR}/${TARGET_OUTPUT_BASENAME}.hex -U lfuse:w:0x6D:m)

@@ -1,0 +1,28 @@
+* Load Sharing Circuit
+* based on a single P-Channel MOSFET
+
+* Including model files
+.include NTR0202PL.REV0.LIB
+.include 1N5819.LIB
+
+* Components of the scheme
+R4	0 in		100k
+C3	0 in		4.7u
+C6	0 3		4.7u
+C5	0 out		4.7u
+XQ1	3 in out	ntr0202plt1
+D5	in out		D1n5819
+Vin	in 0		pulse (0 4.95 2ms 0ns 0ms 5ms 10ms)
+Vdd	3 0		pwl (0 0 0ms 0 0ms 3.2v 20ms 3.2v)
+
+* Transient analysis for 20ms, step size 0.02ms
+.tran 0.02ms 20ms
+
+* Defining the run-time control functions
+.control
+run
+
+* Plotting input and output voltages
+plot v(in) v(out)
+.endc
+.end
