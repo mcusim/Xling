@@ -5,14 +5,14 @@ EELAYER END
 $Descr A4 11693 8268
 encoding utf-8
 Sheet 1 1
-Title "Xling Circuit"
-Date "2019-02-13"
+Title "Xling Tamagotchi-like Game"
+Date "2019-04-04"
 Rev "0.2.10"
-Comp ""
+Comp "Designed by Dmitry Salychev"
 Comment1 ""
-Comment2 "MCUSim.org/wiki/Xling"
-Comment3 "It is designed as a hobby game within the MCUSim project."
-Comment4 "Tamagotchi-like device with OLED and Li-Ion battery."
+Comment2 ""
+Comment3 "It is designed as a hobby toy within the MCUSim project."
+Comment4 "A tamagotchi-like game with an OLED display and Li-Ion battery."
 $EndDescr
 $Comp
 L xling:R R16
@@ -441,7 +441,7 @@ F 3 "" H 6435 1075 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 Text Notes 4775 4435 0    51   ~ 0
-Set IREF to 12.5uA:\n(V at IREF-VSS)/Iref =\n(6.4V-0)/12.5uA =\n512kΩ\n\nCharge pump output\nvoltage: 6.4V-9.0V
+Set IREF to 12.5uA:\n(V at IREF-VSS)/Iref =\n(6.4V-0)/12.5uA =\n512kΩ\n\nCharge pump output\nvoltage: 6.4V to 9.0V
 Text Notes 5485 5785 0    51   ~ 0
 Resistor devider R7-R20:\n\nR7 = R20*(Vout/0.6-1) =\n(110*10^3)*(3.3/0.6-1) =\n~~510 kOhm
 $Comp
