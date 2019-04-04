@@ -1,4 +1,4 @@
-(module Crystal_SMD_CFPX-104-4Pin_5x3.2mm (layer F.Cu) (tedit 5CA24E2F)
+(module Crystal_SMD_CFPX-104-4Pin_5x3.2mm (layer F.Cu) (tedit 5CA5D7FC)
   (fp_text reference REF** (at 0 -3.15) (layer F.SilkS)
     (effects (font (size 1 1) (thickness 0.15)))
   )
