@@ -7,7 +7,7 @@ encoding utf-8
 Sheet 1 1
 Title "Xling Circuit"
 Date "2019-02-13"
-Rev "0.2.6"
+Rev "0.2.7"
 Comp ""
 Comment1 ""
 Comment2 "MCUSim.org/wiki/Xling"
@@ -335,9 +335,9 @@ Text Label 3565 1660 2    60   ~ 0
 ISP_PDI_MOSI
 Text Label 3600 1760 2    60   ~ 0
 ISP_PDO_MISO
-Text Label 9335 1425 0    60   ~ 0
+Text Label 11025 1325 2    60   ~ 0
 ISP_PDI_MOSI
-Text Label 11060 1325 2    60   ~ 0
+Text Label 9335 1425 0    60   ~ 0
 ISP_PDO_MISO
 $Comp
 L xling:Conn_01x02 J3
@@ -345,7 +345,7 @@ U 1 1 5A020B3D
 P 3145 7120
 F 0 "J3" H 3145 7240 50  0000 C CNN
 F 1 "Battery" H 3115 6890 50  0000 C CNN
-F 2 "" H 3145 7120 50  0001 C CNN
+F 2 "Xling Footprints:PinHeader_1x02_P2.54mm_Vertical" H 3145 7120 50  0001 C CNN
 F 3 "" H 3145 7120 50  0001 C CNN
 	1    3145 7120
 	1    0    0    -1  
@@ -1448,8 +1448,6 @@ AVR ISP connector
 Wire Wire Line
 	9930 1425 9335 1425
 Wire Wire Line
-	10430 1325 11060 1325
-Wire Wire Line
 	10430 1425 10790 1425
 Wire Wire Line
 	10430 1525 10775 1525
@@ -1537,4 +1535,6 @@ Wire Notes Line
 	9270 2015 11190 2015
 Wire Notes Line
 	11190 2015 11190 505 
+Wire Wire Line
+	10430 1325 11025 1325
 $EndSCHEMATC

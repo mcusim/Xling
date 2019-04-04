@@ -1,4 +1,4 @@
-15722093436269779
+15722606998831779
 Battery
 BatteryHolder_Bulgin_BX0036_1xC
 Bulgin Battery Holder, BX0036, Battery Type C (https://www.bulgin.com/products/pub/media/bulgin/data/Battery_holders.pdf)
@@ -70697,8 +70697,8 @@ Crystal_SMD_CFPX-104-4Pin_5x3.2mm
 
 
 0
-0
-0
+4
+2
 Xling Footprints
 C_0603_1608Metric
 Capacitor SMD 0603 (1608 Metric), square (rectangular) end terminal, IPC_7351 nominal, (Body size source: http://www.tortai-tech.com/upload/download/2011102023233369053.pdf), generated with kicad-footprint-generator

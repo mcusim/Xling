@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <export version="D">
   <design>
-    <source>/home/dsl/git/xling/hardware/xling.sch</source>
-    <date>Mon Apr  1 19:59:07 2019</date>
+    <source>/home/dsl/git/Xling/hardware/xling.sch</source>
+    <date>Mon Apr  1 20:16:08 2019</date>
     <tool>Eeschema 5.1.0</tool>
     <sheet number="1" name="/" tstamps="/">
       <title_block>
@@ -840,7 +840,7 @@
   </libparts>
   <libraries>
     <library logical="xling">
-      <uri>/home/dsl/git/xling/hardware/lib_sch/xling.lib</uri>
+      <uri>/home/dsl/git/Xling/hardware/lib_sch/xling.lib</uri>
     </library>
   </libraries>
   <nets>
