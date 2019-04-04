@@ -7,10 +7,10 @@ encoding utf-8
 Sheet 1 1
 Title "Xling Circuit"
 Date "2019-02-13"
-Rev "0.2.9"
-Comp ""
+Rev "0.2.10"
+Comp "Designed by Dmitry Salychev"
 Comment1 ""
-Comment2 "MCUSim.org/wiki/Xling"
+Comment2 ""
 Comment3 "It is designed as a hobby game within the MCUSim project."
 Comment4 "Tamagotchi-like device with OLED and Li-Ion battery."
 $EndDescr
