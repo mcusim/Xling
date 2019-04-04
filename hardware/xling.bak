@@ -7,7 +7,7 @@ encoding utf-8
 Sheet 1 1
 Title "Xling Circuit"
 Date "2019-02-13"
-Rev "0.2.7"
+Rev "0.2.8"
 Comp ""
 Comment1 ""
 Comment2 "MCUSim.org/wiki/Xling"
@@ -345,7 +345,7 @@ U 1 1 5A020B3D
 P 3145 7120
 F 0 "J3" H 3145 7240 50  0000 C CNN
 F 1 "Battery" H 3115 6890 50  0000 C CNN
-F 2 "Xling Footprints:PinHeader_1x02_P2.54mm_Vertical" H 3145 7120 50  0001 C CNN
+F 2 "Xling Footprints:Battery_SMD_pads_1x02_HandSoldering" H 3145 7120 50  0001 C CNN
 F 3 "" H 3145 7120 50  0001 C CNN
 	1    3145 7120
 	1    0    0    -1  
