@@ -2,7 +2,7 @@
 
   (general
     (thickness 1)
-    (drawings 108)
+    (drawings 104)
     (tracks 511)
     (zones 0)
     (modules 55)
@@ -13,7 +13,7 @@
   (title_block
     (title "Xling PCB")
     (date 2019-04-05)
-    (rev 0.2.14)
+    (rev 0.2.15)
     (company MCUSim)
   )
 
@@ -95,7 +95,7 @@
       (mirror false)
       (drillshape 0)
       (scaleselection 1)
-      (outputdirectory "gerber/0.2.6"))
+      (outputdirectory "gerber/0.2.14"))
   )
 
   (net 0 "")
@@ -2924,10 +2924,6 @@
     (arrow2a (pts (xy 158.4 118.5) (xy 157.813579 119.626504)))
     (arrow2b (pts (xy 158.4 118.5) (xy 158.986421 119.626504)))
   )
-  (gr_line (start 155 89.5) (end 155 86.25) (layer Edge.Cuts) (width 0.2) (tstamp 5CA65ABB))
-  (gr_line (start 155 90.5) (end 154 90.5) (layer Edge.Cuts) (width 0.2) (tstamp 5CA65AA6))
-  (gr_arc (start 154 90) (end 154 89.5) (angle -180) (layer Edge.Cuts) (width 0.2) (tstamp 5CA65AA5))
-  (gr_line (start 155 89.5) (end 154 89.5) (layer Edge.Cuts) (width 0.2) (tstamp 5CA65AA4))
   (gr_line (start 155 119) (end 155 124) (layer Edge.Cuts) (width 0.2) (tstamp 5CA65A8D))
   (gr_arc (start 154 118.5) (end 154 118) (angle -180) (layer Edge.Cuts) (width 0.2))
   (gr_line (start 155 119) (end 154 119) (layer Edge.Cuts) (width 0.2) (tstamp 5CA65A6C))
@@ -2982,7 +2978,7 @@
   (gr_text "Rev:\nVcc:\nDisplay:\nMode:\nBattery:\nDate:" (at 151 100) (layer B.SilkS) (tstamp 5CA60688)
     (effects (font (size 1.2 1.2) (thickness 0.2)) (justify left mirror))
   )
-  (gr_text "0.2.14\n3.3V\n128x64 SH1106G\nTWI (0x7A)\nLi-Ion 3.7V 400mAh\n05.04.2019" (at 142.3 100) (layer B.SilkS) (tstamp 5CA6013A)
+  (gr_text "0.2.15\n3.3V\n128x64 SH1106G\nTWI (0x7A)\nLi-Ion 3.7V 400mAh\n05.04.2019" (at 142.3 100) (layer B.SilkS) (tstamp 5CA6013A)
     (effects (font (size 1.2 1.2) (thickness 0.2)) (justify left mirror))
   )
   (gr_text ISP (at 145.1 125.7) (layer F.SilkS) (tstamp 5CA4FF1F)
@@ -3201,7 +3197,7 @@
   (gr_line (start 143.85 80.762) (end 131.15 80.762) (layer Edge.Cuts) (width 0.2) (tstamp 5CA36CBD))
   (gr_line (start 145.12 80) (end 143.85 80.762) (layer Edge.Cuts) (width 0.2) (tstamp 5CA36CBA))
   (gr_line (start 129.88 80) (end 131.15 80.762) (layer Edge.Cuts) (width 0.2) (tstamp 5CA36CB7))
-  (gr_line (start 155 90.5) (end 155 118) (layer Edge.Cuts) (width 0.2) (tstamp 5CA36CAE))
+  (gr_line (start 155 86.25) (end 155 118) (layer Edge.Cuts) (width 0.2) (tstamp 5CA36CAE))
   (gr_line (start 120 124) (end 120 86.25) (layer Edge.Cuts) (width 0.2) (tstamp 5CA36CA8))
   (gr_line (start 152 127) (end 123 127) (layer Edge.Cuts) (width 0.2) (tstamp 5CA36CA5))
 
@@ -3717,7 +3713,7 @@
   (segment (start 128.413487 107.482959) (end 128.304989 107.591457) (width 0.25) (layer F.Cu) (net 36))
   (segment (start 128.413487 106.086513) (end 128.413487 107.482959) (width 0.25) (layer F.Cu) (net 36))
 
-  (zone (net 1) (net_name +3V3) (layer B.Cu) (tstamp 5CA50B5D) (hatch edge 0.508)
+  (zone (net 1) (net_name +3V3) (layer B.Cu) (tstamp 5CA7533B) (hatch edge 0.508)
     (connect_pads (clearance 0.508))
     (min_thickness 0.254)
     (fill yes (arc_segments 16) (thermal_gap 0.508) (thermal_bridge_width 0.508))
@@ -4483,7 +4479,7 @@
       )
     )
   )
-  (zone (net 2) (net_name GND) (layer F.Cu) (tstamp 5CA50B5A) (hatch edge 0.508)
+  (zone (net 2) (net_name GND) (layer F.Cu) (tstamp 5CA75338) (hatch edge 0.508)
     (connect_pads (clearance 0.508))
     (min_thickness 0.254)
     (fill yes (arc_segments 16) (thermal_gap 0.508) (thermal_bridge_width 0.508))

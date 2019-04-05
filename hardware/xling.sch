@@ -7,7 +7,7 @@ encoding utf-8
 Sheet 1 1
 Title "Xling Tamagotchi-like Game"
 Date "2019-04-05"
-Rev "0.2.14"
+Rev "0.2.15"
 Comp "Designed by Dmitry Salychev"
 Comment1 ""
 Comment2 ""
