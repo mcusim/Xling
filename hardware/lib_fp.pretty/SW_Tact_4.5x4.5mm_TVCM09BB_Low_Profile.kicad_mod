@@ -1,4 +1,5 @@
-(module SW_Tact_4.5x4.5mm_TVCM09BB_Low_Profile (layer F.Cu) (tedit 5CA249C4)
+(module SW_Tact_4.5x4.5mm_TVCM09BB_Low_Profile (layer F.Cu) (tedit 5CA72AC3)
+  (attr smd)
   (fp_text reference REF** (at 0 -4) (layer F.SilkS)
     (effects (font (size 1 1) (thickness 0.15)))
   )
@@ -14,4 +15,9 @@
   (pad 1 smd rect (at 2.25 -1.75) (size 0.8 0.7) (layers F.Cu F.Paste F.Mask))
   (pad 2 smd rect (at -2.25 1.75) (size 0.8 0.7) (layers F.Cu F.Paste F.Mask))
   (pad 2 smd rect (at 2.25 1.75) (size 0.8 0.7) (layers F.Cu F.Paste F.Mask))
+  (model ${KIPRJMOD}/3d_models/packages/Switch_TVCM09.stp
+    (offset (xyz 0 0 0.1))
+    (scale (xyz 1 1 1))
+    (rotate (xyz -90 0 90))
+  )
 )
