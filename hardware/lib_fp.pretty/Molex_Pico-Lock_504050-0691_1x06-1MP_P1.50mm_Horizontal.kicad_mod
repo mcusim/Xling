@@ -1,4 +1,4 @@
-(module Molex_Pico-Lock_504050-0691_1x06-1MP_P1.50mm_Horizontal (layer F.Cu) (tedit 5CA20946)
+(module Molex_Pico-Lock_504050-0691_1x06-1MP_P1.50mm_Horizontal (layer F.Cu) (tedit 5CA72505)
   (descr "Molex Pico-Lock series connector, 504050-0691 (http://www.molex.com/pdm_docs/sd/5040500891_sd.pdf), generated with kicad-footprint-generator")
   (tags "connector Molex Pico-Lock top entry")
   (attr smd)
@@ -47,5 +47,10 @@
     (at (xyz 0 0 0))
     (scale (xyz 1 1 1))
     (rotate (xyz 0 0 0))
+  )
+  (model ${KIPRJMOD}/3d_models/packages/Molex_504050-0691.stp
+    (offset (xyz -6.35 -2.75 1.8))
+    (scale (xyz 1 1 1))
+    (rotate (xyz -90 0 180))
   )
 )
