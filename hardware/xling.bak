@@ -6,8 +6,8 @@ $Descr A4 11693 8268
 encoding utf-8
 Sheet 1 1
 Title "Xling Tamagotchi-like Game"
-Date "2019-04-04"
-Rev "0.2.12"
+Date "2019-04-05"
+Rev "0.2.14"
 Comp "Designed by Dmitry Salychev"
 Comment1 ""
 Comment2 ""
@@ -52,7 +52,7 @@ $EndComp
 Text Notes 585  4910 0    98   ~ 20
 Power supply
 Text Notes 4785 1505 0    51   ~ 0
-Controller: SH1106G\nVDD1: 1.65-3.5V\nVDD2: 3.0-4.7V\nMode: I2C\nAddress: 0x3D, but\n    LSB denotes a mode, so\n    0x7A - to write,\n    0x7B - to read)
+Controller: SH1106G\nVDD1: 1.65-3.5V\nVDD2: 3.0-4.7V\nMode: TWI\nAddress: 0x3D, but\n    LSB denotes a mode, so\n    0x7A - to write,\n    0x7B - to read)
 $Comp
 L xling:C C19
 U 1 1 59FF5F5A
