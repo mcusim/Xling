@@ -34,7 +34,7 @@ set(TARGET_OUTPUT_BASENAME "xling")
 set(TARGET_OUTPUT_FILE "${TARGET_OUTPUT_BASENAME}.elf")
 set(TARGET_OUTPUT_DIR "${CMAKE_CURRENT_BINARY_DIR}")
 set(AVR_MCU "atmega328p")
-set(AVR_FREQ 8000000UL)
+set(AVR_FREQ 12000000UL)
 
 # Remove '-rdynamic', '-Wl,-search_paths_first' (avr-gcc doesn't support this
 # one and treats it as '-Wl,-s' which strips linked ELF

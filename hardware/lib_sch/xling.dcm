@@ -5,6 +5,12 @@ D 1.5MHz, 1A DC-DC Buck Converter
 K 1A DC-DC Buck Converter
 $ENDCMP
 #
+$CMP Crystal_GND24
+D Four pin crystal, GND on pins 2 and 4
+K quartz ceramic resonator oscillator
+F ~
+$ENDCMP
+#
 $CMP DEP_128064I
 D Display Elektronik OLED 128x64 1.5" with SD1309ZC
 K Display Elektronik OLED 128x64

@@ -26,7 +26,7 @@
  *
  * Main file of the Xling firmware.
  */
-#define F_CPU			8000000UL	/* CPU clock frequency */
+#define F_CPU			12000000UL	/* CPU clock frequency */
 #define TWI_CLOCK		400000L		/* TWI clock frequency */
 
 #include <stdint.h>
