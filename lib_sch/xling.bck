@@ -1,0 +1,35 @@
+EESchema-DOCLIB  Version 2.0
+#
+$CMP AP3401_TSOT26
+D 1.5MHz, 1A DC-DC Buck Converter
+K 1A DC-DC Buck Converter
+$ENDCMP
+#
+$CMP ATmega1284P-AU
+D 20MHz, 16kB Flash, 1kB SRAM, 512B EEPROM, JTAG, TQFP-44
+K AVR 8bit Microcontroller MegaAVR
+F http://ww1.microchip.com/downloads/en/DeviceDoc/Atmel-8272-8-bit-AVR-microcontroller-ATmega164A_PA-324A_PA-644A_PA-1284_P_datasheet.pdf
+$ENDCMP
+#
+$CMP Crystal_GND24
+D Four pin crystal, GND on pins 2 and 4
+K quartz ceramic resonator oscillator
+F ~
+$ENDCMP
+#
+$CMP DEP_128064I
+D Display Elektronik OLED 128x64 1.5" with SD1309ZC
+K Display Elektronik OLED 128x64
+$ENDCMP
+#
+$CMP LT1109CZ-12
+D Micropower DC/DC Converter Adjustable and Fixed 5V, 12V
+K DC converter 5V 12V
+$ENDCMP
+#
+$CMP LTC3440
+D Micropower Synchronous Buck-Boost DC/DC Converter with user controlled Burst Mode
+K Micropower Synchronous Buck-Boost DC/DC Converter
+$ENDCMP
+#
+#End Doc Library
