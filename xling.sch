@@ -6,8 +6,8 @@ $Descr A4 11693 8268
 encoding utf-8
 Sheet 1 1
 Title "Xling, a tamagotchi-like toy"
-Date "2019-09-03"
-Rev "0.3"
+Date "2019-10-20"
+Rev "3.1"
 Comp ""
 Comment1 ""
 Comment2 ""
@@ -29,7 +29,7 @@ $EndComp
 Text Notes 575  5475 0    98   ~ 20
 Power supply
 Text Notes 6300 1250 0    51   ~ 0
-Controller: SH1106G, 128x64\nVDD1: 1.65-3.5V\nVDD2: 3.0-4.7V\nMode: SPI (3-wire)
+Controller: SH1106G, 128x64\nVDD1: 1.65-3.5V\nVDD2: 3.0-4.7V\nMode: SPI (4-wire)
 $Comp
 L xling:C C19
 U 1 1 59FF5F5A
@@ -421,12 +421,12 @@ $EndComp
 $Comp
 L xling:+3.3V #PWR06
 U 1 1 5C9D7632
-P 9925 1250
-F 0 "#PWR06" H 9925 1100 50  0001 C CNN
-F 1 "+3.3V" H 9925 1390 50  0000 C CNN
-F 2 "" H 9925 1250 50  0001 C CNN
-F 3 "" H 9925 1250 50  0001 C CNN
-	1    9925 1250
+P 10250 1200
+F 0 "#PWR06" H 10250 1050 50  0001 C CNN
+F 1 "+3.3V" H 10250 1340 50  0000 C CNN
+F 2 "" H 10250 1200 50  0001 C CNN
+F 3 "" H 10250 1200 50  0001 C CNN
+	1    10250 1200
 	1    0    0    -1  
 $EndComp
 $Comp
@@ -1035,18 +1035,6 @@ Wire Notes Line
 	6100 500  500  500 
 Wire Notes Line
 	500  500  500  5250
-$Comp
-L xling:R R1
-U 1 1 59FF6B80
-P 7425 1425
-F 0 "R1" V 7325 1425 50  0000 C CNN
-F 1 "1K" V 7425 1425 50  0000 C CNN
-F 2 "Xling Footprints:R_0603_1608Metric" V 7355 1425 50  0001 C CNN
-F 3 "" H 7425 1425 50  0001 C CNN
-F 4 "CRCW06031K00JNTABC" V 7425 1425 60  0001 C CNN "Model"
-	1    7425 1425
-	1    0    0    -1  
-$EndComp
 Wire Wire Line
 	7375 3175 7500 3175
 Wire Wire Line
@@ -1154,41 +1142,17 @@ Wire Wire Line
 Wire Wire Line
 	1750 3700 1800 3700
 Wire Wire Line
-	7900 1350 8000 1350
-Wire Wire Line
 	8000 1450 7800 1450
 Wire Wire Line
 	7800 1450 7800 1550
 Connection ~ 7800 1550
 Wire Wire Line
-	7800 1550 7800 1900
-Wire Wire Line
 	8000 2000 7900 2000
-Wire Wire Line
-	7900 2000 7900 1350
-Connection ~ 7900 1350
 Wire Wire Line
 	8000 2100 7900 2100
 Wire Wire Line
 	7900 2100 7900 2000
 Connection ~ 7900 2000
-$Comp
-L xling:R R2
-U 1 1 59FF6C05
-P 7625 1425
-F 0 "R2" V 7525 1425 50  0000 C CNN
-F 1 "1K" V 7625 1425 50  0000 C CNN
-F 2 "Xling Footprints:R_0603_1608Metric" V 7555 1425 50  0001 C CNN
-F 3 "" H 7625 1425 50  0001 C CNN
-F 4 "CRCW06031K00JNTABC" V 7625 1425 60  0001 C CNN "Model"
-	1    7625 1425
-	1    0    0    -1  
-$EndComp
-Wire Wire Line
-	8000 1900 7800 1900
-Wire Wire Line
-	7800 1900 7800 2550
-Connection ~ 7800 1900
 Wire Wire Line
 	8000 2550 7800 2550
 Connection ~ 7800 2550
@@ -1341,26 +1305,7 @@ Wire Wire Line
 	9650 6200 9650 6250
 Wire Wire Line
 	7900 1100 7900 1125
-Wire Wire Line
-	7625 1125 7900 1125
 Connection ~ 7900 1125
-Wire Wire Line
-	7900 1125 7900 1350
-Wire Wire Line
-	7425 1125 7625 1125
-Connection ~ 7625 1125
-Wire Wire Line
-	7625 1125 7625 1275
-Wire Wire Line
-	7425 1125 7425 1275
-Wire Wire Line
-	7425 1575 7425 1800
-Wire Wire Line
-	7425 1800 8000 1800
-Wire Wire Line
-	7625 1575 7625 1700
-Wire Wire Line
-	7625 1700 8000 1700
 Text GLabel 2250 1850 0    60   Input ~ 0
 RST
 Wire Wire Line
@@ -1404,20 +1349,14 @@ Text GLabel 4525 3700 2    60   Input ~ 0
 OLED_RST
 Wire Wire Line
 	4525 3800 4200 3800
-Text GLabel 6950 2450 0    60   Input ~ 0
+Text GLabel 6750 2750 0    60   Input ~ 0
 MOSI
-Text GLabel 6950 2350 0    60   Input ~ 0
+Text GLabel 6750 2650 0    60   Input ~ 0
 SCK
-Text GLabel 7250 1700 0    60   Input ~ 0
+Text GLabel 6950 1700 0    60   Input ~ 0
 OLED_CS
-Text GLabel 7250 1800 0    60   Input ~ 0
+Text GLabel 6950 1800 0    60   Input ~ 0
 OLED_RST
-Wire Wire Line
-	7250 1800 7425 1800
-Connection ~ 7425 1800
-Wire Wire Line
-	7250 1700 7625 1700
-Connection ~ 7625 1700
 Text GLabel 4525 1300 2    60   Input ~ 0
 BAT_STAT
 Text GLabel 4525 1600 2    60   Input ~ 0
@@ -1460,35 +1399,27 @@ USB
 $Comp
 L xling:R R19
 U 1 1 5D653A17
-P 7300 2350
-F 0 "R19" V 7475 2350 50  0000 C CNN
-F 1 "10K" V 7400 2350 50  0000 C CNN
-F 2 "Xling Footprints:R_0603_1608Metric" V 7230 2350 50  0001 C CNN
-F 3 "" H 7300 2350 50  0001 C CNN
-F 4 "0603SAJ0103T5E" V 7300 2350 50  0001 C CNN "Model"
-	1    7300 2350
+P 7300 2650
+F 0 "R19" V 7400 2650 50  0000 C CNN
+F 1 "10K" V 7300 2650 50  0000 C CNN
+F 2 "Xling Footprints:R_0603_1608Metric" V 7230 2650 50  0001 C CNN
+F 3 "" H 7300 2650 50  0001 C CNN
+F 4 "0603SAJ0103T5E" V 7300 2650 50  0001 C CNN "Model"
+	1    7300 2650
 	0    -1   -1   0   
 $EndComp
 $Comp
 L xling:R R20
 U 1 1 5D653DE9
-P 7550 2450
-F 0 "R20" V 7450 2450 50  0000 C CNN
-F 1 "10K" V 7375 2450 50  0000 C CNN
-F 2 "Xling Footprints:R_0603_1608Metric" V 7480 2450 50  0001 C CNN
-F 3 "" H 7550 2450 50  0001 C CNN
-F 4 "0603SAJ0103T5E" V 7550 2450 50  0001 C CNN "Model"
-	1    7550 2450
+P 7550 2750
+F 0 "R20" V 7450 2750 50  0000 C CNN
+F 1 "10K" V 7550 2750 50  0000 C CNN
+F 2 "Xling Footprints:R_0603_1608Metric" V 7480 2750 50  0001 C CNN
+F 3 "" H 7550 2750 50  0001 C CNN
+F 4 "0603SAJ0103T5E" V 7550 2750 50  0001 C CNN "Model"
+	1    7550 2750
 	0    -1   -1   0   
 $EndComp
-Wire Wire Line
-	7700 2450 8000 2450
-Wire Wire Line
-	6950 2450 7400 2450
-Wire Wire Line
-	7450 2350 8000 2350
-Wire Wire Line
-	7150 2350 6950 2350
 Wire Wire Line
 	4225 7225 4225 7550
 Wire Wire Line
@@ -1586,15 +1517,6 @@ Wire Wire Line
 	4525 4200 4200 4200
 Wire Wire Line
 	4200 2600 4525 2600
-Wire Wire Line
-	9750 1350 9925 1350
-Wire Wire Line
-	9925 1350 9925 1250
-Wire Wire Line
-	9750 1450 9925 1450
-Wire Wire Line
-	9925 1450 9925 1350
-Connection ~ 9925 1350
 $Comp
 L xling:R R3
 U 1 1 5D6F271F
@@ -1680,8 +1602,6 @@ F 4 "CL10A475KQ8NNNC" H 10250 1550 50  0001 C CNN "Model"
 	-1   0    0    -1  
 $EndComp
 Wire Wire Line
-	9925 1350 10250 1350
-Wire Wire Line
 	10250 1350 10250 1400
 $Comp
 L xling:GND #PWR016
@@ -1697,72 +1617,72 @@ $EndComp
 $Comp
 L xling:GND #PWR032
 U 1 1 5D71025C
-P 5350 2175
-F 0 "#PWR032" H 5350 1925 50  0001 C CNN
-F 1 "GND" H 5350 2025 50  0000 C CNN
-F 2 "" H 5350 2175 50  0001 C CNN
-F 3 "" H 5350 2175 50  0001 C CNN
-	1    5350 2175
+P 5350 2575
+F 0 "#PWR032" H 5350 2325 50  0001 C CNN
+F 1 "GND" H 5350 2425 50  0000 C CNN
+F 2 "" H 5350 2575 50  0001 C CNN
+F 3 "" H 5350 2575 50  0001 C CNN
+	1    5350 2575
 	1    0    0    -1  
 $EndComp
 $Comp
 L xling:+3.3V #PWR031
 U 1 1 5D710F8C
-P 5350 1775
-F 0 "#PWR031" H 5350 1625 50  0001 C CNN
-F 1 "+3.3V" H 5350 1915 50  0000 C CNN
-F 2 "" H 5350 1775 50  0001 C CNN
-F 3 "" H 5350 1775 50  0001 C CNN
-	1    5350 1775
+P 5350 1675
+F 0 "#PWR031" H 5350 1525 50  0001 C CNN
+F 1 "+3.3V" H 5350 1815 50  0000 C CNN
+F 2 "" H 5350 1675 50  0001 C CNN
+F 3 "" H 5350 1675 50  0001 C CNN
+	1    5350 1675
 	1    0    0    -1  
 $EndComp
-Text Notes 5425 1450 0    51   ~ 0
+Text Notes 5425 1350 0    51   ~ 0
 Test points:
 $Comp
 L Connector:TestPoint TP2
 U 1 1 5D7EC8BB
-P 5425 1975
-F 0 "TP2" V 5425 2300 50  0000 R CNN
-F 1 "VBAT" V 5425 2525 50  0000 R CNN
-F 2 "Xling Footprints:TestPoint_Pad_D2.0mm" H 5625 1975 50  0001 C CNN
-F 3 "~" H 5625 1975 50  0001 C CNN
-	1    5425 1975
-	0    1    1    0   
-$EndComp
-Text Label 5175 1975 0    60   ~ 0
-BAT
-$Comp
-L Connector:TestPoint TP1
-U 1 1 5D8F0926
 P 5425 1875
-F 0 "TP1" V 5425 2200 50  0000 R CNN
-F 1 "+3.3V" V 5425 2475 50  0000 R CNN
+F 0 "TP2" V 5425 2200 50  0000 R CNN
+F 1 "VBAT" V 5425 2425 50  0000 R CNN
 F 2 "Xling Footprints:TestPoint_Pad_D2.0mm" H 5625 1875 50  0001 C CNN
 F 3 "~" H 5625 1875 50  0001 C CNN
 	1    5425 1875
 	0    1    1    0   
 $EndComp
-Wire Wire Line
-	5175 1975 5425 1975
-Wire Wire Line
-	5350 1775 5350 1875
-Wire Wire Line
-	5350 1875 5425 1875
+Text Label 5175 1875 0    60   ~ 0
+BAT
 $Comp
-L Connector:TestPoint TP5
-U 1 1 5D91C2BD
-P 5425 2075
-F 0 "TP5" V 5425 2400 50  0000 R CNN
-F 1 "GND" V 5425 2600 50  0000 R CNN
-F 2 "Xling Footprints:TestPoint_Pad_D2.0mm" H 5625 2075 50  0001 C CNN
-F 3 "~" H 5625 2075 50  0001 C CNN
-	1    5425 2075
+L Connector:TestPoint TP1
+U 1 1 5D8F0926
+P 5425 1775
+F 0 "TP1" V 5425 2100 50  0000 R CNN
+F 1 "+3.3V" V 5425 2375 50  0000 R CNN
+F 2 "Xling Footprints:TestPoint_Pad_D2.0mm" H 5625 1775 50  0001 C CNN
+F 3 "~" H 5625 1775 50  0001 C CNN
+	1    5425 1775
 	0    1    1    0   
 $EndComp
 Wire Wire Line
-	5425 2075 5350 2075
+	5175 1875 5425 1875
 Wire Wire Line
-	5350 2075 5350 2175
+	5350 1675 5350 1775
+Wire Wire Line
+	5350 1775 5425 1775
+$Comp
+L Connector:TestPoint TP5
+U 1 1 5D91C2BD
+P 5425 2475
+F 0 "TP5" V 5425 2800 50  0000 R CNN
+F 1 "GND" V 5425 3000 50  0000 R CNN
+F 2 "Xling Footprints:TestPoint_Pad_D2.0mm" H 5625 2475 50  0001 C CNN
+F 3 "~" H 5625 2475 50  0001 C CNN
+	1    5425 2475
+	0    1    1    0   
+$EndComp
+Wire Wire Line
+	5425 2475 5350 2475
+Wire Wire Line
+	5350 2475 5350 2575
 $Comp
 L xling:OpenHardwareLogo OH1
 U 1 1 5D70AEFD
@@ -1774,4 +1694,237 @@ F 3 "" H 4925 3275 60  0001 C CNN
 	1    4925 3275
 	1    0    0    -1  
 $EndComp
+Wire Wire Line
+	7900 1125 7900 2000
+Wire Wire Line
+	8000 1350 7800 1350
+Wire Wire Line
+	7800 1350 7800 1450
+Connection ~ 7800 1450
+Wire Wire Line
+	7800 1550 7800 2550
+Text GLabel 6950 1900 0    60   Input ~ 0
+OLED_DC
+Text GLabel 4525 3600 2    60   Input ~ 0
+OLED_DC
+Wire Wire Line
+	4200 3600 4525 3600
+$Comp
+L xling:R R1
+U 1 1 5DB45BE3
+P 7225 1425
+F 0 "R1" V 7300 1425 50  0000 C CNN
+F 1 "10K" V 7225 1425 50  0000 C CNN
+F 2 "Xling Footprints:R_0603_1608Metric" V 7155 1425 50  0001 C CNN
+F 3 "" H 7225 1425 50  0001 C CNN
+F 4 "0603SAJ0103T5E" V 7225 1425 50  0001 C CNN "Model"
+	1    7225 1425
+	-1   0    0    1   
+$EndComp
+$Comp
+L xling:R R2
+U 1 1 5DB625A6
+P 7425 1425
+F 0 "R2" V 7500 1425 50  0000 C CNN
+F 1 "10K" V 7425 1425 50  0000 C CNN
+F 2 "Xling Footprints:R_0603_1608Metric" V 7355 1425 50  0001 C CNN
+F 3 "" H 7425 1425 50  0001 C CNN
+F 4 "0603SAJ0103T5E" V 7425 1425 50  0001 C CNN "Model"
+	1    7425 1425
+	-1   0    0    1   
+$EndComp
+$Comp
+L xling:R R21
+U 1 1 5DB64787
+P 7625 1425
+F 0 "R21" V 7700 1425 50  0000 C CNN
+F 1 "10K" V 7625 1425 50  0000 C CNN
+F 2 "Xling Footprints:R_0603_1608Metric" V 7555 1425 50  0001 C CNN
+F 3 "" H 7625 1425 50  0001 C CNN
+F 4 "0603SAJ0103T5E" V 7625 1425 50  0001 C CNN "Model"
+	1    7625 1425
+	-1   0    0    1   
+$EndComp
+Wire Wire Line
+	8000 2450 7750 2450
+Wire Wire Line
+	7750 2450 7750 2750
+Wire Wire Line
+	7750 2750 7700 2750
+Wire Wire Line
+	8000 2350 7700 2350
+Wire Wire Line
+	7700 2350 7700 2650
+Wire Wire Line
+	7700 2650 7450 2650
+$Comp
+L xling:R R22
+U 1 1 5DBDDCC5
+P 6875 2375
+F 0 "R22" V 6950 2375 50  0000 C CNN
+F 1 "10K" V 6875 2375 50  0000 C CNN
+F 2 "Xling Footprints:R_0603_1608Metric" V 6805 2375 50  0001 C CNN
+F 3 "" H 6875 2375 50  0001 C CNN
+F 4 "0603SAJ0103T5E" V 6875 2375 50  0001 C CNN "Model"
+	1    6875 2375
+	-1   0    0    1   
+$EndComp
+$Comp
+L xling:R R23
+U 1 1 5DBDDDB9
+P 7050 2375
+F 0 "R23" V 7125 2375 50  0000 C CNN
+F 1 "10K" V 7050 2375 50  0000 C CNN
+F 2 "Xling Footprints:R_0603_1608Metric" V 6980 2375 50  0001 C CNN
+F 3 "" H 7050 2375 50  0001 C CNN
+F 4 "0603SAJ0103T5E" V 7050 2375 50  0001 C CNN "Model"
+	1    7050 2375
+	-1   0    0    1   
+$EndComp
+$Comp
+L xling:+3.3V #PWR033
+U 1 1 5DBFC0D9
+P 7050 2150
+F 0 "#PWR033" H 7050 2000 50  0001 C CNN
+F 1 "+3.3V" H 7050 2290 50  0000 C CNN
+F 2 "" H 7050 2150 50  0001 C CNN
+F 3 "" H 7050 2150 50  0001 C CNN
+	1    7050 2150
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	7050 2150 7050 2175
+Wire Wire Line
+	6875 2225 6875 2175
+Wire Wire Line
+	6875 2175 7050 2175
+Connection ~ 7050 2175
+Wire Wire Line
+	7050 2175 7050 2225
+$Comp
+L Connector:TestPoint TP3
+U 1 1 5DC304E7
+P 5425 1975
+F 0 "TP3" V 5425 2300 50  0000 R CNN
+F 1 "SCK" V 5425 2500 50  0000 R CNN
+F 2 "Xling Footprints:TestPoint_Pad_D2.0mm" H 5625 1975 50  0001 C CNN
+F 3 "~" H 5625 1975 50  0001 C CNN
+	1    5425 1975
+	0    1    1    0   
+$EndComp
+$Comp
+L Connector:TestPoint TP4
+U 1 1 5DC3058F
+P 5425 2075
+F 0 "TP4" V 5425 2400 50  0000 R CNN
+F 1 "MOSI" V 5425 2600 50  0000 R CNN
+F 2 "Xling Footprints:TestPoint_Pad_D2.0mm" H 5625 2075 50  0001 C CNN
+F 3 "~" H 5625 2075 50  0001 C CNN
+	1    5425 2075
+	0    1    1    0   
+$EndComp
+$Comp
+L Connector:TestPoint TP6
+U 1 1 5DC30631
+P 5425 2175
+F 0 "TP6" V 5425 2500 50  0000 R CNN
+F 1 "CS" V 5425 2700 50  0000 R CNN
+F 2 "Xling Footprints:TestPoint_Pad_D2.0mm" H 5625 2175 50  0001 C CNN
+F 3 "~" H 5625 2175 50  0001 C CNN
+	1    5425 2175
+	0    1    1    0   
+$EndComp
+$Comp
+L Connector:TestPoint TP7
+U 1 1 5DC508E5
+P 5425 2275
+F 0 "TP7" V 5425 2600 50  0000 R CNN
+F 1 "DC" V 5425 2800 50  0000 R CNN
+F 2 "Xling Footprints:TestPoint_Pad_D2.0mm" H 5625 2275 50  0001 C CNN
+F 3 "~" H 5625 2275 50  0001 C CNN
+	1    5425 2275
+	0    1    1    0   
+$EndComp
+Text GLabel 5425 1975 0    60   Input ~ 0
+SCK
+Text GLabel 5425 2075 0    60   Input ~ 0
+MOSI
+Text GLabel 5425 2175 0    60   Input ~ 0
+OLED_CS
+Text GLabel 5425 2275 0    60   Input ~ 0
+OLED_DC
+$Comp
+L Connector:TestPoint TP8
+U 1 1 5DC8071C
+P 5425 2375
+F 0 "TP8" V 5425 2700 50  0000 R CNN
+F 1 "RST" V 5425 2900 50  0000 R CNN
+F 2 "Xling Footprints:TestPoint_Pad_D2.0mm" H 5625 2375 50  0001 C CNN
+F 3 "~" H 5625 2375 50  0001 C CNN
+	1    5425 2375
+	0    1    1    0   
+$EndComp
+Text GLabel 5425 2375 0    60   Input ~ 0
+OLED_RST
+Wire Wire Line
+	10250 1350 10250 1200
+Connection ~ 10250 1350
+Wire Wire Line
+	9750 1350 9875 1350
+Wire Wire Line
+	9750 1450 9875 1450
+Wire Wire Line
+	9875 1450 9875 1350
+Connection ~ 9875 1350
+Wire Wire Line
+	9875 1350 10250 1350
+Wire Wire Line
+	7225 1125 7425 1125
+Wire Wire Line
+	6950 1800 7425 1800
+Wire Wire Line
+	6950 1700 7625 1700
+Wire Wire Line
+	6950 1900 7225 1900
+Wire Wire Line
+	7225 1575 7225 1900
+Connection ~ 7225 1900
+Wire Wire Line
+	7225 1900 8000 1900
+Wire Wire Line
+	7425 1575 7425 1800
+Connection ~ 7425 1800
+Wire Wire Line
+	7425 1800 8000 1800
+Wire Wire Line
+	7625 1575 7625 1700
+Connection ~ 7625 1700
+Wire Wire Line
+	7625 1700 8000 1700
+Wire Wire Line
+	7225 1275 7225 1125
+Wire Wire Line
+	7425 1275 7425 1125
+Connection ~ 7425 1125
+Wire Wire Line
+	7425 1125 7625 1125
+Wire Wire Line
+	7625 1275 7625 1125
+Connection ~ 7625 1125
+Wire Wire Line
+	7625 1125 7900 1125
+Wire Wire Line
+	6750 2750 6875 2750
+Wire Wire Line
+	6750 2650 7050 2650
+Wire Wire Line
+	6875 2525 6875 2750
+Connection ~ 6875 2750
+Wire Wire Line
+	6875 2750 7400 2750
+Wire Wire Line
+	7050 2525 7050 2650
+Connection ~ 7050 2650
+Wire Wire Line
+	7050 2650 7150 2650
 $EndSCHEMATC
