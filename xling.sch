@@ -6,12 +6,12 @@ $Descr A4 11693 8268
 encoding utf-8
 Sheet 1 1
 Title "Xling, a tamagotchi-like toy"
-Date "2019-10-20"
-Rev "3.1"
+Date "2020-01-13"
+Rev "3.2"
 Comp ""
 Comment1 ""
 Comment2 ""
-Comment3 "Dmitry Salychev"
+Comment3 "Dmitry Salychev <dsl@mcusim.org>"
 Comment4 "Designed by"
 $EndDescr
 $Comp
@@ -1373,7 +1373,7 @@ Text GLabel 4525 4300 2    60   Input ~ 0
 BTN1
 Text GLabel 4525 4200 2    60   Input ~ 0
 BTN2
-Text GLabel 4525 2600 2    60   Input ~ 0
+Text GLabel 4525 2400 2    60   Input ~ 0
 BTN3
 Text GLabel 7925 5625 2    60   Input ~ 0
 BTN1
@@ -1515,8 +1515,6 @@ Wire Wire Line
 	4200 4300 4525 4300
 Wire Wire Line
 	4525 4200 4200 4200
-Wire Wire Line
-	4200 2600 4525 2600
 $Comp
 L xling:R R3
 U 1 1 5D6F271F
@@ -1927,4 +1925,6 @@ Wire Wire Line
 Connection ~ 7050 2650
 Wire Wire Line
 	7050 2650 7150 2650
+Wire Wire Line
+	4525 2400 4200 2400
 $EndSCHEMATC
