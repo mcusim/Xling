@@ -41,5 +41,6 @@ Please, note that the software part of the project isn't finished yet!
 
 ## Website and Contact
 
-[https://hackaday.io/project/165726-xling]    
-Dmitry Salychev <dsl AT mcusim DOT org>
+Hackaday.io project: https://hackaday.io/project/165726-xling    
+Email: dsl AT mcusim DOT org    
+Dmitry Salychev
