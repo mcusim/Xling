@@ -1,0 +1,30 @@
+/home/dsl/git/Xling/xling.sch,,,,,,,
+Sat 21 Mar 2020 05:07:58 PM CET,,,,,,,
+Eeschema 5.1.5-52549c5~84~ubuntu18.04.1,,,,,,,
+Revision: 3.2,,,,,,,
+Component Count: 69,,,,,,,
+Ref,Qnty,Value,Part,Footprint,Description,Vendor,Model
+"C1, C3, C4, C7, C10, C12",6,100nF,xling:C,Xling Footprints:C_0603_1608Metric,,,CL10B104KO8NNNC
+"C2, C11, C17, C18, C19, C20, C21",7,4.7uF,xling:C,Xling Footprints:C_0603_1608Metric,,,CL10A475KQ8NNNC
+"C5, C6, C16, C22",4,22pF,xling:C,Xling Footprints:C_0603_1608Metric,,,CL10C220JB8NNNC
+"C8, C9",2,0.22uF,xling:C,Xling Footprints:C_0603_1608Metric,,,CL10B224KO8NNNC
+"C13, C14, C15",3,4.7nF,xling:C,Xling Footprints:C_0603_1608Metric,,,CL10B472KB8NNNC
+D1,1,1N5819,xling:1N5818,Xling Footprints:D_SOD-123,,,1N5819HW-7-F
+J1,1,ISP,xling:Conn_02x03_Odd_Even,Xling Footprints:Molex_Pico-Lock_504050-0691_1x06-1MP_P1.50mm_Horizontal,,,504050-0691
+J2,1,USB_OTG,xling:USB_OTG,Xling Footprints:USB_Micro-B_Molex-105017-0001,,,105017-0001
+J3,1,Battery,xling:Conn_01x02,Xling Footprints:Battery_SMD_pads_1x02_HandSoldering,,,
+L1,1,10uH,xling:L,Xling Footprints:L_1210_3225Metric,,,B82422A1103K100
+L2,1,2.2uH,xling:L,Xling Footprints:L_1210_3225Metric,,,NLV32T-2R2J-PF
+OH1,1,OpenHardwareLogo,xling:OpenHardwareLogo,Xling Footprints:oshw,,,
+Q1,1,NTR0202PL,xling:NTR2101P,Xling Footprints:SOT-23,,,NTR0202PLT1G
+"R1, R2, R19, R20, R21, R22, R23",7,10K,xling:R,Xling Footprints:R_0603_1608Metric,,,0603SAJ0103T5E
+"R3, R8, R9, R10, R11, R13",6,100K,xling:R,Xling Footprints:R_0603_1608Metric,,,0603SAJ0104T5E
+"R4, R5, R6, R7, R12, R14, R15",7,510K,xling:R,Xling Footprints:R_0603_1608Metric,,,0603SAJ0514T5E
+R16,1,2.55K,xling:R,Xling Footprints:R_0603_1608Metric,,,0603SAF2551T5E
+"R17, R18",2,110K,xling:R,Xling Footprints:R_0603_1608Metric,,,0603SAF1103T5E
+"SW1, SW2, SW3",3,BTN,xling:SW_Push,Xling Footprints:SW_Tact_4.5x4.5mm_TVCM09BB_Low_Profile,,,TVCM09BB
+U1,1,REX012864L,xling:REX012864L,Xling Footprints:DisplayPin_1x30_P0.7mm,,,REX012864LYAP3N00000
+U2,1,ATmega1284P-AU,xling:ATmega1284P-AU,Xling Footprints:TQFP-44_10x10mm_P0.8mm,"20MHz, 128kB Flash, 16kB SRAM, 4kB EEPROM, JTAG, TQFP-44",,ATMEGA1284P-AU
+U3,1,MCP73831,xling:MCP73831,Xling Footprints:MCP73831_SOT_23,,,MCP73831T-2ATI/OT
+U4,1,AP3401_TSOT26,xling:AP3401_TSOT26,Xling Footprints:AP3401_TSOT26,"1.5MHz, 1A DC-DC Buck Converter",,AP3401KTTR-G1
+Y1,1,12MHz,xling:Crystal_GND24,Xling Footprints:Crystal_SMD_CFPX-104-4Pin_5x3.2mm,"Four pin crystal, GND on pins 2 and 4",,LFXTAL032878BULK

@@ -1,0 +1,255 @@
+What is it?
+-----------
+
+ This is a coding style guide based on FreeBSD's style(9). It is generally a
+ set of examples how to format code, name variables, etc. to consult when
+ in doubt.
+
+ It's important to strictly follow the guide in the original files of the
+ Xling-firmware project to help everyone read and understand the code easily.
+ It's also adviced to follow this guide in modifications to the files obtained
+ externally (like FreeRTOS sources, MCUSim drivers, etc.).
+
+ This guide might be overwhelming for the first time readers, but it allows to
+ write code which can be read easily and in a pleasant manner.
+
+Content
+-------
+
+1. Copyright header
+    1.1. Copyright header in source files
+    1.2. Copyright header in header files
+2. Include files
+    2.1. Non-local include files
+    2.2. Local include files
+    2.3. Conditional includes
+3. Namespace
+
+1. Copyright header
+-------------------
+
+ The copyright header should be placed at the very top of the files and be a
+ multi-line comment, with the first line of the comment having a dash after
+ the star "/*-" (for automatic processing) like so:
+
+     /*-
+      * SPDX-License-Identifier: GPL-3.0-or-later
+      *
+      * Copyright (c) 2017-2019 Dmitry Salychev
+      *
+      * Long, boring license goes here, but trimmed for brevity
+      */
+
+ Comments starting in columns other than the first are never considered license
+ statements. Use the appropriate SPDX-License-Identifier line before the
+ copyright.
+
+1.1. Copyright header in source files
+-------------------------------------
+
+ In general, do not leave a blank line between a copyright header and the
+ upcoming non-local include directives, but find a place after them to provide
+ a comment with a description of the file like so:
+
+     /*-
+      * SPDX-License-Identifier: GPL-3.0-or-later
+      *
+      * Copyright (c) 2017-2019 Dmitry Salychev
+      *
+      * Long, boring license goes here, but trimmed for brevity
+      */
+     #include <stdint.h>
+     #include <string.h>
+     #include <avr/io.h>
+     #include <avr/interrupt.h>
+     #include <avr/pgmspace.h>
+     #include <util/delay.h>
+
+     /*
+      * Provide a description of the source file giving a moderate amount of
+      * details here. It'll likely be the first comment others will start
+      * reading.
+      *
+      * NOTE: An important note which is nice to know before reading any other
+      * code in the file.
+      */
+
+ This is important to leave a blank line before and after the description
+ comment to improve its readability.
+
+1.2. Copyright header in header files
+-------------------------------------
+
+ Start of a header file looks almost the same:
+
+     /*-
+      * SPDX-License-Identifier: GPL-3.0-or-later
+      *
+      * Copyright (c) 2017-2019 Dmitry Salychev
+      *
+      * Long, boring license goes here, but trimmed for brevity
+      */
+     #ifndef GUARD_MACRO_H_
+     #define GUARD_MACRO_H_ 1
+
+     /*
+      * Provide a description of the header file giving a moderate amount of
+      * details here. It'll likely be the first comment others will start
+      * reading.
+      *
+      * NOTE: An important note which is nice to know before reading any other
+      * code in the file.
+      */
+
+     #endif /* GUARD_MACRO_H_ */
+
+2. Include files
+----------------
+
+2.1. Non-local include files
+----------------------------
+
+ Non-local include files should follow the copyright header in source files
+ like in 1.1, but the same non-local includes should follow a blank line after
+ the description comment in header files like so:
+
+     /*-
+      * SPDX-License-Identifier: GPL-3.0-or-later
+      *
+      * Copyright (c) 2017-2019 Dmitry Salychev
+      *
+      * Long, boring license goes here, but trimmed for brevity
+      */
+     #ifndef GUARD_MACRO_H_
+     #define GUARD_MACRO_H_ 1
+
+     /*
+      * Provide a description of the header file giving a moderate amount of
+      * details here. It'll likely be the first comment others will start
+      * reading.
+      *
+      * NOTE: An important note which is nice to know before reading any other
+      * code in the file.
+      */
+
+     #include <stdint.h>
+     #include <avr/pgmspace.h>
+
+     #endif /* GUARD_MACRO_H_ */
+
+2.2. Local include files
+------------------------
+
+ Keep the different groups of the local headers separated by a blank line like:
+
+     /*
+      * Provide a description of the source file giving a moderate amount of
+      * details here. It'll likely be the first comment others will start
+      * reading.
+      *
+      * NOTE: An important note which is nice to know before reading any other
+      * code in the file.
+      */
+
+     /* FreeRTOS local includes. */
+     #include "FreeRTOS.h"
+     #include "task.h"
+
+     /* Local includes of the MCUSim drivers. */
+     #include "mcusim/drivers/avr-gcc/avr/display/sh1106/sh1106.h"
+     #include "mcusim/drivers/avr-gcc/avr/display/sh1106/sh1106_graphics.h"
+
+     /* Local includes of the Xling-firmware project itself. */
+     #include "xling/tasks.h"
+     #include "xling/context.h"
+     #include "xling/graphics/xling.h"
+     #include "xling/graphics/luci.h"
+
+ The local includes should be separated by a blank line from the non-local
+ includes in the header files.
+
+2.3. Conditional includes
+-------------------------
+
+ It can be necessary to use a define directive before the includes. Put it like
+ so to the source files:
+
+     /*-
+      * SPDX-License-Identifier: GPL-3.0-or-later
+      *
+      * Copyright (c) 2017-2019 Dmitry Salychev
+      *
+      * Long, boring license goes here, but trimmed for brevity
+      */
+     #define F_CPU		12000000UL	/* CPU 12 MHz */
+
+     #include <stdint.h>
+     #include <stdio.h>
+     #include <limits.h>
+
+ You may attach the define directives to the groups of includes:
+
+     /*
+      * Provide a description of the source file giving a moderate amount of
+      * details here. It'll likely be the first comment others will start
+      * reading.
+      *
+      * NOTE: An important note which is nice to know before reading any other
+      * code in the file.
+      */
+
+     /* FreeRTOS local includes. */
+     #include "FreeRTOS.h"
+     #include "task.h"
+
+     /*
+      * It's important to describe this specific configuration of the include
+      * files.
+      *
+      * NOTE: Don't hesitate to provide a plenty of the details to cover
+      * possible consequences of such a hacky approach.
+      */
+     #if defined(WITH_MCUSIM_DRIVERS)
+     #include "mcusim/drivers/avr-gcc/avr/display/sh1106/sh1106.h"
+     #include "mcusim/drivers/avr-gcc/avr/display/sh1106/sh1106_graphics.h"
+     #endif /* WITH_MCUSIM_DRIVERS */
+
+3. Namespace
+------------
+
+ Do not #define or declare names in the implementation namespace except for
+ implementing application interfaces.
+
+ It means that a header file should contain macros, types and signatures of the
+ functions which are supposed to be part of its interface which can be used
+ throught the program.
+
+ Names of these parts of the interface may contain prefixes in order to avoid
+ collisions:
+
+     typedef struct XG_TaskArgs_t {
+             QueueHandle_t	display_q;	/* Display task queue. */
+             void *		task_arg;	/* Task-specific argument. */
+     } XG_TaskArgs_t;
+
+     typedef enum XG_MsgType_t {
+             XG_MSG_BATLVL,           /* Current battery level, in %. */
+             XG_MSG_BATSTATPIN,       /* Battery status pin value. */
+             XG_MSG_BATCHARGING,      /* Battery started charging. */
+             XG_MSG_BATSTOPCHARGING,  /* Battery stopped charging. */
+     } XG_MsgType_t;
+
+     void        XG_DisplayTask(void *) __attribute__((noreturn));
+     void        XG_BatteryMonitorTask(void *) __attribute__((noreturn));
+
+ Any functions implemented in a source file should have an internal linkage
+ (i.e. declared with "static" keyword) except for the functions which form
+ an interface of the file (declared in the header files usually).
+
+ Variables should also have an internal linkage (i.e. declared with "static"
+ keyword) if they're declared in a translation unit, but outside of any
+ function.
+
+ Variables with external linkage (i.e. declared without any keyword or with
+ "extern" one) are acceptable, but MUST be documented. It is strictly adviced to
+ avoid using such global variables.
