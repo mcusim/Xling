@@ -117,8 +117,12 @@ batmon_task(void *arg)
 			if (status == pdPASS) {
 				switch (msg.type) {
 				case XG_MSG_TASKSUSP_REQ:
-					/* Let the task to suspend itself. */
-					vTaskSuspend(NULL);
+					/*
+					 * Block the task indefinitely to wait
+					 * for a notification.
+					 */
+					xTaskNotifyWait(0, 0, NULL,
+					                portMAX_DELAY);
 					break;
 				default:
 					/* Ignore other messages silently. */

@@ -61,14 +61,20 @@ typedef enum wake_source_e {
 
 /* Local variables. */
 static volatile TaskHandle_t _task_handle;
-static volatile uint16_t _tick_val = 0;		/* # of ticks passed. */
-static volatile uint8_t _extint_to_wake = 0;
+
+/* Number of the timer ticks passed. */
+static volatile uint16_t _tick_val = 0;
+/* Task shouldn't be woken from external interrupts initially. */
+static volatile uint8_t _task_woken_from_extint = 1;
+/* Task should be woken from its timer initially. */
+static volatile uint8_t _task_woken_from_timer = 0;
 static volatile wake_source_e _wake_source = WAKE_FROM_TIMER;
+/* END Local variables. */
 
 /* Local functions. */
 static void	sleepmod_task(void *) __attribute__((noreturn));
-static void	suspend_tasks(const XG_TaskArgs_t *arg);
-static void	resume_tasks(const XG_TaskArgs_t *arg);
+static void	ask_tasks_wait(const XG_TaskArgs_t *arg);
+static void	notify_tasks(const XG_TaskArgs_t *arg);
 static void	init_timer0(void);
 static void	stop_timer0(void);
 static void	start_timer0(void);
@@ -115,8 +121,11 @@ sleepmod_task(void *arg)
 
 	/* Task loop */
 	while (1) {
-		/* Let the task to suspend itself. */
-		vTaskSuspend(NULL);
+		/*
+		 * Block the task indefinitely to wait for a notification
+		 * (interrupt from a timer or an external one).
+		 */
+		xTaskNotifyWait(0, 0, NULL, portMAX_DELAY);
 
 		switch (_wake_source) {
 		case WAKE_FROM_TIMER:
@@ -128,13 +137,16 @@ sleepmod_task(void *arg)
 
 			/* Reset the timer ticks. */
 			_tick_val = 0;
-			_extint_to_wake = 1;
 
 			/*
-			 * Timeout expired. Let's ask all of the
-			 * tasks to suspend.
+			 * Timeout expired. Let's ask all of the tasks to
+			 * suspend.
 			 */
-			suspend_tasks(args);
+			ask_tasks_wait(args);
+
+			/* Toggle the switch. */
+			_task_woken_from_extint = 0;
+
 			break;
 		case WAKE_FROM_EXTINT:
 			/* Disable external interrupts. */
@@ -147,10 +159,14 @@ sleepmod_task(void *arg)
 			_tick_val = 0;
 
 			/*
-			 * There was an external interrupt. Let's resume all of
+			 * There was an external interrupt. Let's notify all of
 			 * the tasks.
 			 */
-			resume_tasks(args);
+			notify_tasks(args);
+
+			/* Toggle the switch. */
+			_task_woken_from_timer = 0;
+
 			break;
 		default:
 			break;
@@ -167,7 +183,7 @@ sleepmod_task(void *arg)
 }
 
 static void
-suspend_tasks(const XG_TaskArgs_t *arg)
+ask_tasks_wait(const XG_TaskArgs_t *arg)
 {
 	const QueueHandle_t q[] = {
 		arg->batmon_ti.queue_hdl,
@@ -185,7 +201,7 @@ suspend_tasks(const XG_TaskArgs_t *arg)
 }
 
 static void
-resume_tasks(const XG_TaskArgs_t *arg)
+notify_tasks(const XG_TaskArgs_t *arg)
 {
 	const TaskHandle_t t[] = {
 		arg->batmon_ti.task_hdl,
@@ -195,7 +211,7 @@ resume_tasks(const XG_TaskArgs_t *arg)
 
 	/* Resume all of the tasks. */
 	for (size_t i = 0; i < tnum; i++) {
-		vTaskResume(t[i]);
+		xTaskNotify(t[i], 0, eNoAction);
 	}
 }
 
@@ -325,27 +341,34 @@ start_timer0(void)
 
 ISR(TIMER0_COMPA_vect)
 {
-	BaseType_t yield;
+	BaseType_t higher_prior_task_woken = pdFALSE;
 
 	if (_tick_val == (TIMEOUT_TICKS - 1)) {
 		/* Reset the timer ticks. */
 		_tick_val = 0;
 
-		/* Set the task wake source. */
-		_wake_source = WAKE_FROM_TIMER;
+		if (_task_woken_from_timer == 0) {
+			/* Set the task wake source. */
+			_wake_source = WAKE_FROM_TIMER;
 
-		/* Resume the suspended Sleep Mode task. */
-		yield = xTaskResumeFromISR(_task_handle);
+			/* Toggle the switch. */
+			_task_woken_from_timer = 1;
 
-		if (yield == pdTRUE) {
-			/*
-			 * A context switch should now be performed so the ISR
-			 * returns directly to the resumed task. This is because
-			 * the resumed task had a priority that was equal to or
-			 * higher than the task that is currently in the
-			 * Running state.
-			 */
-			portYIELD_FROM_ISR();
+			xTaskNotifyFromISR(_task_handle, 0, eNoAction,
+			                   &higher_prior_task_woken);
+
+			if (higher_prior_task_woken == pdTRUE) {
+				/*
+				 * A context switch should now be performed so
+				 * the ISR returns directly to the resumed task.
+				 *
+				 * This is because the resumed task had a
+				 * priority that was equal to or higher than
+				 * the task that is currently in the Running
+				 * state.
+				 */
+				portYIELD_FROM_ISR();
+			}
 		}
 	} else {
 		_tick_val++;
@@ -354,14 +377,19 @@ ISR(TIMER0_COMPA_vect)
 
 ISR(INT0_vect)
 {
-	if (_extint_to_wake != 0) {
-		/* Resume the suspended Sleep Mode task. */
-		const BaseType_t yield = xTaskResumeFromISR(_task_handle);
+	BaseType_t higher_prior_task_woken = pdFALSE;
 
+	if (_task_woken_from_extint == 0) {
 		/* Set the task wake source. */
 		_wake_source = WAKE_FROM_EXTINT;
 
-		if (yield == pdTRUE) {
+		/* Toggle the switch. */
+		_task_woken_from_extint = 1;
+
+		xTaskNotifyFromISR(_task_handle, 0, eNoAction,
+		                   &higher_prior_task_woken);
+
+		if (higher_prior_task_woken == pdTRUE) {
 			/*
 			 * A context switch should now be performed so the
 			 * ISR returns directly to the resumed task.
@@ -372,8 +400,6 @@ ISR(INT0_vect)
 			 */
 			portYIELD_FROM_ISR();
 		}
-
-		_extint_to_wake = 0;
 	}
 }
 

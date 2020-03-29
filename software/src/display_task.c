@@ -223,8 +223,12 @@ display_task(void *arg)
 					MSIM_SH1106_bufSend(display);
 					MSIM_SH1106_Wait(display);
 
-					/* Let the task to suspend itself. */
-					vTaskSuspend(NULL);
+					/*
+					 * Block the task indefinitely to wait
+					 * for a notification.
+					 */
+					xTaskNotifyWait(0, 0, NULL,
+					                portMAX_DELAY);
 
 					/*
 					 * Skip the first battery level messages
@@ -381,8 +385,8 @@ display_task(void *arg)
 			MSIM_SH1106_Print(display, &textbuf[0]);
 		}
 
-		/* Let the task to suspend itself until the next wake. */
-		vTaskSuspend(NULL);
+		/* Block the task indefinitely to wait for a notification. */
+		xTaskNotifyWait(0, 0, NULL, portMAX_DELAY);
 	}
 
 	/*

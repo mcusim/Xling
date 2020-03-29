@@ -466,7 +466,6 @@ vPortSuppressTicksAndSleep(TickType_t idle_time)
 			 */
 			vTaskStepTick(idle_time);
 		}
-
 		/* Restart the timer that is generating the tick interrupt. */
 		start_tick_timer();
 	}
@@ -522,6 +521,7 @@ sleep(uint8_t mode)
 {
 	set_sleep_mode(mode);
 	sleep_enable();
+	sleep_bod_disable();
 	sleep_cpu();
 	sleep_disable();
 }
