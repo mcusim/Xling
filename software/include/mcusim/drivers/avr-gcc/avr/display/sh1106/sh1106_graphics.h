@@ -1,4 +1,6 @@
-/*
+/*-
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ *
  * This file is part of MCUSim, an XSPICE library with microcontrollers.
  *
  * Copyright (C) 2017-2019 MCUSim Developers
@@ -25,6 +27,23 @@
 
 #include "mcusim/drivers/avr-gcc/avr/display/sh1106/sh1106.h"
 
+typedef struct MSIM_SH1106Canvas_t {
+	uint8_t *data;
+	uint16_t width;
+	uint16_t height;
+	uint16_t data_size;
+} MSIM_SH1106Canvas_t;
+
+typedef struct MSIM_SH1106Image_t {
+	const uint8_t *data;
+	uint16_t width;
+	uint16_t height;
+	uint16_t data_size;
+} MSIM_SH1106Image_t;
+
 int	MSIM_SH1106_Print(MSIM_SH1106_t *dev, const char *text);
+int	MSIM_SH1106_Draw_PF(MSIM_SH1106Canvas_t * const canvas,
+                            const MSIM_SH1106Image_t * const image,
+                            const uint16_t x, const uint16_t y);
 
 #endif /* MSIM_GRH_DISPLAY_SH1106_H_ */

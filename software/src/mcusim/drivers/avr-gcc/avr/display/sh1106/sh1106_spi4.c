@@ -109,7 +109,7 @@ typedef enum con_state {
 	CON_MASTER_RECV,	/* Master receives data */
 } con_state;
 
-/* Cconnection block */
+/* Connection block */
 typedef struct sh1106_con {
 	volatile uint8_t	*rst_port;	/* RST port */
 	volatile uint8_t	*rst_ddr;	/* RST port (DDR) */

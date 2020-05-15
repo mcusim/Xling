@@ -59,7 +59,7 @@ project(Xling-firmware C)
 # Xling-firmware version
 set(XLING_MAJOR_VERSION 0)
 set(XLING_MINOR_VERSION 4)
-set(XLING_PATCH_VERSION 13)
+set(XLING_PATCH_VERSION 14)
 
 # Target file name (without extension) and version
 set(TARGET_OUTPUT_BASENAME "Xling-firmware-${XLING_MAJOR_VERSION}.${XLING_MINOR_VERSION}.${XLING_PATCH_VERSION}")
@@ -151,13 +151,11 @@ add_definitions("-DconfigXG_MINOR_VER=${XLING_MINOR_VERSION}")
 add_definitions("-DconfigXG_PATCH_VER=${XLING_PATCH_VERSION}")
 
 # ------------------------------------------------------------------------------
-# MCUSim drivers configuration
+# MCUSim driver configuration
 # ------------------------------------------------------------------------------
-#add_definitions("-DconfigMSIM_DRV_DISPLAY_SH1106_TWI")
-#add_definitions("-DconfigMSIM_DRV_DISPLAY_SH1106_TWIBB")
 add_definitions("-DconfigMSIM_DRV_DISPLAY_SH1106_SPI4")
 add_definitions("-DconfigMSIM_DRV_DISPLAY_SH1106_DNUM=1")
-add_definitions("-DconfigMSIM_DRV_DISPLAY_SH1106_BUFSZ=256")
+add_definitions("-DconfigMSIM_DRV_DISPLAY_SH1106_BUFSZ=150")
 
 # ------------------------------------------------------------------------------
 # FreeRTOS configuration and adjustments
@@ -187,6 +185,7 @@ set(CMAKE_CXX_COMPILER ${AVR_CXX})
 # ------------------------------------------------------------------------------
 include_directories("./")
 include_directories("include/")
+include_directories("include/rtos/")
 
 # ------------------------------------------------------------------------------
 # Set sources here
@@ -203,11 +202,13 @@ set(XLING_SRC
 	src/mcusim/drivers/avr-gcc/avr/display/sh1106/sh1106_spi4.c
 	src/mcusim/drivers/avr-gcc/avr/display/sh1106/sh1106_twi.c
 	src/mcusim/drivers/avr-gcc/avr/display/sh1106/sh1106_twibb.c
-	src/fuse.c
-	src/main.c
-	src/display_task.c
-	src/battery_monitor_task.c
-	src/sleep_mode_task.c
+	src/xling/images/exy_in_bottle_02.c
+	src/xling/fuse.c
+	src/xling/main.c
+	src/xling/display_task.c
+	src/xling/battery_monitor_task.c
+	src/xling/sleep_mode_task.c
+	src/xling/keyboard_task.c
 )
 
 add_executable(${TARGET_OUTPUT_FILE} ${XLING_SRC})

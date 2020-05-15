@@ -96,7 +96,7 @@ extern void vPortSuppressTicksAndSleep(TickType_t idle_time);
 #define INCLUDE_vTaskSuspend			1
 #define INCLUDE_xTaskResume			0
 #define INCLUDE_xTaskResumeFromISR		1
-#define INCLUDE_vTaskDelayUntil			0
+#define INCLUDE_vTaskDelayUntil			1
 #define INCLUDE_vTaskDelay			1
 #define INCLUDE_xTaskGetHandle			1
 

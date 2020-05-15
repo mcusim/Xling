@@ -1,0 +1,238 @@
+/*-
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ *
+ * This file is part of a firmware for Xling, a tamagotchi-like toy.
+ *
+ * Copyright (c) 2019 Dmitry Salychev
+ *
+ * Xling firmware is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Xling firmware is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <limits.h>
+#include <avr/io.h>
+
+/*
+ * A task to process keyboard events.
+ */
+
+/* FreeRTOS headers. */
+#include "FreeRTOS.h"
+#include "task.h"
+#include "queue.h"
+
+/* Xling headers. */
+#include "xling/tasks.h"
+
+/* Local macros. */
+#define TASK_NAME		"Keyboard Task"
+#define STACK_SIZE		(configMINIMAL_STACK_SIZE)
+#define TASK_FREQUENCY		((TickType_t)(10))
+#define NO_DELAY		(0)
+
+/* Local variables. */
+static XG_ButtonState_e _keyboard[] = {
+	XG_BTN_LEFT_RELEASED,   /* 0 - Left button. */
+	XG_BTN_CENTER_RELEASED, /* 1 - Center button. */
+	XG_BTN_RIGHT_RELEASED,  /* 2 - Right button. */
+};
+static TaskHandle_t _task_handle;
+
+/* Local functions. */
+static void keyboard_task(void *) __attribute__((noreturn));
+
+int
+XG_InitKeyboardTask(XG_TaskArgs_t *arg, UBaseType_t priority,
+                    TaskHandle_t *task_handle)
+{
+	BaseType_t status;
+	TaskHandle_t th;
+	int rc = 0;
+
+	/* Create the keyboard task. */
+	status = xTaskCreate(keyboard_task, TASK_NAME, STACK_SIZE, arg,
+	                     priority, &th);
+
+	if (status != pdPASS) {
+		/* Task couldn't be created. */
+		rc = 1;
+	} else {
+		/* Task has been created successfully. */
+		if (task_handle != NULL) {
+			(*task_handle) = th;
+		}
+		_task_handle = th;
+	}
+
+	return rc;
+}
+
+static void
+keyboard_task(void *arg)
+{
+	const XG_TaskArgs_t * const args = (XG_TaskArgs_t *) arg;
+	BaseType_t status;
+	TickType_t last_wake_time;
+	XG_Msg_t msg;
+
+	/* Initialize the last wake time. */
+	last_wake_time = xTaskGetTickCount();
+
+	/* Task loop */
+	while (1) {
+		/* Wait for the next task tick. */
+		vTaskDelayUntil(&last_wake_time, TASK_FREQUENCY);
+
+		/* Receive all of the messages from the queue. */
+		while (1) {
+			/*
+			 * Attempt to receive a message from the queue.
+			 *
+			 * NOTE: This task won't be blocked because its main
+			 * purpose is to generate the keyboard events for the
+			 * other tasks.
+			 */
+			status = xQueueReceive(args->keyboard_info.queue_handle,
+			                       &msg, 0);
+
+			/* Message has been received. */
+			if (status == pdPASS) {
+				switch (msg.type) {
+				case XG_MSG_TASKSUSP_REQ:
+					/*
+					 * Block the task indefinitely to wait
+					 * for a notification.
+					 */
+					xTaskNotifyWait(0, 0, NULL,
+					                portMAX_DELAY);
+					break;
+				default:
+					/* Ignore other messages silently. */
+					break;
+				}
+			} else {
+				/*
+				 * Queue is empty. There is no need to receive
+				 * new messages anymore in this frame cycle.
+				 */
+				break;
+			}
+		}
+
+		/* Scan buttons and send messages. */
+
+		/* Read left button, PD3. */
+		if (_keyboard[0] == XG_BTN_LEFT_RELEASED) {
+			if (((PIND & 8U) >> 3) == 0U) {
+				_keyboard[0] = XG_BTN_LEFT_PRESSED;
+
+				msg.type = XG_MSG_KEYBOARD;
+				msg.value = XG_BTN_LEFT_PRESSED;
+
+				status = xQueueSendToBack(
+				        args->display_info.queue_handle, &msg,
+		                        portMAX_DELAY);
+				status = xQueueSendToBack(
+				        args->sleep_info.queue_handle, &msg, 0);
+			}
+		} else if (_keyboard[0] == XG_BTN_LEFT_PRESSED) {
+			if (((PIND & 8U) >> 3) == 1U) {
+				_keyboard[0] = XG_BTN_LEFT_RELEASED;
+
+				msg.type = XG_MSG_KEYBOARD;
+				msg.value = XG_BTN_LEFT_RELEASED;
+
+				status = xQueueSendToBack(
+				        args->display_info.queue_handle, &msg,
+		                        portMAX_DELAY);
+				status = xQueueSendToBack(
+				        args->sleep_info.queue_handle, &msg, 0);
+			}
+		} else {
+			/* Nothing to do in this case. */
+		}
+
+		/* Read center button, PD2. */
+		if (_keyboard[1] == XG_BTN_CENTER_RELEASED) {
+			if (((PIND & 4U) >> 2) == 0U) {
+				_keyboard[1] = XG_BTN_CENTER_PRESSED;
+
+				msg.type = XG_MSG_KEYBOARD;
+				msg.value = XG_BTN_CENTER_PRESSED;
+
+				status = xQueueSendToBack(
+				        args->display_info.queue_handle, &msg,
+		                        portMAX_DELAY);
+				status = xQueueSendToBack(
+				        args->sleep_info.queue_handle, &msg, 0);
+			}
+		} else if (_keyboard[1] == XG_BTN_CENTER_PRESSED) {
+			if (((PIND & 4U) >> 2) == 1U) {
+				_keyboard[1] = XG_BTN_CENTER_RELEASED;
+
+				msg.type = XG_MSG_KEYBOARD;
+				msg.value = XG_BTN_CENTER_RELEASED;
+
+				status = xQueueSendToBack(
+				        args->display_info.queue_handle, &msg,
+		                        portMAX_DELAY);
+				status = xQueueSendToBack(
+				        args->sleep_info.queue_handle, &msg, 0);
+			}
+		} else {
+			/* Nothing to do in this case. */
+		}
+
+		/* Read right button, PB2. */
+		if (_keyboard[2] == XG_BTN_RIGHT_RELEASED) {
+			if (((PINB & 4U) >> 2) == 0U) {
+				_keyboard[2] = XG_BTN_RIGHT_PRESSED;
+
+				msg.type = XG_MSG_KEYBOARD;
+				msg.value = XG_BTN_RIGHT_PRESSED;
+
+				status = xQueueSendToBack(
+				        args->display_info.queue_handle, &msg,
+		                        portMAX_DELAY);
+				status = xQueueSendToBack(
+				        args->sleep_info.queue_handle, &msg, 0);
+			}
+		} else if (_keyboard[2] == XG_BTN_RIGHT_PRESSED) {
+			if (((PINB & 4U) >> 2) == 1U) {
+				_keyboard[2] = XG_BTN_RIGHT_RELEASED;
+
+				msg.type = XG_MSG_KEYBOARD;
+				msg.value = XG_BTN_RIGHT_RELEASED;
+
+				status = xQueueSendToBack(
+				        args->display_info.queue_handle, &msg,
+		                        portMAX_DELAY);
+				status = xQueueSendToBack(
+				        args->sleep_info.queue_handle, &msg, 0);
+			}
+		} else {
+			/* Nothing to do in this case. */
+		}
+	}
+
+	/*
+	 * The task must be deleted before reaching the end of its
+	 * implementating function.
+	 *
+	 * NOTE: This point shouldn't be reached.
+	 */
+	vTaskDelete(NULL);
+}
