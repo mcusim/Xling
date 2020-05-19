@@ -40,7 +40,8 @@
 /* Local macros. */
 #define TASK_NAME		"Keyboard Task"
 #define STACK_SIZE		(configMINIMAL_STACK_SIZE)
-#define TASK_FREQUENCY		((TickType_t)(10))
+#define TASK_PERIOD		(10)				/* ms */
+#define TASK_DELAY		(pdMS_TO_TICKS(TASK_PERIOD))	/* ticks */
 #define NO_DELAY		(0)
 
 /* Local variables. */
@@ -59,22 +60,18 @@ XG_InitKeyboardTask(XG_TaskArgs_t *arg, UBaseType_t priority,
                     TaskHandle_t *task_handle)
 {
 	BaseType_t status;
-	TaskHandle_t th;
 	int rc = 0;
 
 	/* Create the keyboard task. */
 	status = xTaskCreate(keyboard_task, TASK_NAME, STACK_SIZE, arg,
-	                     priority, &th);
+	                     priority, task_handle);
 
 	if (status != pdPASS) {
 		/* Task couldn't be created. */
 		rc = 1;
 	} else {
 		/* Task has been created successfully. */
-		if (task_handle != NULL) {
-			(*task_handle) = th;
-		}
-		_task_handle = th;
+		_task_handle = (*task_handle);
 	}
 
 	return rc;
@@ -84,6 +81,9 @@ static void
 keyboard_task(void *arg)
 {
 	const XG_TaskArgs_t * const args = (XG_TaskArgs_t *) arg;
+	const QueueHandle_t display_queue = args->display_info.queue_handle;
+	const QueueHandle_t sleep_queue = args->sleep_info.queue_handle;
+	const QueueHandle_t keyboard_queue = args->keyboard_info.queue_handle;
 	BaseType_t status;
 	TickType_t last_wake_time;
 	XG_Msg_t msg;
@@ -94,7 +94,7 @@ keyboard_task(void *arg)
 	/* Task loop */
 	while (1) {
 		/* Wait for the next task tick. */
-		vTaskDelayUntil(&last_wake_time, TASK_FREQUENCY);
+		vTaskDelayUntil(&last_wake_time, TASK_DELAY);
 
 		/* Receive all of the messages from the queue. */
 		while (1) {
@@ -105,8 +105,7 @@ keyboard_task(void *arg)
 			 * purpose is to generate the keyboard events for the
 			 * other tasks.
 			 */
-			status = xQueueReceive(args->keyboard_info.queue_handle,
-			                       &msg, 0);
+			status = xQueueReceive(keyboard_queue, &msg, 0);
 
 			/* Message has been received. */
 			if (status == pdPASS) {
@@ -143,10 +142,9 @@ keyboard_task(void *arg)
 				msg.value = XG_BTN_LEFT_PRESSED;
 
 				status = xQueueSendToBack(
-				        args->display_info.queue_handle, &msg,
-		                        portMAX_DELAY);
+				        display_queue, &msg, 0);
 				status = xQueueSendToBack(
-				        args->sleep_info.queue_handle, &msg, 0);
+				        sleep_queue, &msg, 0);
 			}
 		} else if (_keyboard[0] == XG_BTN_LEFT_PRESSED) {
 			if (((PIND & 8U) >> 3) == 1U) {
@@ -156,10 +154,9 @@ keyboard_task(void *arg)
 				msg.value = XG_BTN_LEFT_RELEASED;
 
 				status = xQueueSendToBack(
-				        args->display_info.queue_handle, &msg,
-		                        portMAX_DELAY);
+				        display_queue, &msg, 0);
 				status = xQueueSendToBack(
-				        args->sleep_info.queue_handle, &msg, 0);
+				        sleep_queue, &msg, 0);
 			}
 		} else {
 			/* Nothing to do in this case. */
@@ -174,10 +171,9 @@ keyboard_task(void *arg)
 				msg.value = XG_BTN_CENTER_PRESSED;
 
 				status = xQueueSendToBack(
-				        args->display_info.queue_handle, &msg,
-		                        portMAX_DELAY);
+				        display_queue, &msg, 0);
 				status = xQueueSendToBack(
-				        args->sleep_info.queue_handle, &msg, 0);
+				        sleep_queue, &msg, 0);
 			}
 		} else if (_keyboard[1] == XG_BTN_CENTER_PRESSED) {
 			if (((PIND & 4U) >> 2) == 1U) {
@@ -187,10 +183,9 @@ keyboard_task(void *arg)
 				msg.value = XG_BTN_CENTER_RELEASED;
 
 				status = xQueueSendToBack(
-				        args->display_info.queue_handle, &msg,
-		                        portMAX_DELAY);
+				        display_queue, &msg, 0);
 				status = xQueueSendToBack(
-				        args->sleep_info.queue_handle, &msg, 0);
+				        sleep_queue, &msg, 0);
 			}
 		} else {
 			/* Nothing to do in this case. */
@@ -205,10 +200,9 @@ keyboard_task(void *arg)
 				msg.value = XG_BTN_RIGHT_PRESSED;
 
 				status = xQueueSendToBack(
-				        args->display_info.queue_handle, &msg,
-		                        portMAX_DELAY);
+				        display_queue, &msg, 0);
 				status = xQueueSendToBack(
-				        args->sleep_info.queue_handle, &msg, 0);
+				        sleep_queue, &msg, 0);
 			}
 		} else if (_keyboard[2] == XG_BTN_RIGHT_PRESSED) {
 			if (((PINB & 4U) >> 2) == 1U) {
@@ -218,10 +212,9 @@ keyboard_task(void *arg)
 				msg.value = XG_BTN_RIGHT_RELEASED;
 
 				status = xQueueSendToBack(
-				        args->display_info.queue_handle, &msg,
-		                        portMAX_DELAY);
+				        display_queue, &msg, 0);
 				status = xQueueSendToBack(
-				        args->sleep_info.queue_handle, &msg, 0);
+				        sleep_queue, &msg, 0);
 			}
 		} else {
 			/* Nothing to do in this case. */

@@ -119,7 +119,7 @@ main(void)
 		 * Initialize battery monitor task.
 		 */
 		task_handle = &(_battery_args.battery_info.task_handle);
-		rc = XG_InitBatteryMonitorTask(&_battery_args, 3, task_handle);
+		rc = XG_InitBatteryMonitorTask(&_battery_args, 2, task_handle);
 		if (rc != 0) {
 			break;
 		} else {
@@ -132,7 +132,7 @@ main(void)
 		 * Initialize sleep mode task.
 		 */
 		task_handle = &(_sleep_args.sleep_info.task_handle);
-		rc = XG_InitSleepModeTask(&_sleep_args, 3, task_handle);
+		rc = XG_InitSleepModeTask(&_sleep_args, 2, task_handle);
 		if (rc != 0) {
 			break;
 		} else {

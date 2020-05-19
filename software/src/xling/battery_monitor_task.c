@@ -45,11 +45,13 @@
 /* Local macros. */
 #define SET_BIT(byte, bit)	((byte) |= (1U << (bit)))
 #define CLEAR_BIT(byte, bit)	((byte) &= (uint8_t) ~(1U << (bit)))
-#define TNAME			"Battery Monitor Task"
-#define STSZ			(configMINIMAL_STACK_SIZE)
-#define BAT_MAX			(700) /* Raw ADC value measured manually. */
-#define BAT_MIN			(545) /* Raw ADC value measured manually. */
+#define TASK_NAME		"Battery Monitor Task"
+#define STACK_SZ		(configMINIMAL_STACK_SIZE)
+#define BAT_MAX			(700) /* Raw ADC value (measured manually). */
+#define BAT_MIN			(545) /* Raw ADC value (measured manually). */
 #define BAT_PERCENT(v)		((v)-BAT_MIN)/((BAT_MAX-BAT_MIN)/100.0)
+#define TASK_PERIOD		(100)				/* ms */
+#define TASK_DELAY		(pdMS_TO_TICKS(TASK_PERIOD))	/* ticks */
 
 /* Local variables. */
 static volatile uint16_t _bat_lvl;	/* Raw battery voltage from ADC. */
@@ -61,11 +63,10 @@ static void init_adc(void);
 static void batmon_task(void *) __attribute__((noreturn));
 
 int
-XG_InitBatteryMonitorTask(XG_TaskArgs_t *arg, UBaseType_t prior,
+XG_InitBatteryMonitorTask(XG_TaskArgs_t *arg, UBaseType_t priority,
                           TaskHandle_t *task_handle)
 {
-	BaseType_t stat;
-	TaskHandle_t th;
+	BaseType_t status;
 	int rc = 0;
 
 	/*
@@ -76,17 +77,15 @@ XG_InitBatteryMonitorTask(XG_TaskArgs_t *arg, UBaseType_t prior,
 	init_adc();
 
 	/* Create the battery monitor task. */
-	stat = xTaskCreate(batmon_task, TNAME, STSZ, arg, prior, &th);
+	status = xTaskCreate(batmon_task, TASK_NAME, STACK_SZ,
+	                     arg, priority, task_handle);
 
-	if (stat != pdPASS) {
+	if (status != pdPASS) {
 		/* Sleep mode task couldn't be created. */
 		rc = 1;
 	} else {
 		/* Task has been created successfully. */
-		if (task_handle != NULL) {
-			(*task_handle) = th;
-		}
-		_task_handle = th;
+		_task_handle = (*task_handle);
 	}
 
 	return rc;
@@ -96,11 +95,20 @@ static void
 batmon_task(void *arg)
 {
 	const XG_TaskArgs_t * const args = (XG_TaskArgs_t *) arg;
-	XG_Msg_t msg;
+	const QueueHandle_t display_queue = args->display_info.queue_handle;
+	const QueueHandle_t battery_queue = args->battery_info.queue_handle;
+	TickType_t last_wake_time;
 	BaseType_t status;
+	XG_Msg_t msg;
+
+	/* Initialize the last wake time. */
+	last_wake_time = xTaskGetTickCount();
 
 	/* Task loop */
 	while (1) {
+		/* Wait for the next task tick. */
+		vTaskDelayUntil(&last_wake_time, TASK_DELAY);
+
 		/* Receive all of the messages from the queue. */
 		while (1) {
 			/*
@@ -110,8 +118,7 @@ batmon_task(void *arg)
 			 * purpose is to control the battery voltage and let
 			 * the other tasks know about the actual values.
 			 */
-			status = xQueueReceive(args->battery_info.queue_handle,
-			                       &msg, 0);
+			status = xQueueReceive(battery_queue, &msg, 0);
 
 			/* Message has been received. */
 			if (status == pdPASS) {
@@ -140,8 +147,7 @@ batmon_task(void *arg)
 		/* Send the battery level message. */
 		msg.type = XG_MSG_BATLVL;
 		msg.value = BAT_PERCENT(_bat_lvl);
-		status = xQueueSendToBack(args->display_info.queue_handle, &msg,
-		                          portMAX_DELAY);
+		status = xQueueSendToBack(display_queue, &msg, 0);
 
 		if (status != pdPASS) {
 			/*
@@ -155,8 +161,7 @@ batmon_task(void *arg)
 		/* Send the battery status pin message. */
 		msg.type = XG_MSG_BATSTATPIN;
 		msg.value = _bat_stat;
-		status = xQueueSendToBack(args->display_info.queue_handle, &msg,
-		                          portMAX_DELAY);
+		status = xQueueSendToBack(display_queue, &msg, 0);
 
 		if (status != pdPASS) {
 			/*
@@ -166,9 +171,6 @@ batmon_task(void *arg)
 			 */
 			continue;
 		}
-
-		/* Be silent for some time. */
-		vTaskDelay(pdMS_TO_TICKS(100));
 	}
 
 	/*

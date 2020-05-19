@@ -56,6 +56,8 @@
 #define CLEAR_BIT(byte, bit)	((byte) &= (uint8_t) ~(1U << (bit)))
 #define TASK_NAME		"Display Task"
 #define STACK_SZ		(configMINIMAL_STACK_SIZE)
+#define TASK_PERIOD		(42)				/* ms */
+#define TASK_DELAY		(pdMS_TO_TICKS(TASK_PERIOD))	/* ticks */
 
 /* Local variables. */
 static const MSIM_SH1106DrvConf_t _driver_conf = {
@@ -86,17 +88,13 @@ static MSIM_SH1106Canvas_t _canvas = {
 };
 
 /* Local functions declarations. */
-static void	init_timer3(void);
-static void	stop_timer3(void);
-static void	start_timer3(void);
 static void	display_task(void *) __attribute__((noreturn));
 
 int
-XG_InitDisplayTask(XG_TaskArgs_t *arg, UBaseType_t prior,
+XG_InitDisplayTask(XG_TaskArgs_t *arg, UBaseType_t priority,
                    TaskHandle_t *task_handle)
 {
 	BaseType_t stat;
-	TaskHandle_t th;
 	int rc = 0;
 
 	/*
@@ -116,23 +114,18 @@ XG_InitDisplayTask(XG_TaskArgs_t *arg, UBaseType_t prior,
 
 		/* Start the driver for SH1106-based displays. */
 		MSIM_SH1106__drvStart(&_driver_conf);
-
-		/* Setup Timer 3 to resume the display task. */
-		init_timer3();
 	}
 
 	/* Create the display task. */
-	stat = xTaskCreate(display_task, TASK_NAME, STACK_SZ, arg, prior, &th);
+	stat = xTaskCreate(display_task, TASK_NAME, STACK_SZ,
+	                   arg, priority, task_handle);
 
 	if (stat != pdPASS) {
 		/* Sleep mode task couldn't be created. */
 		rc = 1;
 	} else {
 		/* Task has been created successfully. */
-		if (task_handle != NULL) {
-			(*task_handle) = th;
-		}
-		_task_handle = th;
+		_task_handle = (*task_handle);
 	}
 
 	return rc;
@@ -149,6 +142,7 @@ display_task(void *arg)
 	uint16_t x_base = 0;
 	uint16_t y_base = 0;
 	TickType_t delay;
+	TickType_t last_wake_time;
 	BaseType_t status;
 	XG_Msg_t msg;
 
@@ -163,8 +157,14 @@ display_task(void *arg)
 	MSIM_SH1106_DisplayOn(display);
 	MSIM_SH1106_bufSend(display);
 
+	/* Remember the last wake time. */
+	last_wake_time = xTaskGetTickCount();
+
 	/* Task loop */
 	while (1) {
+		/* Wait for the next task tick. */
+		vTaskDelayUntil(&last_wake_time, TASK_DELAY);
+
 		/* Remember a moment in time. */
 		delay = xTaskGetTickCount();
 
@@ -192,12 +192,6 @@ display_task(void *arg)
 					bat_stat = msg.value;
 					break;
 				case XG_MSG_TASKSUSP_REQ:
-					/*
-					 * Do not resume the task by the timer
-					 * before going to sleep.
-					 */
-					stop_timer3();
-
 					/* Switch the display off. */
 					MSIM_SH1106_bufClear(display);
 					MSIM_SH1106_DisplayOff(display);
@@ -211,12 +205,6 @@ display_task(void *arg)
 					xTaskNotifyWait(0, 0, NULL,
 					                portMAX_DELAY);
 
-					/*
-					 * Skip the first battery level messages
-					 * after awake.
-					 */
-					bat_lvl_skip = 5;
-
 					/* Switch the display back on. */
 					MSIM_SH1106_bufClear(display);
 					MSIM_SH1106_DisplayOn(display);
@@ -224,10 +212,10 @@ display_task(void *arg)
 					MSIM_SH1106_Wait(display);
 
 					/*
-					 * Let's resume the task by the timer
-					 * again.
+					 * Skip the first battery level
+					 * messages after awake.
 					 */
-					start_timer3();
+					bat_lvl_skip = 5;
 
 					break;
 				default:
@@ -270,9 +258,6 @@ display_task(void *arg)
 		 * draw an animation frame.
 		 */
 		delay = xTaskGetTickCount() - delay;
-
-		/* Block the task indefinitely to wait for a notification. */
-		xTaskNotifyWait(0, 0, NULL, portMAX_DELAY);
 	}
 
 	/*
@@ -282,91 +267,4 @@ display_task(void *arg)
 	 * NOTE: Shouldn't reach this point!
 	 */
 	vTaskDelete(NULL);
-}
-
-static void
-init_timer3(void)
-{
-	/*
-	 * Configure Timer 3 to generate a 24 Hz frequency at the Output Compare
-	 * Channel A. It can be achieved by dividing the MCU clock frequency
-	 * by 8 to get 1.5 MHz, and by 62,500 to get the desired one:
-	 *
-	 *     12,000,000 / 8 = 1,500,000 Hz
-	 *     1,500,000 / 62,500 = 24 Hz
-	 */
-
-	/* CTC mode, WDM33:0 = 4 */
-	CLEAR_BIT(TCCR3B, WGM33);
-	SET_BIT(TCCR3B, WGM32);
-	CLEAR_BIT(TCCR3A, WGM31);
-	CLEAR_BIT(TCCR3A, WGM30);
-
-	/*
-	 * Divide the timer frequency by 62,500 to get 24 Hz at channel A.
-	 */
-	TCNT3 = 0x00;
-	OCR3A = 62499;
-
-	/* Enable Output-Compare interrupt (Channel A). */
-	SET_BIT(TIMSK3, OCIE3A);
-
-	/* Start timer, prescaler to 8: CS32:0 = 2. */
-	CLEAR_BIT(TCCR3B, CS32);
-	SET_BIT(TCCR3B, CS31);
-	CLEAR_BIT(TCCR3B, CS30);
-}
-
-static void
-stop_timer3(void)
-{
-	uint8_t byte = TCCR3B;
-
-	taskENTER_CRITICAL();
-
-	/* Stop the timer: CS32:0 = 0. */
-	CLEAR_BIT(byte, CS32);
-	CLEAR_BIT(byte, CS31);
-	CLEAR_BIT(byte, CS30);
-	TCCR3B = byte;
-
-	taskEXIT_CRITICAL();
-}
-
-static void
-start_timer3(void)
-{
-	uint8_t byte = TCCR3B;
-
-	taskENTER_CRITICAL();
-
-	/* Start timer, prescaler to 8: CS32:0 = 2. */
-	CLEAR_BIT(byte, CS32);
-	SET_BIT(byte, CS31);
-	CLEAR_BIT(byte, CS30);
-	TCCR3B = byte;
-
-	taskEXIT_CRITICAL();
-}
-
-/*
- * A Timer 3 Compare-Match (Channel A) ISR which is used to resume the display
- * updating task.
- */
-ISR(TIMER3_COMPA_vect)
-{
-	/* Resume the suspended task. */
-	BaseType_t yield = pdFALSE;
-
-	xTaskNotifyFromISR(_task_handle, 0, eNoAction, &yield);
-
-	if (yield == pdTRUE) {
-		/*
-		 * A context switch should now be performed so the ISR returns
-		 * directly to the resumed task. This is because the resumed
-		 * task had a priority that was equal to or higher than the task
-		 * that is currently in the Running state.
-		 */
-		portYIELD_FROM_ISR();
-	}
 }

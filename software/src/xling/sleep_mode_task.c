@@ -46,10 +46,10 @@
 #include "xling/tasks.h"
 
 /* Local macros. */
-#define TNAME			"Sleep Mode Task"
+#define TASK_NAME		"Sleep Mode Task"
+#define STACK_SZ		(configMINIMAL_STACK_SIZE)
 #define SET_BIT(byte, bit)	((byte) |= (1U << (bit)))
 #define CLEAR_BIT(byte, bit)	((byte) &= (uint8_t) ~(1U << (bit)))
-#define STSZ			(configMINIMAL_STACK_SIZE)
 #define TIMEOUT_MS		(29000)
 #define TIMEOUT_TICKS		((uint16_t)(TIMEOUT_MS / 2.666667))
 
@@ -83,11 +83,10 @@ static void	enable_extint(void);
 static void	disable_extint(void);
 
 int
-XG_InitSleepModeTask(XG_TaskArgs_t *arg, UBaseType_t prior,
+XG_InitSleepModeTask(XG_TaskArgs_t *arg, UBaseType_t priority,
                      TaskHandle_t *task_handle)
 {
-	BaseType_t stat;
-	TaskHandle_t th;
+	BaseType_t status;
 	int rc = 0;
 
 	/*
@@ -99,17 +98,15 @@ XG_InitSleepModeTask(XG_TaskArgs_t *arg, UBaseType_t prior,
 	init_timer0();
 
 	/* Create the sleep mode task. */
-	stat = xTaskCreate(sleepmod_task, TNAME, STSZ, arg, prior, &th);
+	status = xTaskCreate(sleepmod_task, TASK_NAME, STACK_SZ,
+	                     arg, priority, task_handle);
 
-	if (stat != pdPASS) {
+	if (status != pdPASS) {
 		/* Sleep mode task couldn't be created. */
 		rc = 1;
 	} else {
 		/* Task has been created successfully. */
-		if (task_handle != NULL) {
-			(*task_handle) = th;
-		}
-		_task_handle = th;
+		_task_handle = (*task_handle);
 	}
 
 	return rc;
@@ -119,6 +116,7 @@ static void
 sleepmod_task(void *arg)
 {
 	const XG_TaskArgs_t * const args = (XG_TaskArgs_t *) arg;
+	const QueueHandle_t sleep_queue = args->sleep_info.queue_handle;
 	BaseType_t status;
 	XG_Msg_t msg;
 
@@ -133,8 +131,7 @@ sleepmod_task(void *arg)
 		/* Receive all of the messages from the queue. */
 		while (1) {
 			/* Attempt to receive the next message. */
-			status = xQueueReceive(args->sleep_info.queue_handle,
-			                       &msg, 0);
+			status = xQueueReceive(sleep_queue, &msg, 0);
 
 			/* Message has been received. */
 			if (status == pdPASS) {
@@ -163,13 +160,16 @@ sleepmod_task(void *arg)
 
 		switch (_wake_source) {
 		case WAKE_FROM_TIMER:
-			/* Stop the Timer 0. */
+			/* Let's not wake this task by the Timer 0. */
 			stop_timer0();
 
-			/* Enable external interrupts. */
+			/*
+			 * Enable external interrupts - to be able to wake
+			 * from buttons pressed.
+			 */
 			enable_extint();
 
-			/* Reset the timer ticks. */
+			/* Reset timer ticks. */
 			_tick_val = 0;
 
 			/*
@@ -183,10 +183,16 @@ sleepmod_task(void *arg)
 
 			break;
 		case WAKE_FROM_EXTINT:
-			/* Disable external interrupts. */
+			/*
+			 * External interrupts don't make much sense in
+			 * case of the device awake.
+			 */
 			disable_extint();
 
-			/* Start the Timer 0. */
+			/*
+			 * Let's wake this task by the Timer 0 to count
+			 * timeout before the next sleep.
+			 */
 			start_timer0();
 
 			/* Reset the timer ticks. */
