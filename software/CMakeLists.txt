@@ -59,7 +59,7 @@ project(Xling-firmware C)
 # Xling-firmware version
 set(XLING_MAJOR_VERSION 0)
 set(XLING_MINOR_VERSION 4)
-set(XLING_PATCH_VERSION 15)
+set(XLING_PATCH_VERSION 16)
 
 # Target file name (without extension) and version
 set(TARGET_OUTPUT_BASENAME "Xling-firmware-${XLING_MAJOR_VERSION}.${XLING_MINOR_VERSION}.${XLING_PATCH_VERSION}")
@@ -69,8 +69,8 @@ set(TARGET_OUTPUT_BASENAME "Xling-firmware-${XLING_MAJOR_VERSION}.${XLING_MINOR_
 # ------------------------------------------------------------------------------
 set(AVR_MCU "atmega1284p")
 set(AVR_FREQ 12000000UL)
-#set(AVR_PORT "/dev/ttyU0")		# for FreeBSD
-set(AVR_PORT "/dev/ttyACM0")		# for GNU/Linux
+set(AVR_PORT "/dev/ttyU0")		# for FreeBSD
+#set(AVR_PORT "/dev/ttyACM0")		# for GNU/Linux
 set(AVR_BAUDRATE 115200)
 set(AVR_PROG "stk500v2")
 set(AVR_PART "m1284p")
@@ -203,6 +203,9 @@ set(XLING_SRC
 	src/mcusim/drivers/avr-gcc/avr/display/sh1106/sh1106_twi.c
 	src/mcusim/drivers/avr-gcc/avr/display/sh1106/sh1106_twibb.c
 	src/xling/images/exy_in_bottle_02.c
+#	src/xling/fonts/TestFont.c
+#	src/xling/fonts/TestFont2.c
+	src/xling/fonts/TestFont3.c
 	src/xling/fuse.c
 	src/xling/main.c
 	src/xling/display_task.c
@@ -220,7 +223,8 @@ add_custom_target("upload")
 # ------------------------------------------------------------------------------
 add_custom_command(
 	TARGET ${TARGET_OUTPUT_FILE} POST_BUILD
-	COMMAND ${AVR_SIZE_TOOL} --format=avr --mcu=${AVR_MCU} ${TARGET_OUTPUT_DIR}/${TARGET_OUTPUT_FILE})
+	#COMMAND ${AVR_SIZE_TOOL} --format=avr --mcu=${AVR_MCU} ${TARGET_OUTPUT_DIR}/${TARGET_OUTPUT_FILE})
+	COMMAND ${AVR_SIZE_TOOL} ${TARGET_OUTPUT_DIR}/${TARGET_OUTPUT_FILE})
 add_custom_command(
 	TARGET ${TARGET_OUTPUT_FILE} POST_BUILD
 	COMMAND ${AVR_OBJDUMP} -h -S ${TARGET_OUTPUT_FILE} > ${TARGET_OUTPUT_DIR}/${TARGET_OUTPUT_BASENAME}.lss)

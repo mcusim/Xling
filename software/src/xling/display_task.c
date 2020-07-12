@@ -51,22 +51,59 @@
 #include "xling/tasks.h"
 #include "xling/graphics.h"
 
-/* Local macros. */
+/*
+ * ----------------------------------------------------------------------------
+ * Local types.
+ * ----------------------------------------------------------------------------
+ */
+
+/*
+ * This structure helps to process messages received from the task queue in a
+ * separate function and keep their values.
+ */
+typedef struct msg_params_t {
+	uint16_t	bat_lvl;
+	uint16_t	bat_stat;
+} msg_params_t;
+
+/*
+ * ----------------------------------------------------------------------------
+ * Local macros.
+ * ----------------------------------------------------------------------------
+ */
 #define SET_BIT(byte, bit)	((byte) |= (1U << (bit)))
 #define CLEAR_BIT(byte, bit)	((byte) &= (uint8_t) ~(1U << (bit)))
 #define TASK_NAME		"Display Task"
-#define STACK_SZ		(configMINIMAL_STACK_SIZE)
-#define TASK_PERIOD		(42)				/* ms */
-#define TASK_DELAY		(pdMS_TO_TICKS(TASK_PERIOD))	/* ticks */
+#define TASK_PERIOD		(42) /* in ms (~ 23.8 Hz) */
+#define TASK_DELAY		(pdMS_TO_TICKS(TASK_PERIOD))
+#define TEXT_BUFSZ		(128)
 
-/* Local variables. */
+/*
+ * Bigger stack size is necessary to draw text and images to the canvas which
+ * will be moved to the display memory.
+ */
+#define STACK_SZ		(configMINIMAL_STACK_SIZE * 2)
+
+/*
+ * ----------------------------------------------------------------------------
+ * Local variables.
+ * ----------------------------------------------------------------------------
+ */
+
+/*
+ * Configuration of the OLED display driver.
+ */
 static const MSIM_SH1106DrvConf_t _driver_conf = {
-	.port_spi = &PORTB,
-	.ddr_spi = &DDRB,
+	.port_spi = &PORTB,		/* I/O port with SPI. */
+	.ddr_spi = &DDRB,		/* DDR for the I/O port with SPI. */
 	.mosi = PB5,			/* OLED SPI pin. */
 	.miso = PB6,			/* OLED SPI pin. */
 	.sck = PB7,			/* OLED SPI pin. */
 };
+
+/*
+ * Configuration of the OLED display.
+ */
 static const MSIM_SH1106Conf_t _display_conf = {
 	.rst_port = &PORTC,
 	.rst_ddr = &DDRC,
@@ -78,8 +115,15 @@ static const MSIM_SH1106Conf_t _display_conf = {
 	.cs = PC7,			/* OLED Chip Select pin. */
 	.dc = PC5,			/* OLED Data/Command pin. */
 };
+
 static volatile TaskHandle_t _task_handle;
+
+/*
+ * NOTE: 1024 bytes is enough to describe a monochrome image for OLED display
+ *       which resolution is 128x64 px.
+ */
 static uint8_t _display_buffer[1024];
+
 static MSIM_SH1106Canvas_t _canvas = {
 	.data = &_display_buffer[0],
 	.width = 128,
@@ -87,8 +131,23 @@ static MSIM_SH1106Canvas_t _canvas = {
 	.data_size = 8,
 };
 
-/* Local functions declarations. */
-static void	display_task(void *) __attribute__((noreturn));
+static char _text_buf[TEXT_BUFSZ];
+static MSIM_SH1106Text_t _text = {
+//	.font = &XG_FONT_TestFont,
+//	.font = &XG_FONT_TestFont2,
+	.font = &XG_FONT_TestFont3,
+	.text = &_text_buf[0],
+};
+
+/*
+ * ----------------------------------------------------------------------------
+ * Local functions declarations.
+ * ----------------------------------------------------------------------------
+ */
+static void	display_task(void *arg) __attribute__((noreturn));
+static void	receive_msgs(const QueueHandle_t q,
+                             MSIM_SH1106_t * const display,
+                             msg_params_t *params);
 
 int
 XG_InitDisplayTask(XG_TaskArgs_t *arg, UBaseType_t priority,
@@ -136,17 +195,15 @@ display_task(void *arg)
 {
 	const XG_TaskArgs_t * const args = (XG_TaskArgs_t *) arg;
 	MSIM_SH1106_t * const display = MSIM_SH1106_Init(&_display_conf);
-	uint8_t bat_lvl_skip = 0;
-	uint16_t bat_lvl = UINT16_MAX;
-	uint16_t bat_stat = 5;
-	uint16_t x_base = 0;
-	uint16_t y_base = 0;
-	TickType_t delay;
-	TickType_t last_wake_time;
-	BaseType_t status;
-	XG_Msg_t msg;
+	TickType_t ticks;
+	TickType_t delay = 0;
+	TickType_t last_wake;
+	msg_params_t params = {
+		.bat_lvl = 100,
+		.bat_stat = 0,
+	};
 
-	/* Use current time as seed for random generator. */
+	/* Use current time as a seed for random generator. */
 	srand((unsigned int) time(NULL));
 
 	/* Setup an OLED display. */
@@ -158,86 +215,39 @@ display_task(void *arg)
 	MSIM_SH1106_bufSend(display);
 
 	/* Remember the last wake time. */
-	last_wake_time = xTaskGetTickCount();
+	last_wake = xTaskGetTickCount();
 
 	/* Task loop */
 	while (1) {
 		/* Wait for the next task tick. */
-		vTaskDelayUntil(&last_wake_time, TASK_DELAY);
+		vTaskDelayUntil(&last_wake, TASK_DELAY);
 
 		/* Remember a moment in time. */
-		delay = xTaskGetTickCount();
+		ticks = xTaskGetTickCount();
 
-		/* Receive all of the messages from the queue. */
-		while (1) {
-			/* Attempt to receive the next message. */
-			status = xQueueReceive(args->display_info.queue_handle,
-			                       &msg, 0);
+		/*
+		 * Receive and process all of the messages available in the
+		 * display queue at the moment.
+		 */
+		receive_msgs(args->display_info.queue_handle, display, &params);
 
-			/* Message has been received. */
-			if (status == pdPASS) {
-				switch (msg.type) {
-				case XG_MSG_BATLVL:
-					/* Skip several values initially. */
-					if (bat_lvl_skip > 0) {
-						bat_lvl_skip--;
-					} else if (msg.value > 100) {
-						bat_lvl = 100;
-					} else {
-						bat_lvl = msg.value;
-					}
+		/* Clear the canvas. */
+		memset(_display_buffer, 0x00, 1024);
 
-					break;
-				case XG_MSG_BATSTATPIN:
-					bat_stat = msg.value;
-					break;
-				case XG_MSG_TASKSUSP_REQ:
-					/* Switch the display off. */
-					MSIM_SH1106_bufClear(display);
-					MSIM_SH1106_DisplayOff(display);
-					MSIM_SH1106_bufSend(display);
-					MSIM_SH1106_Wait(display);
+		/*
+		 * Draw the frame time, battery level and battery status on
+		 * the display.
+		 */
+		snprintf(_text_buf, TEXT_BUFSZ, "Frame: %lu ms", delay);
+		MSIM_SH1106_Print(&_canvas, &_text, 0, 0);
 
-					/*
-					 * Block the task indefinitely to wait
-					 * for a notification.
-					 */
-					xTaskNotifyWait(0, 0, NULL,
-					                portMAX_DELAY);
+		snprintf(_text_buf, TEXT_BUFSZ, "Battery: %u%%",
+		         params.bat_lvl);
+		MSIM_SH1106_Print(&_canvas, &_text, 0, 16);
 
-					/* Switch the display back on. */
-					MSIM_SH1106_bufClear(display);
-					MSIM_SH1106_DisplayOn(display);
-					MSIM_SH1106_bufSend(display);
-					MSIM_SH1106_Wait(display);
-
-					/*
-					 * Skip the first battery level
-					 * messages after awake.
-					 */
-					bat_lvl_skip = 5;
-
-					break;
-				default:
-					/* Ignore other messages silently. */
-					break;
-				}
-			} else {
-				/*
-				 * Queue is empty. There is no need to receive
-				 * new messages anymore in this frame cycle.
-				 */
-				break;
-			}
-		}
-
-		/* Prepare random coordinates. */
-		x_base = 1 + rand() / ((RAND_MAX + 1u) / _canvas.width);
-		y_base = 1 + rand() / ((RAND_MAX + 1u) / _canvas.height);
-
-		/* Draw image on a canvas at random coordinates. */
-		MSIM_SH1106_Draw_PF(&_canvas, &XG_IMG_EXY_IN_BOTTLE_02,
-		                    x_base, y_base);
+		snprintf(_text_buf, TEXT_BUFSZ, (params.bat_stat == 1)
+		         ? "Charged: yes" : "Charged: no");
+		MSIM_SH1106_Print(&_canvas, &_text, 0, 32);
 
 		/* Transfer canvas buffer to the display. */
 		for (uint32_t i = 0; i < 8; i++) {
@@ -248,8 +258,7 @@ display_task(void *arg)
 
 			MSIM_SH1106_bufClear(display);
 			MSIM_SH1106_bufAppendLast(
-			        display, &_display_buffer[i * 128],
-			        128);
+			        display, &_display_buffer[i * 128], 128);
 			MSIM_SH1106_bufSend(display);
 		}
 
@@ -257,7 +266,7 @@ display_task(void *arg)
 		 * Calculate a delay to receive a message from the queue and
 		 * draw an animation frame.
 		 */
-		delay = xTaskGetTickCount() - delay;
+		delay = xTaskGetTickCount() - ticks;
 	}
 
 	/*
@@ -267,4 +276,75 @@ display_task(void *arg)
 	 * NOTE: Shouldn't reach this point!
 	 */
 	vTaskDelete(NULL);
+}
+
+static void
+receive_msgs(const QueueHandle_t q, MSIM_SH1106_t * const display,
+             msg_params_t *params)
+{
+	static uint8_t bat_lvl_skip = 5;
+	XG_Msg_t msg;
+	BaseType_t status;
+
+	/* Receive all of the messages from the queue. */
+	while (1) {
+		/* An attempt to receive the next message. */
+		status = xQueueReceive(q, &msg, 0);
+
+		/* Message has been received. */
+		if (status == pdPASS) {
+			switch (msg.type) {
+			case XG_MSG_BATLVL:
+				/* Skip several values initially. */
+				if (bat_lvl_skip > 0) {
+					bat_lvl_skip--;
+				} else if (msg.value > 100) {
+					params->bat_lvl = 100;
+				} else {
+					params->bat_lvl = msg.value;
+				}
+
+				break;
+			case XG_MSG_BATSTATPIN:
+				params->bat_stat = msg.value;
+				break;
+			case XG_MSG_TASKSUSP_REQ:
+				/* Switch the display off. */
+				MSIM_SH1106_bufClear(display);
+				MSIM_SH1106_DisplayOff(display);
+				MSIM_SH1106_bufSend(display);
+				MSIM_SH1106_Wait(display);
+
+				/*
+				 * Block the task indefinitely to wait
+				 * for a notification.
+				 */
+				xTaskNotifyWait(0, 0, NULL,
+				                portMAX_DELAY);
+
+				/* Switch the display back on. */
+				MSIM_SH1106_bufClear(display);
+				MSIM_SH1106_DisplayOn(display);
+				MSIM_SH1106_bufSend(display);
+				MSIM_SH1106_Wait(display);
+
+				/*
+				 * Skip the first battery level
+				 * messages after awake.
+				 */
+				bat_lvl_skip = 5;
+
+				break;
+			default:
+				/* Ignore other messages silently. */
+				break;
+			}
+		} else {
+			/*
+			 * Queue is empty. There is no need to receive
+			 * new messages anymore in this frame cycle.
+			 */
+			break;
+		}
+	}
 }

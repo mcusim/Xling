@@ -28,22 +28,47 @@
 #include "mcusim/drivers/avr-gcc/avr/display/sh1106/sh1106.h"
 
 typedef struct MSIM_SH1106Canvas_t {
-	uint8_t *data;
-	uint16_t width;
-	uint16_t height;
-	uint16_t data_size;
+	uint8_t		*data;
+	uint16_t	 width;
+	uint16_t	 height;
+	uint16_t	 data_size;
 } MSIM_SH1106Canvas_t;
 
 typedef struct MSIM_SH1106Image_t {
-	const uint8_t *data;
-	uint16_t width;
-	uint16_t height;
-	uint16_t data_size;
+	const uint8_t	*data;
+	uint16_t	 width;
+	uint16_t	 height;
+	uint16_t	 data_size;
 } MSIM_SH1106Image_t;
 
-int	MSIM_SH1106_Print(MSIM_SH1106_t *dev, const char *text);
-int	MSIM_SH1106_Draw_PF(MSIM_SH1106Canvas_t * const canvas,
-                            const MSIM_SH1106Image_t * const image,
-                            const uint16_t x, const uint16_t y);
+typedef struct MSIM_SH1106Glyph_t {
+	uint32_t	 code;
+	const uint8_t	*data;
+	uint16_t	 width;
+	uint16_t	 height;
+	uint16_t	 data_size;
+} MSIM_SH1106Glyph_t;
+
+typedef struct MSIM_SH1106Font_t {
+	uint32_t			 length;
+	const MSIM_SH1106Glyph_t	*glyphs;
+} MSIM_SH1106Font_t;
+
+typedef struct MSIM_SH1106Text_t {
+	const MSIM_SH1106Font_t		*font;
+	const char			*text;
+} MSIM_SH1106Text_t;
+
+int
+MSIM_SH1106_Print(
+	MSIM_SH1106Canvas_t * const canvas,
+	MSIM_SH1106Text_t * const text,
+	const uint16_t x, const uint16_t y);
+
+int
+MSIM_SH1106_Draw_PF(
+	MSIM_SH1106Canvas_t * const canvas,
+	const MSIM_SH1106Image_t * const image,
+	const uint16_t x, const uint16_t y);
 
 #endif /* MSIM_GRH_DISPLAY_SH1106_H_ */

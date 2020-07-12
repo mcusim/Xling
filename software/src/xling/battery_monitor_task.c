@@ -42,7 +42,11 @@
 /* Xling headers. */
 #include "xling/tasks.h"
 
-/* Local macros. */
+/*
+ * ----------------------------------------------------------------------------
+ * Local macros.
+ * ----------------------------------------------------------------------------
+ */
 #define SET_BIT(byte, bit)	((byte) |= (1U << (bit)))
 #define CLEAR_BIT(byte, bit)	((byte) &= (uint8_t) ~(1U << (bit)))
 #define TASK_NAME		"Battery Monitor Task"
@@ -53,12 +57,20 @@
 #define TASK_PERIOD		(100)				/* ms */
 #define TASK_DELAY		(pdMS_TO_TICKS(TASK_PERIOD))	/* ticks */
 
-/* Local variables. */
+/*
+ * ----------------------------------------------------------------------------
+ * Local variables.
+ * ----------------------------------------------------------------------------
+ */
 static volatile uint16_t _bat_lvl;	/* Raw battery voltage from ADC. */
 static volatile uint8_t _bat_stat;	/* Battery status pin value. */
 static volatile TaskHandle_t _task_handle;
 
-/* Local functions. */
+/*
+ * ----------------------------------------------------------------------------
+ * Local functions.
+ * ----------------------------------------------------------------------------
+ */
 static void init_adc(void);
 static void batmon_task(void *) __attribute__((noreturn));
 

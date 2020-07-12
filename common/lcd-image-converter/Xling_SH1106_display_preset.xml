@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <preset>
-  <name>Monochrome_SH1106G</name>
+  <name>Xling_SH1106_display_preset</name>
   <prepare>
     <convType>0</convType>
     <monoType>1</monoType>

@@ -27,67 +27,99 @@
  */
 
 #include "mcusim/drivers/avr-gcc/avr/display/sh1106/sh1106_graphics.h"
-#include "mcusim/drivers/avr-gcc/avr/display/sh1106/sh1106_fonts.h"
 
 /* Local macros */
 #define CHAR_WIDTH	3 /* bits */
 #define PAGE_HEIGHT	8 /* bits */
 #define PAGES		8 /* in graphic RAM */
-#define FONT_3x6	MSIM_SH1106_FONT_TOMTHUMB_3x6
 #define NOT(u8)		((uint8_t)(~(u8)))
 #define PGM(a)		((uint8_t)(pgm_read_byte_far((a))))
 
-/* Local functions */
-static void	write_mem(MSIM_SH1106_t *, const uint8_t *, size_t);
-
-/* Prints text at the current line of the display. */
+/*
+ * Prints text on the canvas at the given coordinates.
+ */
 int
-MSIM_SH1106_Print(MSIM_SH1106_t *dev, const char *text)
+MSIM_SH1106_Print(MSIM_SH1106Canvas_t * const canvas,
+                  MSIM_SH1106Text_t * const text,
+                  const uint16_t x, const uint16_t y)
 {
-	const size_t len = strlen(text);
+	const size_t len = strlen(text->text);
+	const MSIM_SH1106Font_t *font = text->font;
+	MSIM_SH1106Image_t image;
+	uint16_t x_advance = 0u;
+	char ch;
+	int rc;
 
-	MSIM_SH1106_bufClear(dev);
-
-	/* Append characters to the display buffer. */
+	/* Draw characters on the canvas. */
 	for (uint32_t i = 0; i < len; i++) {
-		MSIM_SH1106_bufAppend(dev, 0);
-		write_mem(dev, &FONT_3x6[text[i] * CHAR_WIDTH], CHAR_WIDTH);
+		/* Obtain the current character. */
+		ch = text->text[i];
+
+		/*
+		 * Obtain image of the current glyph.
+		 */
+		image.data = font->glyphs[ch-0x20].data;
+		image.width = font->glyphs[ch-0x20].width;
+		image.height = font->glyphs[ch-0x20].height;
+		image.data_size = font->glyphs[ch-0x20].data_size;
+
+		rc = MSIM_SH1106_Draw_PF(canvas, &image, x + x_advance, y);
+
+		x_advance += image.width;
+
+		if (rc != 0) {
+			break;
+		}
 	}
 
-	MSIM_SH1106_bufSend(dev);
-
-	return 0;
+	return rc;
 }
 
 /*
  * Draws an image on a canvas at the given coordinates.
  *
- * NOTE: Image data should be located in flash memory and will be accessed by
- *       a far (32-bit) pointer. Canvas data will be accessed directly.
+ * NOTE: Image data should be located in the flash memory and will be accessed
+ *       by a far (32-bit) pointer. Canvas data will be accessed directly.
  */
 int
 MSIM_SH1106_Draw_PF(MSIM_SH1106Canvas_t * const canvas,
                     const MSIM_SH1106Image_t * const image,
                     const uint16_t x, const uint16_t y)
 {
-	/* Re-calculate image size to draw a visible part of the image only. */
+	/*
+	 * Local read-only variables:
+	 *
+	 * iw, ih:
+	 *
+	 *     Re-calculated image width and height to draw a visible part of
+	 *     the image only.
+	 *
+	 * start_page, end_page:
+	 *
+	 *     Pages of the canvas which will be modified during an image
+	 *     drawing process.
+	 *
+	 * shift, bottom_shift:
+	 *
+	 *     Shifts (in pixels) from the top border of the start page and
+	 *     from the bottom border of the end page.
+	 *
+	 * mask, bottom_mask, img_mask:
+	 *
+	 *     Pixel masks.
+	 */
+
 	const uint16_t iw = ((x + image->width) > canvas->width)
 	        ? image->width - ((x + image->width) - canvas->width)
 	        : image->width;
 	const uint16_t ih = ((y + image->height) > canvas->height)
 	        ? image->height - ((y + image->height) - canvas->height)
 	        : image->height;
-	/* Canvas's pages to modify. */
 	const uint16_t start_page = y / PAGE_HEIGHT;
 	uint16_t end_page = (y + ih + PAGE_HEIGHT - 1) / PAGE_HEIGHT;
-	/*
-	 * Shifts (in pixels) from the top border of the start page and
-	 * from the bottom border of the end page.
-	 */
 	const uint8_t shift = y % PAGE_HEIGHT;
 	const uint8_t bottom_shift = (((y + ih) % PAGE_HEIGHT) != 0)
 	        ? (uint8_t)(PAGE_HEIGHT - ((y + ih) % PAGE_HEIGHT)) : 0u;
-	/* Pixel masks. */
 	const uint8_t mask = (uint8_t)(0xFFu << shift);
 	const uint8_t bottom_mask = (uint8_t)(0xFFu >> bottom_shift);
 	const uint8_t img_mask = (uint8_t)(mask & bottom_mask);
@@ -98,13 +130,11 @@ MSIM_SH1106_Draw_PF(MSIM_SH1106Canvas_t * const canvas,
 
 	/* Check indexes of the pages. */
 	if ((start_page > (PAGES - 1)) || (end_page > PAGES)) {
-		/* Do not draw anything. */
 		end_page = 0;
 		rc = 1;
 	}
 	/* Check coordinates. */
 	if ((x > (canvas->width - 1)) || (y > (canvas->height - 1))) {
-		/* Do not draw anything. */
 		end_page = 0;
 		rc = 1;
 	}
@@ -156,12 +186,4 @@ MSIM_SH1106_Draw_PF(MSIM_SH1106Canvas_t * const canvas,
 	}
 
 	return rc;
-}
-
-static void
-write_mem(MSIM_SH1106_t *dev, const uint8_t *data, size_t len)
-{
-	for (size_t i = 0; i < len; i++) {
-		MSIM_SH1106_bufAppend(dev, pgm_read_byte(&data[i]));
-	}
 }

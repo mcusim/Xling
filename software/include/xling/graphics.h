@@ -28,8 +28,14 @@
 /* SH1106 driver headers. */
 #include "mcusim/drivers/avr-gcc/avr/display/sh1106/sh1106_graphics.h"
 
+/* Images */
 extern const MSIM_SH1106Image_t XG_IMG_EXY_IN_BOTTLE_01;
 extern const MSIM_SH1106Image_t XG_IMG_EXY_IN_BOTTLE_02;
 extern const MSIM_SH1106Image_t XG_IMG_BUTTERFLY;
+
+/* Fonts */
+extern const MSIM_SH1106Font_t XG_FONT_TestFont;
+extern const MSIM_SH1106Font_t XG_FONT_TestFont2;
+extern const MSIM_SH1106Font_t XG_FONT_TestFont3;
 
 #endif /* XG_GRAPHICS_H_ */
