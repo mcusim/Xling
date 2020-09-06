@@ -3,7 +3,7 @@
  *
  * This file is part of a firmware for Xling, a tamagotchi-like toy.
  *
- * Copyright (c) 2019 Dmitry Salychev
+ * Copyright (c) 2019, 2020 Dmitry Salychev
  *
  * Xling firmware is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -45,11 +45,12 @@
 
 /* SH1106 driver headers. */
 #include "mcusim/drivers/avr-gcc/avr/display/sh1106/sh1106.h"
-#include "mcusim/drivers/avr-gcc/avr/display/sh1106/sh1106_graphics.h"
 
 /* Xling headers. */
 #include "xling/tasks.h"
 #include "xling/graphics.h"
+#include "xling/scenes/scenes.h"
+#include "xling/font/Alagard_12pt.h"
 
 /*
  * ----------------------------------------------------------------------------
@@ -124,7 +125,7 @@ static volatile TaskHandle_t _task_handle;
  */
 static uint8_t _display_buffer[1024];
 
-static MSIM_SH1106Canvas_t _canvas = {
+static XG_Canvas_t _canvas = {
 	.data = &_display_buffer[0],
 	.width = 128,
 	.height = 64,
@@ -132,10 +133,8 @@ static MSIM_SH1106Canvas_t _canvas = {
 };
 
 static char _text_buf[TEXT_BUFSZ];
-static MSIM_SH1106Text_t _text = {
-//	.font = &XG_FONT_TestFont,
-//	.font = &XG_FONT_TestFont2,
-	.font = &XG_FONT_TestFont3,
+static XG_Text_t _text = {
+	.font = &XG_FONT_Alagard_12pt,
 	.text = &_text_buf[0],
 };
 
@@ -202,6 +201,7 @@ display_task(void *arg)
 		.bat_lvl = 100,
 		.bat_stat = 0,
 	};
+	XG_Point_t pt = { 0, 0 };
 
 	/* Use current time as a seed for random generator. */
 	srand((unsigned int) time(NULL));
@@ -238,29 +238,28 @@ display_task(void *arg)
 		 * Draw the frame time, battery level and battery status on
 		 * the display.
 		 */
-		snprintf(_text_buf, TEXT_BUFSZ, "Frame: %lu ms", delay);
-		MSIM_SH1106_Print(&_canvas, &_text, 0, 0);
+		snprintf(_text_buf, TEXT_BUFSZ, "%lu ms", delay);
+		pt.x = 85;
+		pt.y = 20;
+		XG_Print(&_canvas, &_text, pt);
 
-		snprintf(_text_buf, TEXT_BUFSZ, "Battery: %u%%",
+		snprintf(_text_buf, TEXT_BUFSZ, "%u%%",
 		         params.bat_lvl);
-		MSIM_SH1106_Print(&_canvas, &_text, 0, 16);
+		pt.y = 31;
+		XG_Print(&_canvas, &_text, pt);
 
 		snprintf(_text_buf, TEXT_BUFSZ, (params.bat_stat == 1)
-		         ? "Charged: yes" : "Charged: no");
-		MSIM_SH1106_Print(&_canvas, &_text, 0, 32);
+		         ? "yes" : "no");
+		pt.y = 42;
+		XG_Print(&_canvas, &_text, pt);
+
+		pt.x = 0;
+		pt.y = 0;
+		//XG_Draw_PF(&_canvas, &XG_IMG_text_decoration, pt);
+		XG_DrawScene(&_canvas, &XG_SCN_smoking_02);
 
 		/* Transfer canvas buffer to the display. */
-		for (uint32_t i = 0; i < 8; i++) {
-			MSIM_SH1106_bufClear(display);
-			MSIM_SH1106_SetPage(display, (uint8_t) i);
-			MSIM_SH1106_SetColumn(display, 2);
-			MSIM_SH1106_bufSend(display);
-
-			MSIM_SH1106_bufClear(display);
-			MSIM_SH1106_bufAppendLast(
-			        display, &_display_buffer[i * 128], 128);
-			MSIM_SH1106_bufSend(display);
-		}
+		XG_TransferCanvas(display, &_canvas);
 
 		/*
 		 * Calculate a delay to receive a message from the queue and

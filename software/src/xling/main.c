@@ -46,10 +46,10 @@
 
 /* SH1106 driver headers. */
 #include "mcusim/drivers/avr-gcc/avr/display/sh1106/sh1106.h"
-#include "mcusim/drivers/avr-gcc/avr/display/sh1106/sh1106_graphics.h"
 
 /* Xling headers. */
 #include "xling/tasks.h"
+#include "xling/graphics.h"
 
 /* Local macros. */
 #define SET_BIT(byte, bit)	((byte) |= (1U << (bit)))

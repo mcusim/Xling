@@ -1,3 +1,4 @@
 (sym_lib_table
   (lib (name xling)(type Legacy)(uri ${KIPRJMOD}/lib_sch/xling.lib)(options "")(descr ""))
+  (lib (name xling-rescue)(type Legacy)(uri ${KIPRJMOD}/xling-rescue.lib)(options "")(descr ""))
 )

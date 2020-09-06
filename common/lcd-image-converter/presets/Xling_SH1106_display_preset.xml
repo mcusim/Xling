@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<preset>
+  <name>Xling_SH1106_display_preset</name>
+  <prepare>
+    <convType>0</convType>
+    <monoType>1</monoType>
+    <edge>128</edge>
+    <scanMain>2</scanMain>
+    <scanSub>0</scanSub>
+    <inverse>0</inverse>
+    <bandScanning>1</bandScanning>
+    <bandWidth>8</bandWidth>
+    <useCustomScript>1</useCustomScript>
+    <customScript><![CDATA[/*
+ * left to right
+ * forward
+ * bands
+ */
+
+var bandY = 0;
+
+do {
+    for (var x = 0; x < image.width; x++) {
+        for (var y = image.bandSize - 1; y >= 0; y--) {
+            image.addPoint(x, bandY + y);
+        }
+    }
+    bandY += image.bandSize;
+} while (bandY < image.height);
+]]></customScript>
+  </prepare>
+  <matrix>
+    <maskUsed>00000001</maskUsed>
+    <maskAnd>ffffffff</maskAnd>
+    <maskOr>00000000</maskOr>
+    <maskFill>000000ff</maskFill>
+    <operations count="2">
+      <operation index="0">
+        <mask>ff000000</mask>
+        <shift>0</shift>
+        <left>0</left>
+      </operation>
+      <operation index="1">
+        <mask>00000001</mask>
+        <shift>0</shift>
+        <left>0</left>
+      </operation>
+    </operations>
+  </matrix>
+  <reordering>
+    <operations count="0"/>
+  </reordering>
+  <image>
+    <bytesOrder>0</bytesOrder>
+    <blockSize>0</blockSize>
+    <blockDefaultOnes>0</blockDefaultOnes>
+    <splitToRows>0</splitToRows>
+    <compressionRle>0</compressionRle>
+    <compressionRleMinLength>4</compressionRleMinLength>
+    <blockPrefix><![CDATA[0x]]></blockPrefix>
+    <blockSuffix><![CDATA[]]></blockSuffix>
+    <blockDelimiter><![CDATA[, ]]></blockDelimiter>
+  </image>
+  <font>
+    <bom>0</bom>
+    <sortOrder>1</sortOrder>
+    <codec>ASMO-708</codec>
+  </font>
+  <templates>
+    <images>Z:/home/dsl/git/Xling/common/lcd-image-converter/Xling-image.tmpl</images>
+    <fonts>:/templates/font_convert</fonts>
+  </templates>
+</preset>
