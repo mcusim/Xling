@@ -1,4 +1,4 @@
-update=Sat 21 Mar 2020 05:04:57 PM CET
+update=Tue Sep  8 18:24:04 2020
 version=1
 last_client=kicad
 [cvpcb]
@@ -61,7 +61,7 @@ PageLayoutDescrFile=
 PlotDirectoryName=output/Xling_v3.2_schematic.pdf
 SubpartIdSeparator=0
 SubpartFirstId=65
-NetFmtName=
+NetFmtName=Pcbnew
 SpiceAjustPassiveValues=0
 LabSize=60
 ERC_TestSimilarLabels=1

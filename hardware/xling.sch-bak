@@ -4,14 +4,14 @@ EELAYER END
 $Descr A4 11693 8268
 encoding utf-8
 Sheet 1 1
-Title "Schematic of Xling, a tamagotchi-like toy"
-Date "2020-03-21"
+Title "Schematic of Xling, a pocket daemon"
+Date "2020-09-11"
 Rev "4"
-Comp "MCUSim.org"
+Comp "Designed by Dmitry Salychev <dsl@mcusim.org>, CERN-OHL-W-2.0"
 Comment1 ""
-Comment2 "CERN Open Hardware Licence Version 2 - Weakly Reciprocal"
-Comment3 "Distributed under the terms of"
-Comment4 "Designed by Dmitry Salychev <dsl@mcusim.org>"
+Comment2 ""
+Comment3 ""
+Comment4 ""
 $EndDescr
 $Comp
 L xling:R R16
@@ -99,19 +99,6 @@ F 3 "" H 7500 6225 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L xling:SW_Push SW1
-U 1 1 5A012D9B
-P 7500 5900
-F 0 "SW1" H 7420 5820 50  0000 L CNN
-F 1 "BTN" H 7500 6090 50  0000 C CNN
-F 2 "Xling Footprints:SW_Tact_4.5x4.5mm_TVCM09BB_Low_Profile" H 7500 6100 50  0001 C CNN
-F 3 "" H 7500 6100 50  0001 C CNN
-F 4 "UP button" H 7500 5900 50  0001 C CNN "Note"
-F 5 "TVCM09BB" H 7500 5900 50  0001 C CNN "Model"
-	1    7500 5900
-	0    1    1    0   
-$EndComp
-$Comp
 L xling:R R9
 U 1 1 5A01515D
 P 9175 5625
@@ -134,19 +121,6 @@ F 3 "" H 9425 5925 50  0001 C CNN
 F 4 "CL10B472KB8NNNC" H 9425 5925 50  0001 C CNN "Model"
 	1    9425 5925
 	1    0    0    -1  
-$EndComp
-$Comp
-L xling:SW_Push SW2
-U 1 1 5A015175
-P 8800 5900
-F 0 "SW2" H 8720 5820 50  0000 L CNN
-F 1 "BTN" H 8800 6090 50  0000 C CNN
-F 2 "Xling Footprints:SW_Tact_4.5x4.5mm_TVCM09BB_Low_Profile" H 8800 6100 50  0001 C CNN
-F 3 "" H 8800 6100 50  0001 C CNN
-F 4 "SELECT Button" H 8800 5900 50  0001 C CNN "Note"
-F 5 "TVCM09BB" H 8800 5900 50  0001 C CNN "Model"
-	1    8800 5900
-	0    1    1    0   
 $EndComp
 $Comp
 L xling:R R10
@@ -173,25 +147,12 @@ F 4 "CL10B472KB8NNNC" H 10625 5925 50  0001 C CNN "Model"
 	1    0    0    -1  
 $EndComp
 $Comp
-L xling:SW_Push SW3
-U 1 1 5A01528F
-P 10000 5925
-F 0 "SW3" H 9920 5845 50  0000 L CNN
-F 1 "BTN" H 10000 6105 50  0000 C CNN
-F 2 "Xling Footprints:SW_Tact_4.5x4.5mm_TVCM09BB_Low_Profile" H 10000 6125 50  0001 C CNN
-F 3 "" H 10000 6125 50  0001 C CNN
-F 4 "DOWN Button" H 10000 5925 50  0001 C CNN "Note"
-F 5 "TVCM09BB" H 10000 5925 50  0001 C CNN "Model"
-	1    10000 5925
-	0    1    1    0   
-$EndComp
-$Comp
 L xling:Conn_01x02 J3
 U 1 1 5A020B3D
 P 3150 7225
 F 0 "J3" H 3150 7345 50  0000 C CNN
 F 1 "Battery" H 3120 6995 50  0000 C CNN
-F 2 "Xling Footprints:Battery_SMD_pads_1x02_HandSoldering" H 3150 7225 50  0001 C CNN
+F 2 "Connector_Molex:Molex_Pico-EZmate_Slim_202656-0021_1x02-1MP_P1.20mm_Vertical" H 3150 7225 50  0001 C CNN
 F 3 "" H 3150 7225 50  0001 C CNN
 	1    3150 7225
 	1    0    0    -1  
@@ -1904,4 +1865,76 @@ Text Notes 1275 725  0    98   ~ 20
 MCU (128 KiB flash, 16 KiB SRAM, 4KiB EEPROM)
 Text Notes 5300 2100 0    98   ~ 20
 Test Points
+$Comp
+L xling:SW_Push_Shielded SW1
+U 1 1 5F66AE66
+P 7500 5900
+F 0 "SW1" V 7447 6048 60  0000 L CNN
+F 1 "BTN" V 7553 6048 60  0000 L CNN
+F 2 "Xling Footprints:SW_Tact_5.2x5.2mm_TVCU11_Low_Profile" H 7400 5950 60  0001 C CNN
+F 3 "https://www.tme.eu/en/details/tvcu11bb/microswitches-tact/jianfu/" H 7400 5950 60  0001 C CNN
+F 4 "UP button" V 7500 5900 50  0001 C CNN "Note"
+F 5 " TVCU11BB" V 7500 5900 50  0001 C CNN "Model"
+	1    7500 5900
+	0    1    1    0   
+$EndComp
+Wire Wire Line
+	7350 5850 7300 5850
+Wire Wire Line
+	7300 5850 7300 5950
+Wire Wire Line
+	7300 6175 7500 6175
+Wire Wire Line
+	7350 5950 7300 5950
+Connection ~ 7300 5950
+Wire Wire Line
+	7300 5950 7300 6175
+Wire Wire Line
+	8650 5850 8610 5850
+Wire Wire Line
+	8610 5850 8610 5950
+Wire Wire Line
+	8610 6175 8800 6175
+Wire Wire Line
+	8650 5950 8610 5950
+Connection ~ 8610 5950
+Wire Wire Line
+	8610 5950 8610 6175
+Wire Wire Line
+	9850 5875 9795 5875
+Wire Wire Line
+	9795 5875 9795 5975
+Wire Wire Line
+	9795 6175 10000 6175
+Wire Wire Line
+	9850 5975 9795 5975
+Connection ~ 9795 5975
+Wire Wire Line
+	9795 5975 9795 6175
+$Comp
+L xling:SW_Push_Shielded SW2
+U 1 1 5F761AF1
+P 8800 5900
+F 0 "SW2" V 8747 6048 60  0000 L CNN
+F 1 "BTN" V 8853 6048 60  0000 L CNN
+F 2 "Xling Footprints:SW_Tact_5.2x5.2mm_TVCU11_Low_Profile" H 8700 5950 60  0001 C CNN
+F 3 "https://www.tme.eu/en/details/tvcu11bb/microswitches-tact/jianfu/" H 8700 5950 60  0001 C CNN
+F 4 "SELECT button" V 8800 5900 50  0001 C CNN "Note"
+F 5 " TVCU11BB" V 8800 5900 50  0001 C CNN "Model"
+	1    8800 5900
+	0    1    1    0   
+$EndComp
+$Comp
+L xling:SW_Push_Shielded SW3
+U 1 1 5F762F49
+P 10000 5925
+F 0 "SW3" V 9947 6073 60  0000 L CNN
+F 1 "BTN" V 10053 6073 60  0000 L CNN
+F 2 "Xling Footprints:SW_Tact_5.2x5.2mm_TVCU11_Low_Profile" H 9900 5975 60  0001 C CNN
+F 3 "https://www.tme.eu/en/details/tvcu11bb/microswitches-tact/jianfu/" H 9900 5975 60  0001 C CNN
+F 4 "DOWN button" V 10000 5925 50  0001 C CNN "Note"
+F 5 " TVCU11BB" V 10000 5925 50  0001 C CNN "Model"
+	1    10000 5925
+	0    1    1    0   
+$EndComp
 $EndSCHEMATC

@@ -1,4 +1,4 @@
-# Xling, a tamagotchi-like toy
+# Xling, a pocket demon
 
 ![Image](Xling_v3.2.png)
 

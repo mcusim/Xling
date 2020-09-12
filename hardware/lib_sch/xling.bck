@@ -6,7 +6,7 @@ K 1A DC-DC Buck Converter
 $ENDCMP
 #
 $CMP ATmega1284P-AU
-D 20MHz, 16kB Flash, 1kB SRAM, 512B EEPROM, JTAG, TQFP-44
+D 20MHz, 128kB Flash, 16kB SRAM, 4kB EEPROM, JTAG, TQFP-44
 K AVR 8bit Microcontroller MegaAVR
 F http://ww1.microchip.com/downloads/en/DeviceDoc/Atmel-8272-8-bit-AVR-microcontroller-ATmega164A_PA-324A_PA-644A_PA-1284_P_datasheet.pdf
 $ENDCMP
