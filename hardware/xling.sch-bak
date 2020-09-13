@@ -4,8 +4,8 @@ EELAYER END
 $Descr A4 11693 8268
 encoding utf-8
 Sheet 1 1
-Title "Schematic of Xling, a pocket daemon"
-Date "2020-09-11"
+Title "Schematic of Xling, a pocket demon"
+Date "2020-09-12"
 Rev "4"
 Comp "Designed by Dmitry Salychev <dsl@mcusim.org>, CERN-OHL-W-2.0"
 Comment1 ""
@@ -555,12 +555,12 @@ $EndComp
 $Comp
 L xling:GND #PWR020
 U 1 1 5CC1A748
-P 1350 1775
-F 0 "#PWR020" H 1350 1525 50  0001 C CNN
-F 1 "GND" H 1350 1625 50  0000 C CNN
-F 2 "" H 1350 1775 50  0001 C CNN
-F 3 "" H 1350 1775 50  0001 C CNN
-	1    1350 1775
+P 1350 1830
+F 0 "#PWR020" H 1350 1580 50  0001 C CNN
+F 1 "GND" H 1350 1680 50  0000 C CNN
+F 2 "" H 1350 1830 50  0001 C CNN
+F 3 "" H 1350 1830 50  0001 C CNN
+	1    1350 1830
 	1    0    0    -1  
 $EndComp
 $Comp
@@ -1241,15 +1241,6 @@ Wire Wire Line
 	7900 1100 7900 1125
 Connection ~ 7900 1125
 Text GLabel 2250 1850 0    60   Input ~ 0
-RST
-Wire Wire Line
-	1350 1350 1350 1425
-Wire Wire Line
-	1350 1425 1275 1425
-Connection ~ 1350 1425
-Wire Wire Line
-	1350 1425 1350 1475
-Text GLabel 1275 1425 0    60   Input ~ 0
 RST
 Text GLabel 4525 2700 2    60   Input ~ 0
 MOSI
@@ -1937,4 +1928,38 @@ F 5 " TVCU11BB" V 10000 5925 50  0001 C CNN "Model"
 	1    10000 5925
 	0    1    1    0   
 $EndComp
+Text GLabel 950  1400 0    60   Input ~ 0
+RST
+Wire Wire Line
+	1350 1775 1350 1800
+Wire Wire Line
+	1350 1350 1350 1400
+$Comp
+L Jumper:SolderJumper_2_Open JP1
+U 1 1 5F5FC8BA
+P 1050 1600
+F 0 "JP1" V 1055 1395 50  0000 L CNN
+F 1 "Reset" V 1145 1350 50  0000 L CNN
+F 2 "Jumper:SolderJumper-2_P1.3mm_Open_Pad1.0x1.5mm" H 1050 1600 50  0001 C CNN
+F 3 "~" H 1050 1600 50  0001 C CNN
+	1    1050 1600
+	0    1    1    0   
+$EndComp
+Wire Wire Line
+	1050 1750 1050 1800
+Wire Wire Line
+	1050 1800 1350 1800
+Connection ~ 1350 1800
+Wire Wire Line
+	1350 1800 1350 1830
+Wire Wire Line
+	1350 1400 1050 1400
+Wire Wire Line
+	1050 1400 1050 1450
+Connection ~ 1350 1400
+Wire Wire Line
+	1350 1400 1350 1475
+Wire Wire Line
+	950  1400 1050 1400
+Connection ~ 1050 1400
 $EndSCHEMATC
