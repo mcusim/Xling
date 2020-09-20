@@ -50,6 +50,10 @@
 #define ANIM_MAX		(128u) /* Max. # of animations per scene. */
 #define ANIM_MAX_PATHS		(16u)  /* Max. # of paths per animation. */
 #define ANIM_MAX_FRAMES		(64u)  /* Max. # of frames per path */
+#define ANIM_TAG_FORMAT		"!anim(%63[a-zA-Z0-9]%63[#,]%63[a-zA-Z0-9])"
+#define ANIM_TAG_PARTS		(3)    /* # of the animation tag parts */
+#define ANIM_GO_TAG_FORMAT	"!go(%63[a-zA-Z0-9]%63[#,]%d%1[%])"
+#define ANIM_GO_TAG_PARTS	(4)
 
 /******************************************************************************
  * Basic configuration.
@@ -81,46 +85,56 @@
  * Local function-like macros.
  ******************************************************************************/
 
-#define IMGA_CMD(buf, bufsz, name, img_path) do {	\
-	snprintf((buf), (bufsz), \
-	    "%s " \
-	    "--mode=convert-image " \
-	    "--doc-name=%s " \
-	    "--config-application=%s " \
-	    "--preset-name=%s " \
-	    "--template=%s " \
-	    "--input=%s " \
-	    "--output=%s/%s.h", \
-	    CONVERTER_PATH, (name), CONV_CONFIG, DISPLAY_PRESET, \
-	    IMGA_TEMPLATE, (img_path), OUTPUT_DIR, (name)); \
+#define IMGA_CMD(buf, bufsz, name, img_path) do {			\
+	snprintf((buf), (bufsz),					\
+	    "%s "							\
+	    "--mode=convert-image "					\
+	    "--doc-name=%s "						\
+	    "--config-application=%s "					\
+	    "--preset-name=%s "						\
+	    "--template=%s "						\
+	    "--input=%s "						\
+	    "--output=%s/%s.h",						\
+	    CONVERTER_PATH, (name), CONV_CONFIG, DISPLAY_PRESET,	\
+	    IMGA_TEMPLATE, (img_path), OUTPUT_DIR, (name));		\
 } while(0)
 
-#define ALPHA_CMD(buf, bufsz, name, img_path) do {	\
-	snprintf((buf), (bufsz), \
-	    "%s " \
-	    "--mode=convert-image " \
-	    "--doc-name=%s " \
-	    "--config-application=%s " \
-	    "--preset-name=%s " \
-	    "--template=%s " \
-	    "--input=%s " \
-	    "--output=%s/%s_a.h", \
-	    CONVERTER_PATH, (name), CONV_CONFIG, DISPLAY_PRESET_ALPHA, \
-	    ALPHA_TEMPLATE, (img_path), OUTPUT_DIR, (name)); \
+#define ALPHA_CMD(buf, bufsz, name, img_path) do {			\
+	snprintf((buf), (bufsz),					\
+	    "%s "							\
+	    "--mode=convert-image "					\
+	    "--doc-name=%s "						\
+	    "--config-application=%s "					\
+	    "--preset-name=%s "						\
+	    "--template=%s "						\
+	    "--input=%s "						\
+	    "--output=%s/%s_a.h",					\
+	    CONVERTER_PATH, (name), CONV_CONFIG, DISPLAY_PRESET_ALPHA,	\
+	    ALPHA_TEMPLATE, (img_path), OUTPUT_DIR, (name));		\
 } while(0)
 
-#define IMG_CMD(buf, bufsz, name, img_path) do {	\
-	snprintf((buf), (bufsz), \
-	    "%s " \
-	    "--mode=convert-image " \
-	    "--doc-name=%s " \
-	    "--config-application=%s " \
-	    "--preset-name=%s " \
-	    "--template=%s " \
-	    "--input=%s " \
-	    "--output=%s/%s.h", \
+#define IMG_CMD(buf, bufsz, name, img_path) do {		 \
+	snprintf((buf), (bufsz),				 \
+	    "%s "						 \
+	    "--mode=convert-image "				 \
+	    "--doc-name=%s "					 \
+	    "--config-application=%s "				 \
+	    "--preset-name=%s "					 \
+	    "--template=%s "					 \
+	    "--input=%s "					 \
+	    "--output=%s/%s.h",					 \
 	    CONVERTER_PATH, (name), CONV_CONFIG, DISPLAY_PRESET, \
-	    IMG_TEMPLATE, (img_path), OUTPUT_DIR, (name)); \
+	    IMG_TEMPLATE, (img_path), OUTPUT_DIR, (name));	 \
+} while(0)
+
+#define IS_SAME_NAME(name1, name2)	(strcmp((name1), (name2)) == 0)
+#define IS_NOT_SAME_NAME(name1, name2)	(strcmp((name1), (name2)) != 0)
+
+#define REPLACE_STR(str, substr, ch) do {				\
+	char *__rep_subst_pos = NULL;					\
+	while ((__rep_subst_pos = strstr((str), (substr))) != NULL) {	\
+		(*__rep_subst_pos) = (ch);				\
+	}								\
 } while(0)
 
 /******************************************************************************
@@ -138,8 +152,8 @@ typedef struct anim_path_t anim_path_t;
 typedef void (*layer_callback_t)(layer_ctx_t *ctx);
 
 struct point_t {
-	uint16_t	 x;
-	uint16_t	 y;
+	int32_t	 x;
+	int32_t	 y;
 };
 
 /* Different types of checks for layers. */
@@ -163,13 +177,18 @@ struct layer_chk_t {
  * layer like calculating hash, obtaining coordinates, etc.
  */
 struct layer_ctx_t {
+	char		 anim_alt_path_name[ANIM_MAX_NAME];
 	uint8_t		 hash[HASH_SZ];
 	point_t		 base_pt;
 	gint		 layer_id;
+	anim_t		*anim;
+	anim_path_t	*anim_path;
+	uint8_t		 anim_alt_path_chance;
 
 	gboolean	 has_hash;
 	gboolean	 has_base_pt;
 	gboolean	 has_layer_id;
+	gboolean	 is_anim_frame;
 };
 
 typedef enum layer_obj_t {
@@ -195,11 +214,11 @@ struct scene_layer_t {
  * chance	Chance to draw the alternative frame, in percent.
  */
 struct anim_frame_t {
+	char		alt_path_name[ANIM_MAX_NAME];
 	uint8_t		hash[HASH_SZ];
 	point_t		base_pt;
 	uint32_t	anim_idx;
 	uint32_t	path_idx;
-	uint32_t	next_path_idx;
 	uint32_t	alt_path_idx;
 	uint8_t		alt_path_chance;
 };
@@ -220,9 +239,10 @@ struct anim_t {
 /* Animation path. */
 struct anim_path_t {
 	char		name[ANIM_MAX_NAME];
- 	uint32_t	frames[ANIM_MAX_FRAMES];
+ 	uint32_t	frames_idx[ANIM_MAX_FRAMES];
 	uint32_t	frames_n;
-	uint16_t	anim_idx;
+	uint32_t	anim_idx;
+	uint32_t	path_idx;
 };
 
 /******************************************************************************
@@ -232,7 +252,10 @@ struct anim_path_t {
 /* Check functions to be applied to layer/layers. */
 static void	 chk_parse_frame(layer_ctx_t *ctx);
 static void	 chk_parse_anim_tag(layer_ctx_t *ctx);
+static void	 chk_parse_anim_frame(layer_ctx_t *ctx);
+static void	 chk_parse_go_tag(layer_ctx_t *ctx);
 static void	 chk_link_animation_frames(layer_ctx_t *ctx);
+static void	 chk_print_animations(layer_ctx_t *ctx);
 
 /* Plugin lifecycle functions. */
 static void      query(void);
@@ -251,6 +274,8 @@ static void	 util_close_scenes_file(void);
 static FILE	*util_open_anim_file(void);
 static void	 util_close_anim_file(void);
 
+static void	 util_reset_layer_context(layer_ctx_t *ctx);
+
 /******************************************************************************
  * Plugin-wide variables.
  ******************************************************************************/
@@ -268,7 +293,10 @@ static GimpParamDef _proc_args[] = {
 static layer_chk_t _layer_checks[] = {
 	{ .kind = CHECK_PER_LAYER,	.cbk = &chk_parse_frame },
 	{ .kind = CHECK_PER_LAYER,	.cbk = &chk_parse_anim_tag },
-	{ .kind = CHECK_AFTER_ALL,	.cbk = &chk_link_animation_frames }
+	{ .kind = CHECK_PER_LAYER,	.cbk = &chk_parse_go_tag },
+	{ .kind = CHECK_PER_LAYER,	.cbk = &chk_parse_anim_frame },
+	{ .kind = CHECK_AFTER_ALL,	.cbk = &chk_link_animation_frames },
+	{ .kind = CHECK_AFTER_ALL,	.cbk = &chk_print_animations }
 };
 static uint32_t _layer_checks_n =
     sizeof(_layer_checks)/sizeof(_layer_checks[0]);
@@ -365,13 +393,9 @@ run(const gchar *name, gint nparams, const GimpParam *param,
 	/* Find a number of the image layers. */
 	layer = gimp_image_get_layers(image_id, &layers_n);
 
-	/* Call checks before all layers. */
+	/* 1. Call checks before all layers. */
+	util_reset_layer_context(&ctx);
 	for (uint32_t j = 0; j < _layer_checks_n; j++) {
-		/* Reset layer context. */
-		ctx.has_hash = FALSE;
-		ctx.has_base_pt = FALSE;
-		ctx.has_layer_id = FALSE;
-
 		switch (_layer_checks[j].kind) {
 		case CHECK_BEFORE_ALL:
 			_layer_checks[j].cbk(&ctx);
@@ -381,18 +405,19 @@ run(const gchar *name, gint nparams, const GimpParam *param,
 		}
 	}
 
-	/* Process all layers. */
+	/* 2. Process all layers. */
+	util_reset_layer_context(&ctx);
 	for (gint i = 0; i < layers_n; i++) {
+		/* Setup context before start of the next layer. */
+		ctx.is_anim_frame = FALSE;
+		ctx.has_hash = FALSE;
+		ctx.has_base_pt = FALSE;
+		ctx.has_layer_id = TRUE;
+		ctx.layer_id = layer[i];
+		ctx.anim_alt_path_chance = 0;
+
 		/* Call all per-layer checks for the current layer. */
 		for (uint32_t j = 0; j < _layer_checks_n; j++) {
-			/* Reset layer context. */
-			ctx.has_hash = FALSE;
-			ctx.has_base_pt = FALSE;
-			ctx.has_layer_id = TRUE;
-
-			/* Provide a layer id. */
-			ctx.layer_id = layer[i];
-
 			switch (_layer_checks[j].kind) {
 			case CHECK_PER_LAYER:
 				_layer_checks[j].cbk(&ctx);
@@ -403,13 +428,9 @@ run(const gchar *name, gint nparams, const GimpParam *param,
 		}
 	}
 
-	/* Call checks after all layers. */
+	/* 3. Call checks after all layers. */
+	util_reset_layer_context(&ctx);
 	for (uint32_t j = 0; j < _layer_checks_n; j++) {
-		/* Reset layer context. */
-		ctx.has_hash = FALSE;
-		ctx.has_base_pt = FALSE;
-		ctx.has_layer_id = FALSE;
-
 		switch (_layer_checks[j].kind) {
 		case CHECK_AFTER_ALL:
 			_layer_checks[j].cbk(&ctx);
@@ -431,6 +452,7 @@ chk_parse_frame(layer_ctx_t *ctx)
 	gint32 img_id;
 	gchar *img_file_name = NULL;
 	GimpDrawable *dwb = NULL;
+	point_t pt;
 	uint8_t hash[HASH_SZ];
 	char hasht[(HASH_SZ * 2) + 1]; /* 2 chars/byte + '\0' */
 	int rc = 0;
@@ -453,6 +475,16 @@ chk_parse_frame(layer_ctx_t *ctx)
 	if ((rc == 0) && (visible) && (dwb != NULL)) {
 		/* Prepare a temporary image file. */
 		img_file_name = gimp_temp_name("png");
+
+		/*
+		 * Get coordinates of the top-left corner of
+		 * the drawable on the image.
+		 */
+		gimp_drawable_offsets(dwb->drawable_id, &pt.x, &pt.y);
+		if (!ctx->has_base_pt) {
+			ctx->base_pt = pt;
+			ctx->has_base_pt = TRUE;
+		}
 
 		/* Drawable might have transparency channel. */
 		has_alpha = gimp_drawable_has_alpha(dwb->drawable_id);
@@ -494,7 +526,7 @@ chk_parse_frame(layer_ctx_t *ctx)
 }
 
 /*
- * Parses !anim(name) and !anim(name, path) tags from the layer name.
+ * Parses !anim(name, path) tag from the layer name.
  */
 static void
 chk_parse_anim_tag(layer_ctx_t *ctx)
@@ -502,7 +534,7 @@ chk_parse_anim_tag(layer_ctx_t *ctx)
 	char layer_name[LAYER_MAX_NAME];
 	char anim_name[ANIM_MAX_NAME];
 	char path_name[ANIM_MAX_NAME];
-	char name_buf[ANIM_MAX_NAME];
+	char name_buf[(2 * ANIM_MAX_NAME) + 1];
 	gboolean visible;
 	gchar *gpos;
 	char *token, *pos;
@@ -525,15 +557,12 @@ chk_parse_anim_tag(layer_ctx_t *ctx)
 		token = strtok(layer_name, "_");
 		while (token != NULL) {
 			/* Replace all spaces */
-			while ((pos = strstr(token, " ")) != NULL) {
-				(*pos) = '#';
-			}
+			REPLACE_STR(token, " ", '#');
 
-			/* First attempt to parse the tag. */
-			rc = sscanf(token,
-			    "!anim(%63[a-zA-Z0-9]%63[#,]%63[a-zA-Z0-9])",
-			    anim_name, name_buf, path_name);
-			if (rc == 3) {
+			/* An attempt to parse the animation tag. */
+			rc = sscanf(token, ANIM_TAG_FORMAT, anim_name,
+			    name_buf, path_name);
+			if (rc == ANIM_TAG_PARTS) {
 				break;
 			}
 
@@ -541,19 +570,210 @@ chk_parse_anim_tag(layer_ctx_t *ctx)
 			token = strtok(NULL, "_");
 		}
 
-		/* There's an animation tag found! */
-		if (rc == 3) {
-			printf("Animation found: %s %s\n", anim_name, path_name);
-		} else {
-			/* Nothing to do. */
+		if (rc == ANIM_TAG_PARTS) {
+			/* Animation tag found! */
+			ctx->is_anim_frame = TRUE;
+
+			if ((ctx->anim == NULL) ||
+			    (IS_NOT_SAME_NAME(anim_name, ctx->anim->name))) {
+				/* Update current animation in the context. */
+				ctx->anim = &_animations[_animations_n];
+				ctx->anim->anim_idx = _animations_n;
+
+				/* Copy name of the animation */
+				strncpy(ctx->anim->name, anim_name,
+				    ANIM_MAX_NAME);
+
+				/* Increase number of the known animations. */
+				_animations_n++;
+			}
+
+			/*
+			 * Animation tag should contain a path for the current
+			 * frame also.
+			 */
+			sprintf(name_buf, "%s@%s", path_name, anim_name);
+			if ((ctx->anim_path == NULL) ||
+			    (IS_NOT_SAME_NAME(name_buf, ctx->anim_path->name))) {
+				/*
+				 * Update current animation path in the
+				 * context.
+				 */
+				ctx->anim_path = &_paths[_paths_n];
+				ctx->anim_path->path_idx = _paths_n;
+				ctx->anim_path->anim_idx = ctx->anim->anim_idx;
+
+				/* Append current path to the animation. */
+				ctx->anim->paths_idx[ctx->anim->paths_n] =
+				    _paths_n;
+				ctx->anim->paths_n++;
+
+				/* Copy name of the path. */
+				strncpy(ctx->anim_path->name, name_buf,
+				    ANIM_MAX_NAME);
+
+				/* Increment number of the known paths. */
+				_paths_n++;
+			}
+		}
+	}
+}
+
+/*
+ * Parses !go(path, chance) tag from the layer name.
+ */
+static void
+chk_parse_go_tag(layer_ctx_t *ctx)
+{
+	char layer_name[LAYER_MAX_NAME];
+	char path_name[ANIM_MAX_NAME];
+	char buf1[ANIM_MAX_NAME];
+	char buf2[ANIM_MAX_NAME];
+	int chance;
+	gchar *gpos;
+	char *token, *pos;
+	int rc = 0;
+
+	if (ctx->is_anim_frame) {
+		/* An animation frame. */
+
+		/* Get a copy of the layer name. */
+		gpos = gimp_item_get_name(ctx->layer_id);
+		strncpy(layer_name, gpos, LAYER_MAX_NAME);
+
+		/* Parse layer name by token. */
+		token = strtok(layer_name, "_");
+		while (token != NULL) {
+			/* Replace all spaces */
+			REPLACE_STR(token, " ", '#');
+
+			/* An attempt to parse the animation tag. */
+			rc = sscanf(token, ANIM_GO_TAG_FORMAT, path_name,
+			    buf1, &chance, buf2);
+			if (rc == ANIM_GO_TAG_PARTS) {
+				break;
+			}
+
+			/* Go to the next token. */
+			token = strtok(NULL, "_");
+		}
+
+		if (rc == ANIM_GO_TAG_PARTS) {
+			/* Go tag found! */
+			snprintf(ctx->anim_alt_path_name, ANIM_MAX_NAME,
+			    "%s@%s", path_name, ctx->anim->name);
+			ctx->anim_alt_path_chance = chance;
+		}
+	} else {
+		/* Not an animation frame - do nothing. */
+	}
+}
+
+/*
+ * Adds current layer's image as an animation frame to the list of frames
+ * and updates its animation path.
+ */
+static void
+chk_parse_anim_frame(layer_ctx_t *ctx)
+{
+	anim_frame_t *frame;
+
+	if (ctx->is_anim_frame) {
+		/* An animation frame. */
+		frame = &_frames[_frames_n];
+		frame->anim_idx = ctx->anim->anim_idx;
+		frame->path_idx = ctx->anim_path->path_idx;
+		frame->base_pt = ctx->base_pt;
+
+		/* Alternative path for this frame */
+		if (ctx->anim_alt_path_chance > 0u) {
+			strncpy(frame->alt_path_name, ctx->anim_alt_path_name,
+			    ANIM_MAX_NAME);
+			frame->alt_path_chance = ctx->anim_alt_path_chance;
+		}
+
+		/* Append frame to the path */
+		ctx->anim_path->frames_idx[ctx->anim_path->frames_n] =
+		    _frames_n;
+		ctx->anim_path->frames_n++;
+
+		/* Copy hash of the frame. */
+		memcpy(frame->hash, ctx->hash, HASH_SZ);
+
+		/* Increment number of the known animation frames. */
+		_frames_n++;
+	} else {
+		/* Not an animation frame - do nothing. */
+	}
+}
+
+/* Resolve alternative path names to path indexes. */
+static void
+chk_link_animation_frames(layer_ctx_t *ctx)
+{
+	anim_frame_t *frame;
+	char hasht[(2 * HASH_SZ) + 1];
+
+	for (uint32_t i = 0; i < _frames_n; i++) {
+		frame = &_frames[i];
+
+		if (frame->alt_path_chance > 0u) {
+			/* Frame has an alternative path. */
+			for (uint32_t j = 0; j < _paths_n; j++) {
+				if (IS_SAME_NAME(frame->alt_path_name,
+				    _paths[j].name)) {
+					frame->alt_path_idx = j;
+					break;
+				}
+			}
 		}
 	}
 }
 
 static void
-chk_link_animation_frames(layer_ctx_t *ctx)
+chk_print_animations(layer_ctx_t *ctx)
 {
-	return;
+	anim_t *anim;
+	anim_path_t *path;
+	anim_frame_t *frame;
+	char hasht[(2 * HASH_SZ) + 1];
+	char hasht2[(2 * HASH_SZ) + 1];
+
+	printf("\n--- Animations ---\n");
+
+	/* Animations */
+	for (uint32_t i = 0; i < _animations_n; i++) {
+		anim = &_animations[i];
+		printf("%s\n", anim->name);
+
+		/* Paths */
+		for (uint32_t j = 0; j < anim->paths_n; j++) {
+			path = &_paths[anim->paths_idx[j]];
+			printf("\t%s\n", path->name);
+
+			/* Frames */
+			for (uint32_t k = 0; k < path->frames_n; k++) {
+				frame = &_frames[path->frames_idx[k]];
+
+				util_sha1_to_text(frame->hash, HASH_SZ, hasht,
+				    sizeof(hasht));
+
+				if (frame->alt_path_chance > 0u) {
+					/* There's an alternative path */
+					util_sha1_to_text(
+					    _frames[_paths[frame->alt_path_idx].frames_idx[0]].hash,
+					    HASH_SZ, hasht2, sizeof(hasht2));
+
+					printf("\t\t%s ---> %s (%s), %d%%\n",
+					    hasht, hasht2,
+					    _paths[frame->alt_path_idx].name,
+					    frame->alt_path_chance);
+				} else {
+					printf("\t\t%s\n", hasht);
+				}
+			}
+		}
+	}
 }
 
 static uint8_t
@@ -630,4 +850,17 @@ util_sha1_to_text(uint8_t *hash, uint32_t hash_sz, char *hasht, uint32_t hasht_s
 	}
 
 	return (val);
+}
+
+static void
+util_reset_layer_context(layer_ctx_t *ctx)
+{
+	ctx->has_hash = FALSE;
+	ctx->has_base_pt = FALSE;
+	ctx->has_layer_id = FALSE;
+	ctx->is_anim_frame = FALSE;
+	ctx->anim_alt_path_chance = 0;
+
+	ctx->anim = NULL;
+	ctx->anim_path = NULL;
 }
