@@ -219,6 +219,7 @@ struct anim_frame_t {
 	point_t		base_pt;
 	uint32_t	anim_idx;
 	uint32_t	path_idx;
+	uint32_t	frame_idx; /* within animation only! */
 	uint32_t	alt_path_idx;
 	uint8_t		alt_path_chance;
 };
@@ -255,6 +256,7 @@ static void	 chk_parse_anim_tag(layer_ctx_t *ctx);
 static void	 chk_parse_anim_frame(layer_ctx_t *ctx);
 static void	 chk_parse_go_tag(layer_ctx_t *ctx);
 static void	 chk_link_animation_frames(layer_ctx_t *ctx);
+static void	 chk_update_animation_frame_indexes(layer_ctx_t *ctx);
 static void	 chk_print_animations(layer_ctx_t *ctx);
 
 /* Plugin lifecycle functions. */
@@ -289,13 +291,14 @@ static GimpParamDef _proc_args[] = {
 	{ GIMP_PDB_DRAWABLE, "drawable", "Input drawable" }
 };
 
-/* List of check functions to be applied to layer/layers. */
+/* List of check functions to be applied to image layers. */
 static layer_chk_t _layer_checks[] = {
 	{ .kind = CHECK_PER_LAYER,	.cbk = &chk_parse_frame },
 	{ .kind = CHECK_PER_LAYER,	.cbk = &chk_parse_anim_tag },
 	{ .kind = CHECK_PER_LAYER,	.cbk = &chk_parse_go_tag },
 	{ .kind = CHECK_PER_LAYER,	.cbk = &chk_parse_anim_frame },
 	{ .kind = CHECK_AFTER_ALL,	.cbk = &chk_link_animation_frames },
+	{ .kind = CHECK_AFTER_ALL,	.cbk = &chk_update_animation_frame_indexes },
 	{ .kind = CHECK_AFTER_ALL,	.cbk = &chk_print_animations }
 };
 static uint32_t _layer_checks_n =
@@ -731,6 +734,36 @@ chk_link_animation_frames(layer_ctx_t *ctx)
 }
 
 static void
+chk_update_animation_frame_indexes(layer_ctx_t *ctx)
+{
+	anim_t *anim;
+	anim_path_t *path;
+	anim_frame_t *frame;
+	uint32_t frame_idx;
+
+	/* Animations */
+	for (uint32_t i = 0; i < _animations_n; i++) {
+		/* Reset frame index for each animation. */
+		frame_idx = 0;
+
+		anim = &_animations[i];
+
+		/* Paths */
+		for (uint32_t j = 0; j < anim->paths_n; j++) {
+			path = &_paths[anim->paths_idx[j]];
+
+			/* Frames */
+			for (uint32_t k = 0; k < path->frames_n; k++) {
+				frame = &_frames[path->frames_idx[k]];
+
+				frame->frame_idx = frame_idx;
+				frame_idx++;
+			}
+		}
+	}
+}
+
+static void
 chk_print_animations(layer_ctx_t *ctx)
 {
 	anim_t *anim;
@@ -764,12 +797,18 @@ chk_print_animations(layer_ctx_t *ctx)
 					    _frames[_paths[frame->alt_path_idx].frames_idx[0]].hash,
 					    HASH_SZ, hasht2, sizeof(hasht2));
 
-					printf("\t\t%s ---> %s (%s), %d%%\n",
-					    hasht, hasht2,
-					    _paths[frame->alt_path_idx].name,
+					printf("\t\t#%d %s at (%d, %d) ---> #%d %s %d%%\n",
+					    frame->frame_idx, hasht,
+					    frame->base_pt.x, frame->base_pt.y,
+					    _frames[_paths[frame->alt_path_idx].frames_idx[0]].frame_idx,
+					    hasht2,
 					    frame->alt_path_chance);
 				} else {
-					printf("\t\t%s\n", hasht);
+					printf("\t\t#%d %s at (%d, %d)\n",
+					    frame->frame_idx,
+					    hasht,
+					    frame->base_pt.x,
+					    frame->base_pt.y);
 				}
 			}
 		}
