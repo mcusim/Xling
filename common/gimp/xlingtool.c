@@ -66,9 +66,6 @@
 #define TEMPLATES_DIR           XLING_CFG_DIR "templates/"
 #define CONV_CONFIG             XLING_CFG_DIR "lcd-image-converter.conf"
 #define OUTPUT_DIR              "/home/dsl/xling"
-#define DATA_DIR		OUTPUT_DIR "/data"
-#define SCENES_FILE             OUTPUT_DIR "/scenes.h"
-#define ANIM_FILE               OUTPUT_DIR "/anim.h"
 
 #define DISPLAY_PRESET          "Xling_SH1106_display_preset"
 #define DISPLAY_PRESET_ALPHA    "Xling_SH1106_display_preset_alpha_channel"
@@ -255,9 +252,11 @@ static void	 chk_parse_frame(layer_ctx_t *ctx);
 static void	 chk_parse_anim_tag(layer_ctx_t *ctx);
 static void	 chk_parse_anim_frame(layer_ctx_t *ctx);
 static void	 chk_parse_go_tag(layer_ctx_t *ctx);
-static void	 chk_link_animation_frames(layer_ctx_t *ctx);
-static void	 chk_update_animation_frame_indexes(layer_ctx_t *ctx);
+static void	 chk_link_anim_frames(layer_ctx_t *ctx);
+static void	 chk_update_anim_frame_indexes(layer_ctx_t *ctx);
 static void	 chk_print_animations(layer_ctx_t *ctx);
+static void	 chk_print_scene_layers(layer_ctx_t *ctx);
+static void	 chk_write_animations_header(layer_ctx_t *ctx);
 
 /* Plugin lifecycle functions. */
 static void      query(void);
@@ -297,9 +296,11 @@ static layer_chk_t _layer_checks[] = {
 	{ .kind = CHECK_PER_LAYER,	.cbk = &chk_parse_anim_tag },
 	{ .kind = CHECK_PER_LAYER,	.cbk = &chk_parse_go_tag },
 	{ .kind = CHECK_PER_LAYER,	.cbk = &chk_parse_anim_frame },
-	{ .kind = CHECK_AFTER_ALL,	.cbk = &chk_link_animation_frames },
-	{ .kind = CHECK_AFTER_ALL,	.cbk = &chk_update_animation_frame_indexes },
-	{ .kind = CHECK_AFTER_ALL,	.cbk = &chk_print_animations }
+	{ .kind = CHECK_AFTER_ALL,	.cbk = &chk_link_anim_frames },
+	{ .kind = CHECK_AFTER_ALL,	.cbk = &chk_update_anim_frame_indexes },
+//	{ .kind = CHECK_AFTER_ALL,	.cbk = &chk_print_animations },
+//	{ .kind = CHECK_AFTER_ALL,	.cbk = &chk_print_scene_layers },
+	{ .kind = CHECK_AFTER_ALL,	.cbk = &chk_write_animations_header },
 };
 static uint32_t _layer_checks_n =
     sizeof(_layer_checks)/sizeof(_layer_checks[0]);
@@ -327,8 +328,6 @@ static uint32_t _paths_n;
 static anim_frame_t _frames[ANIM_MAX * ANIM_MAX_PATHS * ANIM_MAX_FRAMES];
 static uint32_t _frames_n;
 
-static FILE *_scenes_f;
-static FILE *_anim_f;
 static gchar _text_buf[TEXT_BUFSZ];
 
 /******************************************************************************
@@ -495,9 +494,11 @@ chk_parse_frame(layer_ctx_t *ctx)
 		/* Calculate SHA-1 based on the drawable data. */
 		util_calc_sha1(dwb, hash, sizeof(hash));
 		util_sha1_to_text(hash, sizeof(hash), hasht, sizeof(hasht));
+
+		/* Save hash to the context. */
 		if (!ctx->has_hash) {
-			/* Save hash to the context. */
 			memcpy(ctx->hash, hash, HASH_SZ);
+			ctx->has_hash = 1;
 		}
 
 		/* Copy content of the current drawable. */
@@ -538,9 +539,11 @@ chk_parse_anim_tag(layer_ctx_t *ctx)
 	char anim_name[ANIM_MAX_NAME];
 	char path_name[ANIM_MAX_NAME];
 	char name_buf[(2 * ANIM_MAX_NAME) + 1];
+	char hasht[(HASH_SZ * 2) + 1]; /* 2 chars/byte + '\0' */
 	gboolean visible;
 	gchar *gpos;
 	char *token, *pos;
+	scene_layer_t *scn_layer;
 	int rc = 0;
 
 	if (ctx->has_layer_id) {
@@ -587,8 +590,17 @@ chk_parse_anim_tag(layer_ctx_t *ctx)
 				strncpy(ctx->anim->name, anim_name,
 				    ANIM_MAX_NAME);
 
-				/* Increase number of the known animations. */
+				/* Append animation as a new scene layer. */
+				scn_layer = &_scene_layers[_scene_layers_n];
+				scn_layer->obj_type = OT_ANIMATION;
+				scn_layer->layer_id = ctx->layer_id;
+				strncpy(scn_layer->name, anim_name,
+				    ANIM_MAX_NAME);
+
+				/* Increase # of the known animations. */
 				_animations_n++;
+				/* Increase # of the known scene layers. */
+				_scene_layers_n++;
 			}
 
 			/*
@@ -618,6 +630,23 @@ chk_parse_anim_tag(layer_ctx_t *ctx)
 				/* Increment number of the known paths. */
 				_paths_n++;
 			}
+		} else {
+			/* Static image frame. */
+
+			/* Append image as a new scene layer. */
+			scn_layer = &_scene_layers[_scene_layers_n];
+			scn_layer->obj_type = OT_IMAGE;
+			scn_layer->layer_id = ctx->layer_id;
+
+			/* Use image hash as a name of the scene layer. */
+			if (ctx->has_hash) {
+				util_sha1_to_text(ctx->hash, sizeof(ctx->hash),
+				    hasht, sizeof(hasht));
+			}
+			strncpy(scn_layer->name, hasht, ANIM_MAX_NAME);
+
+			/* Increase # of the known scene layers. */
+			_scene_layers_n++;
 		}
 	}
 }
@@ -712,7 +741,7 @@ chk_parse_anim_frame(layer_ctx_t *ctx)
 
 /* Resolve alternative path names to path indexes. */
 static void
-chk_link_animation_frames(layer_ctx_t *ctx)
+chk_link_anim_frames(layer_ctx_t *ctx)
 {
 	anim_frame_t *frame;
 	char hasht[(2 * HASH_SZ) + 1];
@@ -734,7 +763,7 @@ chk_link_animation_frames(layer_ctx_t *ctx)
 }
 
 static void
-chk_update_animation_frame_indexes(layer_ctx_t *ctx)
+chk_update_anim_frame_indexes(layer_ctx_t *ctx)
 {
 	anim_t *anim;
 	anim_path_t *path;
@@ -812,6 +841,102 @@ chk_print_animations(layer_ctx_t *ctx)
 				}
 			}
 		}
+	}
+}
+
+static void
+chk_print_scene_layers(layer_ctx_t *ctx)
+{
+	printf("\n--- Scene layers ---\n");
+
+	for (uint32_t i = 0; i < _scene_layers_n; i++) {
+		printf("%d %s\n", i, _scene_layers[i].name);
+	}
+}
+
+static void
+chk_write_animations_header(layer_ctx_t *ctx)
+{
+	FILE *f_anim = fopen(OUTPUT_DIR "/anim.h", "w");
+	anim_t *anim;
+	anim_path_t *path;
+	anim_frame_t *frame;
+	char hasht[(2 * HASH_SZ) + 1];
+
+	if (f_anim) {
+		fprintf(f_anim, "#ifndef XG_ANIMATIONS_H_\n");
+		fprintf(f_anim, "#define XG_ANIMATIONS_H_ 1\n");
+		fprintf(f_anim, "\n");
+		fprintf(f_anim, "#include \"xling/graphics.h\"\n");
+		fprintf(f_anim, "\n");
+
+		/*
+		 * Iterate over all of the animations in order to include
+		 * headers with frames data.
+		 */
+		/* Animations */
+		for (uint32_t i = 0; i < _animations_n; i++) {
+			anim = &_animations[i];
+			/* Paths */
+			for (uint32_t j = 0; j < anim->paths_n; j++) {
+				path = &_paths[anim->paths_idx[j]];
+				/* Frames */
+				for (uint32_t k = 0; k < path->frames_n; k++) {
+					frame = &_frames[path->frames_idx[k]];
+
+					/* Obtain a text form of the hash */
+					util_sha1_to_text(frame->hash, HASH_SZ,
+					    hasht, sizeof(hasht));
+
+					fprintf(f_anim,
+					    "#include \"xling/scenes/%s.h\"\n",
+					    hasht);
+				}
+			}
+		}
+
+		/* Animations */
+		for (uint32_t i = 0; i < _animations_n; i++) {
+			anim = &_animations[i];
+
+			fprintf(f_anim, "\n");
+			fprintf(f_anim, "const XG_AnimFrame_t XG_ANM_%s[] = {\n",
+			    anim->name);
+
+			/* Paths */
+			for (uint32_t j = 0; j < anim->paths_n; j++) {
+				path = &_paths[anim->paths_idx[j]];
+				/* Frames */
+				for (uint32_t k = 0; k < path->frames_n; k++) {
+					frame = &_frames[path->frames_idx[k]];
+
+					/* Obtain a text form of the hash */
+					util_sha1_to_text(frame->hash, HASH_SZ,
+					    hasht, sizeof(hasht));
+
+					fprintf(f_anim, "\t{ "
+					    ".base_pt = { %d, %d }, "
+					    ".alt = &XG_ANM_%s[%d], "
+					    ".img = &XG_IMG_%s, "
+					    ".alt_chance = %d, "
+					    ".stay_n = %d, "
+					    ".stay_cnt = %d, "
+					    "},\n",
+					    frame->base_pt.x, frame->base_pt.y,
+					    anim->name, _frames[_paths[frame->alt_path_idx].frames_idx[0]].frame_idx,
+					    hasht,
+					    frame->alt_path_chance,
+					    0, 0
+					);
+				}
+			}
+
+			fprintf(f_anim, "}\n");
+		}
+
+		fprintf(f_anim, "\n");
+		fprintf(f_anim, "#endif /* XG_ANIMATIONS_H_ */");
+		fclose(f_anim);
 	}
 }
 
