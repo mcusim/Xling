@@ -18,23 +18,24 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef XG_IMGA_55ed9bac44d7150c300891012bf787bf30aad4f8_H_
-#define XG_IMGA_55ed9bac44d7150c300891012bf787bf30aad4f8_H_ 1
+#ifndef XG_IMG_09cde6c58ed0dc50f8f3b4706451e11b7c3277f2_H_
+#define XG_IMG_09cde6c58ed0dc50f8f3b4706451e11b7c3277f2_H_ 1
 
+#include <stdlib.h>
 #include <stdint.h>
 #include <avr/pgmspace.h>
 
 /*
- * This file with 1-bit alpha channel for monochrome image has been generated
+ * This file with monochrome image with 1-bit alpha channel has been generated
  * for Xling, a tamagotchi-like toy by LCD Image Converter.
  *
- * Data type: image (alpha channel)
- * Filename: 55ed9bac44d7150c300891012bf787bf30aad4f8
+ * Data type: image
+ * Filename: 09cde6c58ed0dc50f8f3b4706451e11b7c3277f2
  *
- * Preset name: Xling_SH1106_display_preset_alpha_channel
+ * Preset name: Xling_SH1106_display_preset
  * Data block size: 8 bit(s), uint8_t
  * RLE compression: no
- * Conversion type: Color, not_used not_used
+ * Conversion type: Monochrome, Diffuse Dither 128
  * Bits per pixel: 1
  * Bands used: yes
  * Band width: 8
@@ -46,9 +47,22 @@
  * LCD Image Converter: <https://www.riuson.com/lcd-image-converter>
  */
 
+/* Xling graphics header */
+#include "xling/graphics.h"
 
-const uint8_t PROGMEM XG_IMGA_55ed9bac44d7150c300891012bf787bf30aad4f8[84] = {
-    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xf0, 0xf8, 0xfc, 0xfe, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xfe, 0xfc, 0xf8, 0xf0, 0x00, 0x00, 0x00, 0xe0, 0xf0, 0xf0, 0xf3, 0xf7, 0xff, 0xff, 0x3f, 0x3f, 0x3f, 0x3f, 0x3f, 0x3f, 0x3f, 0x3f, 0x3f, 0x3f, 0x3f, 0x3f, 0x3f, 0x3f, 0x1f, 0x0f, 0x07, 0x03, 0x0f, 0x0f, 0x0f, 0x0f, 0x03, 0x03, 0x03, 0x03, 0x03, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
+/* Header file with alpha channel for the image. */
+#include "xling/scenes/09cde6c58ed0dc50f8f3b4706451e11b7c3277f2_a.h"
+
+
+static const uint8_t PROGMEM XG_IMG_DATA_09cde6c58ed0dc50f8f3b4706451e11b7c3277f2[10] = {
+    0x00, 0x00, 0x18, 0xf0, 0xc0, 0x80, 0x80, 0xfc, 0xf0, 0xc0
+};
+const XG_Image_t XG_IMG_09cde6c58ed0dc50f8f3b4706451e11b7c3277f2 = {
+        .data = XG_IMG_DATA_09cde6c58ed0dc50f8f3b4706451e11b7c3277f2,
+	.alpha = XG_IMGA_09cde6c58ed0dc50f8f3b4706451e11b7c3277f2,
+        .width = 10,
+        .height = 8,
+        .data_size = 8,
 };
 
-#endif /* XG_IMGA_55ed9bac44d7150c300891012bf787bf30aad4f8_H_ */
+#endif /* XG_IMG_09cde6c58ed0dc50f8f3b4706451e11b7c3277f2_H_ */

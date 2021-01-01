@@ -44,8 +44,12 @@
 
 /* Xling headers. */
 #include "xling/tasks.h"
+#include "xling/msg.h"
 
-/* Local macros. */
+/******************************************************************************
+ * Local macros.
+ ******************************************************************************/
+
 #define TASK_NAME		"Sleep Mode Task"
 #define STACK_SZ		(configMINIMAL_STACK_SIZE)
 #define SET_BIT(byte, bit)	((byte) |= (1U << (bit)))
@@ -53,26 +57,36 @@
 #define TIMEOUT_MS		(29000)
 #define TIMEOUT_TICKS		((uint16_t)(TIMEOUT_MS / 2.666667))
 
-/* Local data types. */
+/******************************************************************************
+ * Local data types.
+ ******************************************************************************/
+
 typedef enum wake_source_e {
 	WAKE_FROM_TIMER = 75,
 	WAKE_FROM_EXTINT,
 	WAKE_TIMER_RESET,
 } wake_source_e;
 
-/* Local variables. */
+/******************************************************************************
+ * Local variables.
+ ******************************************************************************/
+
 static volatile TaskHandle_t _task_handle;
 
 /* Number of the timer ticks passed. */
 static volatile uint16_t _tick_val = 0;
+
 /* Task shouldn't be woken from external interrupts initially. */
 static volatile uint8_t _task_woken_from_extint = 1;
+
 /* Task should be woken from its timer initially. */
 static volatile uint8_t _task_woken_from_timer = 0;
 static volatile wake_source_e _wake_source = WAKE_FROM_TIMER;
-/* END Local variables. */
 
-/* Local functions. */
+/******************************************************************************
+ * Prototypes of the local functions.
+ ******************************************************************************/
+
 static void	sleepmod_task(void *) __attribute__((noreturn));
 static void	ask_tasks_wait(const XG_TaskArgs_t *arg);
 static void	notify_tasks(const XG_TaskArgs_t *arg);
@@ -81,6 +95,10 @@ static void	stop_timer0(void);
 static void	start_timer0(void);
 static void	enable_extint(void);
 static void	disable_extint(void);
+
+/******************************************************************************
+ * Implementation.
+ ******************************************************************************/
 
 int
 XG_InitSleepModeTask(XG_TaskArgs_t *arg, UBaseType_t priority,

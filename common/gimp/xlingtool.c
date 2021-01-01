@@ -54,6 +54,8 @@
 #define ANIM_TAG_PARTS		(3)    /* # of the animation tag parts */
 #define ANIM_GO_TAG_FORMAT	"!go(%63[a-zA-Z0-9]%63[#,]%d%1[%])"
 #define ANIM_GO_TAG_PARTS	(4)
+#define ANIM_STAY_TAG_FORMAT	"!stay(%d)"
+#define ANIM_STAY_TAG_PARTS	(1)
 
 /******************************************************************************
  * Basic configuration.
@@ -172,6 +174,11 @@ struct layer_chk_t {
  *
  * Helps to de-duplicate operations between different checks applied to the same
  * layer like calculating hash, obtaining coordinates, etc.
+ *
+ * Context options:
+ *
+ *	ignore	Ignore this layer (won't be used in any parsing routines,
+ *		won't be exported).
  */
 struct layer_ctx_t {
 	char		 anim_alt_path_name[ANIM_MAX_NAME];
@@ -180,12 +187,14 @@ struct layer_ctx_t {
 	gint		 layer_id;
 	anim_t		*anim;
 	anim_path_t	*anim_path;
+	uint16_t	 anim_frame_stay;
 	uint8_t		 anim_alt_path_chance;
 
 	gboolean	 has_hash;
 	gboolean	 has_base_pt;
 	gboolean	 has_layer_id;
 	gboolean	 is_anim_frame;
+	gboolean	 ignore;
 };
 
 typedef enum layer_obj_t {
@@ -195,6 +204,7 @@ typedef enum layer_obj_t {
 
 struct scene_layer_t {
 	char		 name[LAYER_MAX_NAME];
+	point_t		 base_pt;
 	gint		 layer_id;
 	layer_obj_t	 obj_type;
 };
@@ -218,6 +228,7 @@ struct anim_frame_t {
 	uint32_t	path_idx;
 	uint32_t	frame_idx; /* within animation only! */
 	uint32_t	alt_path_idx;
+	uint16_t	stay;
 	uint8_t		alt_path_chance;
 };
 
@@ -249,14 +260,18 @@ struct anim_path_t {
 
 /* Check functions to be applied to layer/layers. */
 static void	 chk_parse_frame(layer_ctx_t *ctx);
+static void	 chk_parse_ignore_tag(layer_ctx_t *ctx);
+static void	 chk_parse_kbd_tag(layer_ctx_t *ctx);
 static void	 chk_parse_anim_tag(layer_ctx_t *ctx);
 static void	 chk_parse_anim_frame(layer_ctx_t *ctx);
 static void	 chk_parse_go_tag(layer_ctx_t *ctx);
+static void	 chk_parse_stay_tag(layer_ctx_t *ctx);
 static void	 chk_link_anim_frames(layer_ctx_t *ctx);
 static void	 chk_update_anim_frame_indexes(layer_ctx_t *ctx);
 static void	 chk_print_animations(layer_ctx_t *ctx);
 static void	 chk_print_scene_layers(layer_ctx_t *ctx);
 static void	 chk_write_animations_header(layer_ctx_t *ctx);
+static void	 chk_write_scenes_header(layer_ctx_t *ctx);
 
 /* Plugin lifecycle functions. */
 static void      query(void);
@@ -292,15 +307,19 @@ static GimpParamDef _proc_args[] = {
 
 /* List of check functions to be applied to image layers. */
 static layer_chk_t _layer_checks[] = {
+	{ .kind = CHECK_PER_LAYER,	.cbk = &chk_parse_ignore_tag },
+	{ .kind = CHECK_PER_LAYER,	.cbk = &chk_parse_kbd_tag },
 	{ .kind = CHECK_PER_LAYER,	.cbk = &chk_parse_frame },
 	{ .kind = CHECK_PER_LAYER,	.cbk = &chk_parse_anim_tag },
 	{ .kind = CHECK_PER_LAYER,	.cbk = &chk_parse_go_tag },
+	{ .kind = CHECK_PER_LAYER,	.cbk = &chk_parse_stay_tag },
 	{ .kind = CHECK_PER_LAYER,	.cbk = &chk_parse_anim_frame },
 	{ .kind = CHECK_AFTER_ALL,	.cbk = &chk_link_anim_frames },
 	{ .kind = CHECK_AFTER_ALL,	.cbk = &chk_update_anim_frame_indexes },
 //	{ .kind = CHECK_AFTER_ALL,	.cbk = &chk_print_animations },
 //	{ .kind = CHECK_AFTER_ALL,	.cbk = &chk_print_scene_layers },
 	{ .kind = CHECK_AFTER_ALL,	.cbk = &chk_write_animations_header },
+	{ .kind = CHECK_AFTER_ALL,	.cbk = &chk_write_scenes_header },
 };
 static uint32_t _layer_checks_n =
     sizeof(_layer_checks)/sizeof(_layer_checks[0]);
@@ -329,6 +348,13 @@ static anim_frame_t _frames[ANIM_MAX * ANIM_MAX_PATHS * ANIM_MAX_FRAMES];
 static uint32_t _frames_n;
 
 static gchar _text_buf[TEXT_BUFSZ];
+static gchar *image_name;
+
+/*
+ * Flag to generate a callout function XG_SCNKBD_<scene_name> in order to
+ * process keyboard events. This function should be implemented explicitly.
+ */
+static gboolean kbd = FALSE;
 
 /******************************************************************************
  * Implementation.
@@ -369,7 +395,6 @@ run(const gchar *name, gint nparams, const GimpParam *param,
 	gint *layer;
 	gint layers_n;
 	gint image_id;
-	gchar *image_name;
 	char *pos;
 	layer_ctx_t ctx;
 
@@ -415,8 +440,10 @@ run(const gchar *name, gint nparams, const GimpParam *param,
 		ctx.has_hash = FALSE;
 		ctx.has_base_pt = FALSE;
 		ctx.has_layer_id = TRUE;
+		ctx.ignore = FALSE;
 		ctx.layer_id = layer[i];
 		ctx.anim_alt_path_chance = 0;
+		ctx.anim_frame_stay = 0;
 
 		/* Call all per-layer checks for the current layer. */
 		for (uint32_t j = 0; j < _layer_checks_n; j++) {
@@ -444,6 +471,40 @@ run(const gchar *name, gint nparams, const GimpParam *param,
 }
 
 /*
+ * Parses !ignore() tag from the layer name.
+ */
+static void
+chk_parse_ignore_tag(layer_ctx_t *ctx)
+{
+	const gchar *gpos = gimp_item_get_name(ctx->layer_id);
+
+	if ((strstr(gpos, "!ignore()") != NULL) ||
+	    (strcmp(gpos, "!ignore()") == 0)) {
+		/* Ignore tag found in the layer name. */
+		ctx->ignore = TRUE;
+		//printf("Ignoring: %s\n", gpos);
+	}
+}
+
+/*
+ * Parses !kbd() tag from the layer name.
+ */
+static void
+chk_parse_kbd_tag(layer_ctx_t *ctx)
+{
+	const gchar *gpos = gimp_item_get_name(ctx->layer_id);
+	gboolean visible = gimp_item_get_visible(ctx->layer_id);
+
+	if ((ctx->ignore == FALSE) && (visible) &&
+	    ((strstr(gpos, "!kbd()") != NULL) || (strcmp(gpos, "!kbd()") == 0))) {
+		/* Ignore the layer in any other parsing routines. */
+		ctx->ignore = TRUE;
+		/* Attach a keyboard callback function to the scene. */
+		kbd = TRUE;
+	}
+}
+
+/*
  * Exports image data of the layer as a separate header file named
  * as <SHA-1>.h (and <SHA-1>_a.h if layer has an alpha channel).
  */
@@ -467,6 +528,11 @@ chk_parse_frame(layer_ctx_t *ctx)
 		dwb = gimp_drawable_get(ctx->layer_id);
 	} else {
 		/* Can't process a layer without its id. */
+		rc = 1;
+	}
+
+	if (ctx->ignore) {
+		/* Let's not process ignored layers. */
 		rc = 1;
 	}
 
@@ -498,7 +564,7 @@ chk_parse_frame(layer_ctx_t *ctx)
 		/* Save hash to the context. */
 		if (!ctx->has_hash) {
 			memcpy(ctx->hash, hash, HASH_SZ);
-			ctx->has_hash = 1;
+			ctx->has_hash = TRUE;
 		}
 
 		/* Copy content of the current drawable. */
@@ -554,6 +620,11 @@ chk_parse_anim_tag(layer_ctx_t *ctx)
 		rc = 1;
 	}
 
+	if (ctx->ignore) {
+		/* Let's not process ignored layers. */
+		rc = 1;
+	}
+
 	if ((rc == 0) && (visible)) {
 		/* Get a copy of the layer name. */
 		gpos = gimp_item_get_name(ctx->layer_id);
@@ -594,6 +665,8 @@ chk_parse_anim_tag(layer_ctx_t *ctx)
 				scn_layer = &_scene_layers[_scene_layers_n];
 				scn_layer->obj_type = OT_ANIMATION;
 				scn_layer->layer_id = ctx->layer_id;
+				scn_layer->base_pt.x = 0;
+				scn_layer->base_pt.y = 0;
 				strncpy(scn_layer->name, anim_name,
 				    ANIM_MAX_NAME);
 
@@ -637,6 +710,8 @@ chk_parse_anim_tag(layer_ctx_t *ctx)
 			scn_layer = &_scene_layers[_scene_layers_n];
 			scn_layer->obj_type = OT_IMAGE;
 			scn_layer->layer_id = ctx->layer_id;
+			scn_layer->base_pt.x = ctx->base_pt.x;
+			scn_layer->base_pt.y = ctx->base_pt.y;
 
 			/* Use image hash as a name of the scene layer. */
 			if (ctx->has_hash) {
@@ -666,7 +741,7 @@ chk_parse_go_tag(layer_ctx_t *ctx)
 	char *token, *pos;
 	int rc = 0;
 
-	if (ctx->is_anim_frame) {
+	if (!ctx->ignore && ctx->is_anim_frame) {
 		/* An animation frame. */
 
 		/* Get a copy of the layer name. */
@@ -702,6 +777,49 @@ chk_parse_go_tag(layer_ctx_t *ctx)
 }
 
 /*
+ * Parses !stay(frames_n) from the layer name.
+ */
+static void
+chk_parse_stay_tag(layer_ctx_t *ctx)
+{
+	char layer_name[LAYER_MAX_NAME];
+	gchar *gpos;
+	char *token, *pos;
+	int stay, rc = 0;
+
+	if (!ctx->ignore && ctx->is_anim_frame) {
+		/* An animation frame. */
+
+		/* Get a copy of the layer name. */
+		gpos = gimp_item_get_name(ctx->layer_id);
+		strncpy(layer_name, gpos, LAYER_MAX_NAME);
+
+		/* Parse layer name by token. */
+		token = strtok(layer_name, "_");
+		while (token != NULL) {
+			/* Replace all spaces */
+			REPLACE_STR(token, " ", '#');
+
+			/* An attempt to parse !stay tag. */
+			rc = sscanf(token, ANIM_STAY_TAG_FORMAT, &stay);
+			if (rc == ANIM_STAY_TAG_PARTS) {
+				break;
+			}
+
+			/* Go to the next token. */
+			token = strtok(NULL, "_");
+		}
+
+		if (rc == ANIM_STAY_TAG_PARTS) {
+			/* Stay tag found! */
+			ctx->anim_frame_stay = (uint16_t) stay;
+		}
+	} else {
+		/* Not an animation frame - do nothing. */
+	}
+}
+
+/*
  * Adds current layer's image as an animation frame to the list of frames
  * and updates its animation path.
  */
@@ -710,12 +828,13 @@ chk_parse_anim_frame(layer_ctx_t *ctx)
 {
 	anim_frame_t *frame;
 
-	if (ctx->is_anim_frame) {
+	if (!ctx->ignore && ctx->is_anim_frame) {
 		/* An animation frame. */
 		frame = &_frames[_frames_n];
 		frame->anim_idx = ctx->anim->anim_idx;
 		frame->path_idx = ctx->anim_path->path_idx;
 		frame->base_pt = ctx->base_pt;
+		frame->stay = ctx->anim_frame_stay;
 
 		/* Alternative path for this frame */
 		if (ctx->anim_alt_path_chance > 0u) {
@@ -861,6 +980,7 @@ chk_write_animations_header(layer_ctx_t *ctx)
 	anim_t *anim;
 	anim_path_t *path;
 	anim_frame_t *frame;
+	uint16_t n;
 	char hasht[(2 * HASH_SZ) + 1];
 
 	if (f_anim) {
@@ -868,7 +988,6 @@ chk_write_animations_header(layer_ctx_t *ctx)
 		fprintf(f_anim, "#define XG_ANIMATIONS_H_ 1\n");
 		fprintf(f_anim, "\n");
 		fprintf(f_anim, "#include \"xling/graphics.h\"\n");
-		fprintf(f_anim, "\n");
 
 		/*
 		 * Iterate over all of the animations in order to include
@@ -898,14 +1017,16 @@ chk_write_animations_header(layer_ctx_t *ctx)
 		/* Animations */
 		for (uint32_t i = 0; i < _animations_n; i++) {
 			anim = &_animations[i];
+			n = 0;
 
 			fprintf(f_anim, "\n");
-			fprintf(f_anim, "const XG_AnimFrame_t XG_ANM_%s[] = {\n",
+			fprintf(f_anim, "const XG_AnimFrame_t XG_ANMF_%s[] = {\n",
 			    anim->name);
 
 			/* Paths */
 			for (uint32_t j = 0; j < anim->paths_n; j++) {
 				path = &_paths[anim->paths_idx[j]];
+
 				/* Frames */
 				for (uint32_t k = 0; k < path->frames_n; k++) {
 					frame = &_frames[path->frames_idx[k]];
@@ -916,27 +1037,120 @@ chk_write_animations_header(layer_ctx_t *ctx)
 
 					fprintf(f_anim, "\t{ "
 					    ".base_pt = { %d, %d }, "
-					    ".alt = &XG_ANM_%s[%d], "
+					    ".alt = %d, "
 					    ".img = &XG_IMG_%s, "
 					    ".alt_chance = %d, "
-					    ".stay_n = %d, "
-					    ".stay_cnt = %d, "
+					    ".stay = %d, "
 					    "},\n",
 					    frame->base_pt.x, frame->base_pt.y,
-					    anim->name, _frames[_paths[frame->alt_path_idx].frames_idx[0]].frame_idx,
-					    hasht,
-					    frame->alt_path_chance,
-					    0, 0
+					    _frames[_paths[frame->alt_path_idx].frames_idx[0]].frame_idx,
+					    hasht, frame->alt_path_chance,
+					    frame->stay
 					);
+
+					/* Increase # of the frames. */
+					n++;
 				}
 			}
 
-			fprintf(f_anim, "}\n");
+			fprintf(f_anim, "};\n");
+			fprintf(f_anim, "XG_Animation_t XG_ANM_%s = { "
+			    ".frames = XG_ANMF_%s, "
+			    ".frames_n = %d, "
+			    ".frame_idx = 0, "
+			    ".stay_cnt = 0 "
+			    "};\n",
+			    anim->name, anim->name, n
+			);
 		}
 
 		fprintf(f_anim, "\n");
 		fprintf(f_anim, "#endif /* XG_ANIMATIONS_H_ */");
 		fclose(f_anim);
+	}
+}
+
+static void
+chk_write_scenes_header(layer_ctx_t *ctx)
+{
+	char kbd_cbk_name[256];
+	FILE *f_scenes = fopen(OUTPUT_DIR "/scenes.h", "w");
+	scene_layer_t *scn_layer;
+
+	if (f_scenes) {
+		fprintf(f_scenes, "#ifndef XG_SCENES_H_\n");
+		fprintf(f_scenes, "#define XG_SCENES_H_ 1\n");
+		fprintf(f_scenes, "\n");
+		fprintf(f_scenes, "#include \"xling/graphics.h\"\n");
+		fprintf(f_scenes, "#include \"xling/scenes/anim.h\"\n");
+
+		/*
+		 * Iterate over scene layers to write down header files
+		 * for static images.
+		 */
+		for (uint32_t i = 0; i < _scene_layers_n; i++) {
+			scn_layer = &_scene_layers[i];
+
+			if (scn_layer->obj_type == OT_IMAGE) {
+				fprintf(f_scenes,
+				    "#include \"xling/scenes/%s.h\"\n",
+				    scn_layer->name);
+			}
+		}
+		fprintf(f_scenes, "\n");
+
+		/* Declare a keyboard callback function (if needed). */
+		if (kbd == TRUE) {
+			fprintf(f_scenes,
+			    "void XG_SCNKBD_%s(XG_ButtonState_e, void *);\n\n",
+			    image_name
+			);
+		}
+
+		/* Write scene layers down. */
+		fprintf(f_scenes, "XG_Layer_t XG_SCNL_%s[] = {\n",
+		    image_name);
+		for (uint32_t i = 0; i < _scene_layers_n; i++) {
+			scn_layer = &_scene_layers[i];
+
+			if (scn_layer->obj_type == OT_IMAGE) {
+				fprintf(f_scenes, "\t{ "
+				    ".obj = &XG_IMG_%s, "
+				    ".obj_type = XG_OT_Image, "
+				    ".base_pt = { %d, %d } },\n",
+				    scn_layer->name,
+				    scn_layer->base_pt.x,
+				    scn_layer->base_pt.y);
+			} else {
+				fprintf(f_scenes, "\t{ "
+				    ".obj = &XG_ANM_%s, "
+				    ".obj_type = XG_OT_Animation },\n",
+				    scn_layer->name);
+			}
+		}
+		fprintf(f_scenes, "};\n\n");
+
+		/*
+		 * Prepare a name of the keyboard callback
+		 * function (if needed).
+		 */
+		snprintf(kbd_cbk_name, 256,
+		    (kbd == TRUE ? "XG_SCNKBD_%s" : "%s"),
+		    (kbd == TRUE ? image_name : "NULL"));
+
+		fprintf(f_scenes, "const XG_Scene_t XG_SCN_%s = {\n"
+		    "\t.layers = XG_SCNL_%s,\n"
+		    "\t.layers_n = %d,\n"
+		    "\t.kbd_cbk = %s,\n"
+		    "};\n\n",
+		    image_name,
+		    image_name,
+		    _scene_layers_n,
+		    kbd_cbk_name
+		);
+		fprintf(f_scenes, "#endif /* XG_SCENES_H_ */");
+
+		fclose(f_scenes);
 	}
 }
 
@@ -1023,7 +1237,9 @@ util_reset_layer_context(layer_ctx_t *ctx)
 	ctx->has_base_pt = FALSE;
 	ctx->has_layer_id = FALSE;
 	ctx->is_anim_frame = FALSE;
+	ctx->ignore = FALSE;
 	ctx->anim_alt_path_chance = 0;
+	ctx->anim_frame_stay = 0;
 
 	ctx->anim = NULL;
 	ctx->anim_path = NULL;

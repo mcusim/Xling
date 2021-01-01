@@ -152,8 +152,9 @@ U 1 1 5A020B3D
 P 3150 7225
 F 0 "J3" H 3150 7345 50  0000 C CNN
 F 1 "Battery" H 3120 6995 50  0000 C CNN
-F 2 "Connector_Molex:Molex_Pico-EZmate_Slim_202656-0021_1x02-1MP_P1.20mm_Vertical" H 3150 7225 50  0001 C CNN
-F 3 "" H 3150 7225 50  0001 C CNN
+F 2 "Xling Footprints:Molex_Pico-EZmate_Slim_202656-0021_1x02-1MP_P1.20mm_Vertical" H 3150 7225 50  0001 C CNN
+F 3 "https://www.molex.com/webdocs/datasheets/pdf/en-us/2026560021_PCB_HEADERS.pdf" H 3150 7225 50  0001 C CNN
+F 4 "EZmate_Slim_2026560021" H 3150 7225 50  0001 C CNN "Model"
 	1    3150 7225
 	1    0    0    -1  
 $EndComp
@@ -1940,7 +1941,7 @@ U 1 1 5F5FC8BA
 P 1050 1600
 F 0 "JP1" V 1055 1395 50  0000 L CNN
 F 1 "Reset" V 1145 1350 50  0000 L CNN
-F 2 "Jumper:SolderJumper-2_P1.3mm_Open_Pad1.0x1.5mm" H 1050 1600 50  0001 C CNN
+F 2 "Xling Footprints:SolderJumper-2_P1.3mm_Open_Pad1.0x1.5mm" H 1050 1600 50  0001 C CNN
 F 3 "~" H 1050 1600 50  0001 C CNN
 	1    1050 1600
 	0    1    1    0   

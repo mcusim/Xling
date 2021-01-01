@@ -36,6 +36,7 @@
 
 /* Xling headers. */
 #include "xling/tasks.h"
+#include "xling/msg.h"
 
 /* Local macros. */
 #define TASK_NAME		"Keyboard Task"

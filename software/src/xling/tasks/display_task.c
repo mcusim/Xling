@@ -49,33 +49,19 @@
 /* Xling headers. */
 #include "xling/tasks.h"
 #include "xling/graphics.h"
+#include "xling/msg.h"
 #include "xling/scenes/scenes.h"
 #include "xling/font/Alagard_12pt.h"
 
-/*
- * ----------------------------------------------------------------------------
- * Local types.
- * ----------------------------------------------------------------------------
- */
-
-/*
- * This structure helps to process messages received from the task queue in a
- * separate function and keep their values.
- */
-typedef struct msg_params_t {
-	uint16_t	bat_lvl;
-	uint16_t	bat_stat;
-} msg_params_t;
-
-/*
- * ----------------------------------------------------------------------------
+/******************************************************************************
  * Local macros.
- * ----------------------------------------------------------------------------
- */
+ ******************************************************************************/
+
 #define SET_BIT(byte, bit)	((byte) |= (1U << (bit)))
 #define CLEAR_BIT(byte, bit)	((byte) &= (uint8_t) ~(1U << (bit)))
 #define TASK_NAME		"Display Task"
-#define TASK_PERIOD		(42) /* in ms (~ 23.8 Hz) */
+#define TASK_PERIOD		(42) /* in ms (~ 23.80 Hz) */
+//#define TASK_PERIOD		(83) /* in ms (~ 12.05 Hz) */
 #define TASK_DELAY		(pdMS_TO_TICKS(TASK_PERIOD))
 #define TEXT_BUFSZ		(128)
 
@@ -85,15 +71,11 @@ typedef struct msg_params_t {
  */
 #define STACK_SZ		(configMINIMAL_STACK_SIZE * 2)
 
-/*
- * ----------------------------------------------------------------------------
+/******************************************************************************
  * Local variables.
- * ----------------------------------------------------------------------------
- */
+ ******************************************************************************/
 
-/*
- * Configuration of the OLED display driver.
- */
+/* Configuration of the OLED display driver. */
 static const MSIM_SH1106DrvConf_t _driver_conf = {
 	.port_spi = &PORTB,		/* I/O port with SPI. */
 	.ddr_spi = &DDRB,		/* DDR for the I/O port with SPI. */
@@ -102,9 +84,7 @@ static const MSIM_SH1106DrvConf_t _driver_conf = {
 	.sck = PB7,			/* OLED SPI pin. */
 };
 
-/*
- * Configuration of the OLED display.
- */
+/* Configuration of the OLED display. */
 static const MSIM_SH1106Conf_t _display_conf = {
 	.rst_port = &PORTC,
 	.rst_ddr = &DDRC,
@@ -124,29 +104,39 @@ static volatile TaskHandle_t _task_handle;
  *       which resolution is 128x64 px.
  */
 static uint8_t _display_buffer[1024];
-
 static XG_Canvas_t _canvas = {
 	.data = &_display_buffer[0],
 	.width = 128,
 	.height = 64,
 	.data_size = 8,
 };
-
 static char _text_buf[TEXT_BUFSZ];
 static XG_Text_t _text = {
 	.font = &XG_FONT_Alagard_12pt,
 	.text = &_text_buf[0],
+	.text_sz = TEXT_BUFSZ,
+};
+static XG_SceneCtx_t _scene_ctx = {
+//	.scene = &XG_SCN_walking_01,
+	.scene = &XG_SCN_smoking_02,
+	.canvas = &_canvas,
+	.text = &_text,
+	.frame_delay = 0,
+	.bat_lvl = 100,
+	.bat_stat = 0,
 };
 
-/*
- * ----------------------------------------------------------------------------
- * Local functions declarations.
- * ----------------------------------------------------------------------------
- */
+/******************************************************************************
+ * Prototypes of the local functions.
+ ******************************************************************************/
+
 static void	display_task(void *arg) __attribute__((noreturn));
 static void	receive_msgs(const QueueHandle_t q,
-                             MSIM_SH1106_t * const display,
-                             msg_params_t *params);
+                    MSIM_SH1106_t * const display, XG_SceneCtx_t * const sctx);
+
+/******************************************************************************
+ * Implementation.
+ ******************************************************************************/
 
 int
 XG_InitDisplayTask(XG_TaskArgs_t *arg, UBaseType_t priority,
@@ -195,13 +185,7 @@ display_task(void *arg)
 	const XG_TaskArgs_t * const args = (XG_TaskArgs_t *) arg;
 	MSIM_SH1106_t * const display = MSIM_SH1106_Init(&_display_conf);
 	TickType_t ticks;
-	TickType_t delay = 0;
 	TickType_t last_wake;
-	msg_params_t params = {
-		.bat_lvl = 100,
-		.bat_stat = 0,
-	};
-	XG_Point_t pt = { 0, 0 };
 
 	/* Use current time as a seed for random generator. */
 	srand((unsigned int) time(NULL));
@@ -229,34 +213,19 @@ display_task(void *arg)
 		 * Receive and process all of the messages available in the
 		 * display queue at the moment.
 		 */
-		receive_msgs(args->display_info.queue_handle, display, &params);
+		receive_msgs(args->display_info.queue_handle, display,
+		    &_scene_ctx);
 
 		/* Clear the canvas. */
 		memset(_display_buffer, 0x00, 1024);
 
-		/*
-		 * Draw the frame time, battery level and battery status on
-		 * the display.
-		 */
-		snprintf(_text_buf, TEXT_BUFSZ, "%lu ms", delay);
-		pt.x = 85;
-		pt.y = 20;
-		XG_Print(&_canvas, &_text, pt);
+		/* Process keyboard events. */
+		if (_scene_ctx.scene->kbd_cbk != NULL) {
+			_scene_ctx.scene->kbd_cbk(_scene_ctx.btn_stat,
+			    &_scene_ctx);
+		}
 
-		snprintf(_text_buf, TEXT_BUFSZ, "%u%%",
-		         params.bat_lvl);
-		pt.y = 31;
-		XG_Print(&_canvas, &_text, pt);
-
-		snprintf(_text_buf, TEXT_BUFSZ, (params.bat_stat == 1)
-		         ? "yes" : "no");
-		pt.y = 42;
-		XG_Print(&_canvas, &_text, pt);
-
-		pt.x = 0;
-		pt.y = 0;
-		//XG_Draw_PF(&_canvas, &XG_IMG_text_decoration, pt);
-		XG_DrawScene(&_canvas, &XG_SCN_smoking_02);
+		XG_DrawScene(&_canvas, _scene_ctx.scene);
 
 		/* Transfer canvas buffer to the display. */
 		XG_TransferCanvas(display, &_canvas);
@@ -265,7 +234,7 @@ display_task(void *arg)
 		 * Calculate a delay to receive a message from the queue and
 		 * draw an animation frame.
 		 */
-		delay = xTaskGetTickCount() - ticks;
+		_scene_ctx.frame_delay = xTaskGetTickCount() - ticks;
 	}
 
 	/*
@@ -279,7 +248,7 @@ display_task(void *arg)
 
 static void
 receive_msgs(const QueueHandle_t q, MSIM_SH1106_t * const display,
-             msg_params_t *params)
+             XG_SceneCtx_t * const ctx)
 {
 	static uint8_t bat_lvl_skip = 5;
 	XG_Msg_t msg;
@@ -298,14 +267,14 @@ receive_msgs(const QueueHandle_t q, MSIM_SH1106_t * const display,
 				if (bat_lvl_skip > 0) {
 					bat_lvl_skip--;
 				} else if (msg.value > 100) {
-					params->bat_lvl = 100;
+					ctx->bat_lvl = 100;
 				} else {
-					params->bat_lvl = msg.value;
+					ctx->bat_lvl = msg.value;
 				}
 
 				break;
 			case XG_MSG_BATSTATPIN:
-				params->bat_stat = msg.value;
+				ctx->bat_stat = msg.value;
 				break;
 			case XG_MSG_TASKSUSP_REQ:
 				/* Switch the display off. */
@@ -333,6 +302,9 @@ receive_msgs(const QueueHandle_t q, MSIM_SH1106_t * const display,
 				 */
 				bat_lvl_skip = 5;
 
+				break;
+			case XG_MSG_KEYBOARD:
+				ctx->btn_stat = (XG_ButtonState_e)msg.value;
 				break;
 			default:
 				/* Ignore other messages silently. */

@@ -18,8 +18,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef XG_IMG_55ed9bac44d7150c300891012bf787bf30aad4f8_H_
-#define XG_IMG_55ed9bac44d7150c300891012bf787bf30aad4f8_H_ 1
+#ifndef XG_IMG_6b53756df52ddcd5199bdd41761a58d4593499a6_H_
+#define XG_IMG_6b53756df52ddcd5199bdd41761a58d4593499a6_H_ 1
 
 #include <stdlib.h>
 #include <stdint.h>
@@ -30,7 +30,7 @@
  * for Xling, a tamagotchi-like toy by LCD Image Converter.
  *
  * Data type: image
- * Filename: 55ed9bac44d7150c300891012bf787bf30aad4f8
+ * Filename: 6b53756df52ddcd5199bdd41761a58d4593499a6
  *
  * Preset name: Xling_SH1106_display_preset
  * Data block size: 8 bit(s), uint8_t
@@ -51,18 +51,18 @@
 #include "xling/graphics.h"
 
 /* Header file with alpha channel for the image. */
-#include "xling/scenes/55ed9bac44d7150c300891012bf787bf30aad4f8_a.h"
+#include "xling/scenes/6b53756df52ddcd5199bdd41761a58d4593499a6_a.h"
 
 
-static const uint8_t PROGMEM XG_IMG_DATA_55ed9bac44d7150c300891012bf787bf30aad4f8[84] = {
-    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xe0, 0xf0, 0x18, 0x0c, 0x06, 0xc6, 0xc6, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x0c, 0x18, 0xf0, 0xe0, 0x00, 0x00, 0x00, 0x00, 0x00, 0xc0, 0xe0, 0xe0, 0xe1, 0xc3, 0x06, 0x0c, 0x18, 0x18, 0x18, 0x18, 0x18, 0x18, 0x18, 0x18, 0x18, 0x18, 0x18, 0x18, 0x0c, 0x06, 0x03, 0x01, 0x00, 0x00, 0x06, 0x06, 0x00, 0x00, 0x01, 0x01, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
+static const uint8_t PROGMEM XG_IMG_DATA_6b53756df52ddcd5199bdd41761a58d4593499a6[11] = {
+    0x7f, 0x67, 0x47, 0x43, 0x43, 0x43, 0x43, 0x4f, 0x4f, 0x67, 0x7f
 };
-const XG_Image_t XG_IMG_55ed9bac44d7150c300891012bf787bf30aad4f8 = {
-        .data = XG_IMG_DATA_55ed9bac44d7150c300891012bf787bf30aad4f8,
-	.alpha = XG_IMGA_55ed9bac44d7150c300891012bf787bf30aad4f8,
-        .width = 28,
-        .height = 20,
+const XG_Image_t XG_IMG_6b53756df52ddcd5199bdd41761a58d4593499a6 = {
+        .data = XG_IMG_DATA_6b53756df52ddcd5199bdd41761a58d4593499a6,
+	.alpha = XG_IMGA_6b53756df52ddcd5199bdd41761a58d4593499a6,
+        .width = 11,
+        .height = 7,
         .data_size = 8,
 };
 
-#endif /* XG_IMG_55ed9bac44d7150c300891012bf787bf30aad4f8_H_ */
+#endif /* XG_IMG_6b53756df52ddcd5199bdd41761a58d4593499a6_H_ */

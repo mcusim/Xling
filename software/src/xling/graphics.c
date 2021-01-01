@@ -19,21 +19,21 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 #include <stdint.h>
+#include <stdlib.h>
 #include <string.h>
 #include <avr/pgmspace.h>
 
 #include "xling/graphics.h"
 
-/* Local macros */
 #define CHAR_WIDTH	3 /* bits */
 #define PAGE_HEIGHT	8 /* bits */
 #define PAGES		8 /* in graphic RAM */
 #define NOT(u8)		((uint8_t)(~(u8)))
 #define PGM(a)		((uint8_t)(pgm_read_byte_far((a))))
 
-/* Local functions */
-static void get_img_byte(const XG_Image_t * const image, const uint32_t idx,
-                         uint8_t *data, uint8_t *alpha);
+
+static void     get_img_byte(const XG_Image_t * const image,
+                    const uint32_t idx, uint8_t *data, uint8_t *alpha);
 
 /*
  * Prints text on the canvas at the given coordinates.
@@ -244,14 +244,63 @@ XG_DrawScene(XG_Canvas_t *canvas, const XG_Scene_t *scene)
 {
 	const XG_Layer_t *layer;
 	const XG_Image_t *img;
+	XG_Animation_t *anim;
+	const XG_AnimFrame_t *frames;
+	const XG_AnimFrame_t *frame;
+	uint16_t rnd;
 
 	for (uint16_t i = scene->layers_n; i > 0; i--) {
 		layer = &scene->layers[i - 1];
 
 		switch (layer->obj_type) {
 		case XG_OT_Image:
+			/* Let's draw a static image. */
 			img = (const XG_Image_t *) layer->obj;
 			XG_Draw_PF(canvas, img, layer->base_pt);
+
+			break;
+		case XG_OT_Animation:
+			/* Let's draw an animation. */
+			anim = (XG_Animation_t *) layer->obj;
+			frames = (const XG_AnimFrame_t *) anim->frames;
+			frame = &frames[anim->frame_idx];
+
+			/* Paint the current frame. */
+			XG_Draw_PF(canvas, frame->img, frame->base_pt);
+
+			/* Choose the next frame index. */
+			if (anim->stay_cnt == 0u) {
+				if (frame->alt_chance > 0) {
+					rnd = (uint16_t)
+					    (1 + rand() / ((RAND_MAX + 1u) / 100));
+
+					if (rnd <= frame->alt_chance) {
+						anim->frame_idx = frame->alt;
+					} else {
+						anim->frame_idx++;
+					}
+					anim->frame_idx =
+					    anim->frame_idx >= anim->frames_n
+					    ? 0 : anim->frame_idx;
+
+					/* Update stay counter. */
+					anim->stay_cnt =
+					    frames[anim->frame_idx].stay;
+				} else {
+					/* No chance to use an alternative frame. */
+					anim->frame_idx++;
+					anim->frame_idx =
+					    anim->frame_idx >= anim->frames_n
+					    ? 0 : anim->frame_idx;
+
+					/* Update stay counter. */
+					anim->stay_cnt =
+					    frames[anim->frame_idx].stay;
+				}
+			} else {
+				anim->stay_cnt--;
+			}
+
 			break;
 		default:
 			/* Other object types can't be painted at the moment. */

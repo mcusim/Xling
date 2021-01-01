@@ -50,6 +50,7 @@
 /* Xling headers. */
 #include "xling/tasks.h"
 #include "xling/graphics.h"
+#include "xling/msg.h"
 
 /* Local macros. */
 #define SET_BIT(byte, bit)	((byte) |= (1U << (bit)))

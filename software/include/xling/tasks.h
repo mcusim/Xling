@@ -49,49 +49,6 @@ typedef struct XG_TaskArgs_t {
 	XG_TaskInfo_t	keyboard_info;	/* Keyboard task info. */
 } XG_TaskArgs_t;
 
-/*
- * Types of the messages transmitted via queues.
- */
-typedef enum XG_MsgType_t {
-	XG_MSG_BATLVL,			/* Current battery level, in %. */
-	XG_MSG_BATSTATPIN,		/* Battery status pin value. */
-	XG_MSG_BATCHARGING,		/* Battery started charging. */
-	XG_MSG_BATSTOPCHARGING,		/* Battery stopped charging. */
-	/*
-	 * These messages are intended to be used by the Sleep Mode task and
-	 * all of the others in order to prepare the device to be switched to
-	 * the sleep mode.
-	 *
-	 * It's done by suspending all of the tasks by the Sleep Mode task
-	 * in order to let Idle to be the only one which is able to run.
-	 */
-	XG_MSG_TASKSUSP_REQ,		/* Request to suspend the task. */
-	XG_MSG_KEYBOARD,		/* Keyboard events. */
-} XG_MsgType_t;
-
-/*
- * Message to be transmitted via queues.
- */
-typedef struct XG_Msg_t {
-	uint16_t	value;		/* Message value, depends on a type. */
-	XG_MsgType_t	type;		/* Type of the message. */
-} XG_Msg_t;
-
-/*
- * State of the buttons.
- */
-typedef enum XG_ButtonState_e {
-	XG_BTN_LEFT_RELEASED = 75,
-	XG_BTN_LEFT_PRESSED,
-	XG_BTN_LEFT_HOLD,
-	XG_BTN_CENTER_RELEASED,
-	XG_BTN_CENTER_PRESSED,
-	XG_BTN_CENTER_HOLD,
-	XG_BTN_RIGHT_RELEASED,
-	XG_BTN_RIGHT_PRESSED,
-	XG_BTN_RIGHT_HOLD,
-} XG_ButtonState_e;
-
 /* Functions to initialize Xling tasks for the FreeRTOS scheduler. */
 int	XG_InitDisplayTask(XG_TaskArgs_t *, UBaseType_t, TaskHandle_t *);
 int	XG_InitBatteryMonitorTask(XG_TaskArgs_t *, UBaseType_t, TaskHandle_t *);
