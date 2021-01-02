@@ -13,6 +13,15 @@ XG_SCNKBD_smoking_02(XG_ButtonState_e stat, void *arg)
 	XG_Scene_t *scene = scene_ctx->scene;
 	XG_Text_t *text = scene_ctx->text;
 	XG_Point_t pt = { 0, 0 };
+	XG_Animation_t *dots = NULL;
+	XG_Animation_t *thought_bubble = NULL;
+
+	if (scene->layers[4].obj_type == XG_OT_Animation) {
+		dots = (XG_Animation_t *) scene->layers[4].obj;
+	}
+	if (scene->layers[5].obj_type == XG_OT_Animation) {
+		thought_bubble = (XG_Animation_t *) scene->layers[5].obj;
+	}
 
 	switch (stat) {
 	case XG_BTN_LEFT_PRESSED:
@@ -29,6 +38,14 @@ XG_SCNKBD_smoking_02(XG_ButtonState_e stat, void *arg)
 		if (stat_lock == 0) {
 			stat_lock = 1;
 			show_stat = (show_stat == 0) ? 1 : 0;
+
+			if (dots != NULL) {
+				dots->active = dots->active == 1 ? 0 : 1;
+			}
+			if (thought_bubble != NULL) {
+				thought_bubble->active =
+				    thought_bubble->active == 1 ? 0 : 1;
+			}
 		}
 		break;
 	case XG_BTN_CENTER_RELEASED:

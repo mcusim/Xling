@@ -155,6 +155,7 @@ struct XG_Animation_t {
 	const uint16_t        frames_n;
 	uint16_t              frame_idx;
 	uint16_t              stay_cnt;
+	uint8_t               active;
 };
 
 struct XG_Glyph_t {

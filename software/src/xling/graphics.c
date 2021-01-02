@@ -265,7 +265,12 @@ XG_DrawScene(XG_Canvas_t *canvas, const XG_Scene_t *scene)
 			frames = (const XG_AnimFrame_t *) anim->frames;
 			frame = &frames[anim->frame_idx];
 
-			/* Paint the current frame. */
+			/* Don't draw an inactive animation. */
+			if (anim->active == 0) {
+				break;
+			}
+
+			/* Draw the current frame. */
 			XG_Draw_PF(canvas, frame->img, frame->base_pt);
 
 			/* Choose the next frame index. */

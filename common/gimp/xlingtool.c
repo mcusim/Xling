@@ -243,6 +243,7 @@ struct anim_t {
 	uint32_t	paths_idx[ANIM_MAX_PATHS];
 	uint32_t	paths_n;
 	uint32_t	anim_idx;
+	uint8_t		active;
 };
 
 /* Animation path. */
@@ -266,6 +267,7 @@ static void	 chk_parse_anim_tag(layer_ctx_t *ctx);
 static void	 chk_parse_anim_frame(layer_ctx_t *ctx);
 static void	 chk_parse_go_tag(layer_ctx_t *ctx);
 static void	 chk_parse_stay_tag(layer_ctx_t *ctx);
+static void	 chk_parse_inactive_tag(layer_ctx_t *ctx);
 static void	 chk_link_anim_frames(layer_ctx_t *ctx);
 static void	 chk_update_anim_frame_indexes(layer_ctx_t *ctx);
 static void	 chk_print_animations(layer_ctx_t *ctx);
@@ -314,6 +316,7 @@ static layer_chk_t _layer_checks[] = {
 	{ .kind = CHECK_PER_LAYER,	.cbk = &chk_parse_go_tag },
 	{ .kind = CHECK_PER_LAYER,	.cbk = &chk_parse_stay_tag },
 	{ .kind = CHECK_PER_LAYER,	.cbk = &chk_parse_anim_frame },
+	{ .kind = CHECK_PER_LAYER,	.cbk = &chk_parse_inactive_tag },
 	{ .kind = CHECK_AFTER_ALL,	.cbk = &chk_link_anim_frames },
 	{ .kind = CHECK_AFTER_ALL,	.cbk = &chk_update_anim_frame_indexes },
 //	{ .kind = CHECK_AFTER_ALL,	.cbk = &chk_print_animations },
@@ -670,6 +673,9 @@ chk_parse_anim_tag(layer_ctx_t *ctx)
 				strncpy(scn_layer->name, anim_name,
 				    ANIM_MAX_NAME);
 
+				/* Animation is active by default. */
+				ctx->anim->active = 1;
+
 				/* Increase # of the known animations. */
 				_animations_n++;
 				/* Increase # of the known scene layers. */
@@ -853,6 +859,32 @@ chk_parse_anim_frame(layer_ctx_t *ctx)
 
 		/* Increment number of the known animation frames. */
 		_frames_n++;
+	} else {
+		/* Not an animation frame - do nothing. */
+	}
+}
+
+/*
+ * Parses !inactive() tag from the layer's name.
+ *
+ * NOTE: Requires animation to be available in the layer context.
+ */
+static void
+chk_parse_inactive_tag(layer_ctx_t *ctx)
+{
+	gchar *gpos;
+
+	if (!ctx->ignore && ctx->is_anim_frame) {
+		/* An animation frame. */
+
+		/* Get name of the layer and try to find the tag. */
+		gpos = gimp_item_get_name(ctx->layer_id);
+		if ((strstr(gpos, "!inactive()") != NULL) ||
+		    (strcmp(gpos, "!inactive()") == 0)) {
+			/* Mark animation as inactive. */
+			ctx->anim->active = 0;
+			//printf("Ignoring: %s\n", gpos);
+		}
 	} else {
 		/* Not an animation frame - do nothing. */
 	}
@@ -1058,9 +1090,10 @@ chk_write_animations_header(layer_ctx_t *ctx)
 			    ".frames = XG_ANMF_%s, "
 			    ".frames_n = %d, "
 			    ".frame_idx = 0, "
-			    ".stay_cnt = 0 "
+			    ".stay_cnt = 0, "
+			    ".active = %d, "
 			    "};\n",
-			    anim->name, anim->name, n
+			    anim->name, anim->name, n, anim->active
 			);
 		}
 
