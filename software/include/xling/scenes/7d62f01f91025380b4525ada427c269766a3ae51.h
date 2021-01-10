@@ -57,7 +57,7 @@
 static const uint8_t PROGMEM XG_IMG_DATA_7d62f01f91025380b4525ada427c269766a3ae51[11] = {
     0x7f, 0x67, 0x43, 0x43, 0x41, 0x4d, 0x4d, 0x41, 0x43, 0x67, 0x7f
 };
-const XG_Image_t XG_IMG_7d62f01f91025380b4525ada427c269766a3ae51 = {
+XG_Image_t XG_IMG_7d62f01f91025380b4525ada427c269766a3ae51 = {
         .data = XG_IMG_DATA_7d62f01f91025380b4525ada427c269766a3ae51,
 	.alpha = XG_IMGA_7d62f01f91025380b4525ada427c269766a3ae51,
         .width = 11,

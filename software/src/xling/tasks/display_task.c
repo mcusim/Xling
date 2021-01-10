@@ -117,8 +117,9 @@ static XG_Text_t _text = {
 	.text_sz = TEXT_BUFSZ,
 };
 static XG_SceneCtx_t _scene_ctx = {
-//	.scene = &XG_SCN_walking_01,
+	//.scene = &XG_SCN_walking_01,
 	.scene = &XG_SCN_smoking_02,
+	//.scene = &XG_SCN_test_brick,
 	.canvas = &_canvas,
 	.text = &_text,
 	.frame_delay = 0,

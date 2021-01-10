@@ -54,7 +54,7 @@
 static const uint8_t PROGMEM XG_IMG_DATA_a4a22152faab8db4a63de422ae0d5852fd35b04a[2] = {
     0x03, 0x03
 };
-const XG_Image_t XG_IMG_a4a22152faab8db4a63de422ae0d5852fd35b04a = {
+XG_Image_t XG_IMG_a4a22152faab8db4a63de422ae0d5852fd35b04a = {
         .data = XG_IMG_DATA_a4a22152faab8db4a63de422ae0d5852fd35b04a,
 	.alpha = NULL,
         .width = 2,

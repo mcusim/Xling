@@ -54,7 +54,7 @@ $(start_block_images_table)
 static const uint$(img_data_block_size)_t PROGMEM XG_IMG_DATA_$(doc_name)[$(out_blocks_count)] = {
     $(out_image_data)
 };
-const XG_Image_t XG_IMG_$(doc_name) = {
+XG_Image_t XG_IMG_$(doc_name) = {
         .data = XG_IMG_DATA_$(doc_name),
 	.alpha = NULL,
         .width = $(out_image_width),

@@ -26,14 +26,42 @@
 #include "xling/graphics.h"
 
 #define CHAR_WIDTH	3 /* bits */
-#define PAGE_HEIGHT	8 /* bits */
+#define PHEIGHT		8 /* bits */
 #define PAGES		8 /* in graphic RAM */
 #define NOT(u8)		((uint8_t)(~(u8)))
 #define PGM(a)		((uint8_t)(pgm_read_byte_far((a))))
 
+static void	get_img_byte(const XG_Image_t * const image,
+    const uint32_t idx, uint8_t *data, uint8_t *alpha);
 
-static void     get_img_byte(const XG_Image_t * const image,
-                    const uint32_t idx, uint8_t *data, uint8_t *alpha);
+/*
+ * Calculates an auxiliary point with non-negative coordinates (__x, __y) which
+ * will be used as a new top-left corner to draw a visible part of the orignal
+ * image only. In addition, offset (__idx) in the image data array, (__width)
+ * and (__height) of the new image will be provided.
+ */
+#define CALC_AUX_POINT(__pt, __image, __x, __y, __idx, __width, __height) do { \
+	const uint16_t __off = (uint16_t)abs((__pt)->y % PHEIGHT);	\
+	int16_t __sw = (int16_t)(__image)->width; /* signed width */	\
+	int16_t __sh = (int16_t)(__image)->height; /* signed height */	\
+	int16_t __sx, __sy; /* signed coordinates */			\
+									\
+	(__x) = ((__pt)->x < 0) ? 0u : (uint16_t)(__pt)->x;		\
+	(__y) = ((__pt)->y < 0) ? (__off != 0u && abs((__pt)->y) < __sh) \
+	    ? (uint16_t)(PHEIGHT - __off) : 0u				\
+	    : (uint16_t)(__pt)->y;					\
+	__sx = (int16_t)(__x);						\
+	__sy = (int16_t)(__y);						\
+									\
+	(__idx) = ((__pt)->x >= 0 && (__pt)->y >= 0) ? 0u		\
+	    : (uint16_t)((((__sy - (__pt)->y) / PHEIGHT) * __sw) +	\
+		((__pt)->x < 0 ? abs((__pt)->x) : 0));			\
+									\
+	(__width)  = (__sw - (__sx - (__pt)->x)) < 0 ? 0u		\
+	    : (uint16_t)(__sw - (__sx - (__pt)->x));			\
+	(__height) = (__sh - (__sy - (__pt)->y)) < 0 ? 0u		\
+	    : (uint16_t)(__sh - (__sy - (__pt)->y));			\
+} while (0)
 
 /*
  * Prints text on the canvas at the given coordinates.
@@ -60,8 +88,7 @@ XG_Print(XG_Canvas_t *canvas, const XG_Text_t *text, XG_Point_t pt)
 		image.data_size = font->glyphs[ch-0x20].data_size;
 
 		rc = XG_Draw_PF(canvas, &image, pt);
-		pt.x += image.width;
-
+		pt.x += image.width > INT16_MAX ? 0 : (int16_t)image.width;
 		if (rc != 0) {
 			break;
 		}
@@ -79,57 +106,32 @@ XG_Print(XG_Canvas_t *canvas, const XG_Text_t *text, XG_Point_t pt)
 int
 XG_Draw_PF(XG_Canvas_t *canvas, const XG_Image_t *image, XG_Point_t pt)
 {
-	/*
-	 * Local read-only variables:
-	 *
-	 * iw, ih:
-	 *
-	 *     Re-calculated image width and height to draw a visible part of
-	 *     the image only.
-	 *
-	 * start_page, end_page:
-	 *
-	 *     Pages of the canvas which will be modified during an image
-	 *     drawing process.
-	 *
-	 * shift, bottom_shift:
-	 *
-	 *     Shifts (in pixels) from the top border of the start page and
-	 *     from the bottom border of the end page.
-	 *
-	 * mask, bottom_mask, img_mask:
-	 *
-	 *     Pixel masks.
-	 */
-	const uint16_t x = pt.x;
-	const uint16_t y = pt.y;
-
-	/* Image size */
-	const uint16_t iw = ((x + image->width) > canvas->width)
-	        ? image->width - ((x + image->width) - canvas->width)
-	        : image->width;
-	const uint16_t ih = ((y + image->height) > canvas->height)
-	        ? image->height - ((y + image->height) - canvas->height)
-	        : image->height;
-
-	/* Display pages */
-	const uint16_t start_page = y / PAGE_HEIGHT;
-	uint16_t end_page = (y + ih + PAGE_HEIGHT - 1) / PAGE_HEIGHT;
-
-	/* Shifts */
-	const uint8_t shift = y % PAGE_HEIGHT;
-	const uint8_t bottom_shift = (((y + ih) % PAGE_HEIGHT) != 0)
-	        ? (uint8_t)(PAGE_HEIGHT - ((y + ih) % PAGE_HEIGHT)) : 0u;
-
-	/* Masks */
-	const uint8_t mask = (uint8_t)(0xFFu << shift);
-	const uint8_t bottom_mask = (uint8_t)(0xFFu >> bottom_shift);
-	const uint8_t img_mask = (uint8_t)(mask & bottom_mask);
-
-	uint16_t canvas_idx, img_idx = 0;
+	uint16_t x, y;
+	uint16_t iw, ih;
+	uint16_t canvas_idx, img_idx;
 	uint8_t top_byte, img_byte, bottom_byte;
 	uint8_t raw_byte = 0, alpha_mask = 0xFF;
 	int rc = 0;
+
+	CALC_AUX_POINT(&pt, image, x, y, img_idx, iw, ih);
+
+	/* Size of the visible image part */
+	iw = ((x + iw) > canvas->width) ? iw - ((x + iw) - canvas->width) : iw;
+	ih = ((y + ih) > canvas->height) ? ih - ((y + ih) - canvas->height) : ih;
+
+	/* Canvas pages to modify */
+	const uint16_t start_page = (y / PHEIGHT) > PAGES ? PAGES : y / PHEIGHT;
+	uint16_t end_page = (y + ih + PHEIGHT - 1) / PHEIGHT;
+
+	/* Shifts (in pixels) */
+	const uint8_t shift = y % PHEIGHT;
+	const uint8_t bottom_shift = (((y + ih) % PHEIGHT) != 0)
+	        ? (uint8_t)(PHEIGHT - ((y + ih) % PHEIGHT)) : 0u;
+
+	/* Pixel masks */
+	const uint8_t mask = (uint8_t)(0xFFu << shift);
+	const uint8_t bottom_mask = (uint8_t)(0xFFu >> bottom_shift);
+	const uint8_t img_mask = (uint8_t)(mask & bottom_mask);
 
 	/* Check indexes of the pages. */
 	if ((start_page > (PAGES - 1)) || (end_page > PAGES)) {
@@ -149,59 +151,41 @@ XG_Draw_PF(XG_Canvas_t *canvas, const XG_Image_t *image, XG_Point_t pt)
 
 		/* Draw the current line. */
 		for (uint16_t j = canvas_idx; j < (canvas_idx + iw); j++) {
-			/*
-			 * 1. Data byte at the "top" of the current one.
-			 */
-			if (i == start_page) {
+			/* Data byte at the "top" of the current one. */
+			if (i == start_page && img_idx < image->width) {
 				top_byte = (canvas->data[j] & NOT(mask));
 			} else {
-				/*
-				 * Obtain a byte of image data and its alpha
-				 * channel (or 0xFF if no alpha channel).
-				 */
 				get_img_byte(image, img_idx - image->width,
 				    &raw_byte, &alpha_mask);
 
-				/* With alpha channel */
 				top_byte  = canvas->data[j]
 				    & NOT(mask)
-				    & NOT((alpha_mask >> (PAGE_HEIGHT - shift))
+				    & NOT((alpha_mask >> (PHEIGHT - shift))
 					& NOT(mask));
-				top_byte |= (uint8_t)((raw_byte & alpha_mask) >>
-				    (PAGE_HEIGHT - shift));
+				top_byte |= (uint8_t)((raw_byte & alpha_mask)
+				    >> (PHEIGHT - shift));
 			}
-
-			/*
-			 * 2. Byte with the current image data.
-			 */
+			/* Byte with the current image data. */
 			if (i == (end_page - 1)) {
 				/* Image data at the end of the image. */
 				get_img_byte(image, img_idx, &raw_byte,
 				    &alpha_mask);
 
-				/* With alpha channel */
 				img_byte = canvas->data[j]
-				    & mask
-				    & NOT((alpha_mask << shift) & mask);
+				    & mask & NOT((alpha_mask << shift) & mask);
 				img_byte = (uint8_t)(img_byte | ((img_mask != 0)
-				    ? ((raw_byte & alpha_mask) << shift)
-				    : 0));
+				    ? ((raw_byte & alpha_mask) << shift) : 0));
 			} else {
 				/* Image data somewhere before end. */
 				get_img_byte(image, img_idx, &raw_byte,
 				    &alpha_mask);
 
-				/* With alpha channel */
 				img_byte = canvas->data[j]
-				    & mask
-				    & NOT((alpha_mask << shift) & mask);
-				img_byte |= (uint8_t)((raw_byte & alpha_mask) <<
-				    shift);
+				    & mask & NOT((alpha_mask << shift) & mask);
+				img_byte |= (uint8_t)((raw_byte & alpha_mask)
+				    << shift);
 			}
-
-			/*
-			 * 3. Data byte at the "bottom" of the current one.
-			 */
+			/* Data byte at the "bottom" of the current one. */
 			if (i == (end_page - 1)) {
 				bottom_byte = (uint8_t)
 				    (canvas->data[j] & NOT(bottom_mask));
@@ -209,17 +193,15 @@ XG_Draw_PF(XG_Canvas_t *canvas, const XG_Image_t *image, XG_Point_t pt)
 				bottom_byte = 0;
 			}
 
-			/* Draw the actual byte on the canvas. */
+			/* Update byte on the canvas. */
 			canvas->data[j] = top_byte | img_byte | bottom_byte;
 
 			/* Increment image index. */
 			img_idx++;
 		}
-
 		/* Move to the "next line" on the image. */
 		img_idx += image->width - iw;
 	}
-
 	return rc;
 }
 

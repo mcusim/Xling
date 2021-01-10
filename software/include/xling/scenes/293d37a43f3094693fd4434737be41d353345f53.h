@@ -18,8 +18,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef XG_IMG_3f7e477d19ce67747b695ccce516715f626a877f_H_
-#define XG_IMG_3f7e477d19ce67747b695ccce516715f626a877f_H_ 1
+#ifndef XG_IMG_293d37a43f3094693fd4434737be41d353345f53_H_
+#define XG_IMG_293d37a43f3094693fd4434737be41d353345f53_H_ 1
 
 #include <stdlib.h>
 #include <stdint.h>
@@ -30,7 +30,7 @@
  * for Xling, a tamagotchi-like toy by LCD Image Converter.
  *
  * Data type: image
- * Filename: 3f7e477d19ce67747b695ccce516715f626a877f
+ * Filename: 293d37a43f3094693fd4434737be41d353345f53
  *
  * Preset name: Xling_SH1106_display_preset
  * Data block size: 8 bit(s), uint8_t
@@ -51,18 +51,18 @@
 #include "xling/graphics.h"
 
 /* Header file with alpha channel for the image. */
-#include "xling/scenes/3f7e477d19ce67747b695ccce516715f626a877f_a.h"
+#include "xling/scenes/293d37a43f3094693fd4434737be41d353345f53_a.h"
 
 
-static const uint8_t PROGMEM XG_IMG_DATA_3f7e477d19ce67747b695ccce516715f626a877f[10] = {
-    0x00, 0x00, 0x00, 0xf8, 0xe0, 0x80, 0x80, 0xfc, 0xf0, 0xc0
+static const uint8_t PROGMEM XG_IMG_DATA_293d37a43f3094693fd4434737be41d353345f53[30] = {
+    0x01, 0x00, 0xc3, 0xff, 0xff, 0x1f, 0x07, 0x07, 0x8f, 0xee, 0x7c, 0x38, 0x00, 0x00, 0x00, 0x00, 0x07, 0x0f, 0x0d, 0x18, 0x10, 0x00, 0x00, 0x01, 0x03, 0x03, 0x06, 0x04, 0x00, 0x00
 };
-XG_Image_t XG_IMG_3f7e477d19ce67747b695ccce516715f626a877f = {
-        .data = XG_IMG_DATA_3f7e477d19ce67747b695ccce516715f626a877f,
-	.alpha = XG_IMGA_3f7e477d19ce67747b695ccce516715f626a877f,
-        .width = 10,
-        .height = 8,
+XG_Image_t XG_IMG_293d37a43f3094693fd4434737be41d353345f53 = {
+        .data = XG_IMG_DATA_293d37a43f3094693fd4434737be41d353345f53,
+	.alpha = XG_IMGA_293d37a43f3094693fd4434737be41d353345f53,
+        .width = 15,
+        .height = 14,
         .data_size = 8,
 };
 
-#endif /* XG_IMG_3f7e477d19ce67747b695ccce516715f626a877f_H_ */
+#endif /* XG_IMG_293d37a43f3094693fd4434737be41d353345f53_H_ */

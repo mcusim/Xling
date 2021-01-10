@@ -1052,7 +1052,7 @@ chk_write_animations_header(layer_ctx_t *ctx)
 			n = 0;
 
 			fprintf(f_anim, "\n");
-			fprintf(f_anim, "const XG_AnimFrame_t XG_ANMF_%s[] = {\n",
+			fprintf(f_anim, "XG_AnimFrame_t XG_ANMF_%s[] = {\n",
 			    anim->name);
 
 			/* Paths */
@@ -1171,7 +1171,7 @@ chk_write_scenes_header(layer_ctx_t *ctx)
 		    (kbd == TRUE ? "XG_SCNKBD_%s" : "%s"),
 		    (kbd == TRUE ? image_name : "NULL"));
 
-		fprintf(f_scenes, "const XG_Scene_t XG_SCN_%s = {\n"
+		fprintf(f_scenes, "XG_Scene_t XG_SCN_%s = {\n"
 		    "\t.layers = XG_SCNL_%s,\n"
 		    "\t.layers_n = %d,\n"
 		    "\t.kbd_cbk = %s,\n"

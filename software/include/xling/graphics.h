@@ -65,8 +65,8 @@ typedef enum XG_ObjectType_t {
 } XG_ObjectType_t;
 
 struct XG_Point_t {
-	uint16_t          x;
-	uint16_t          y;
+	int16_t x;
+	int16_t y;
 };
 
 /*
@@ -112,7 +112,7 @@ struct XG_SceneCtx_t {
 
 struct XG_Layer_t {
 	XG_Point_t            base_pt;
-	const void           *obj;
+	void                 *obj;
 	XG_ObjectType_t       obj_type;
 };
 
@@ -143,7 +143,7 @@ struct XG_Image_t {
  *  4. Frames counter to understand when to switch to the next animation frame.
  */
 struct XG_AnimFrame_t {
-	const XG_Point_t      base_pt;
+	XG_Point_t            base_pt;
 	const XG_Image_t     *img;
 	const uint16_t        alt;
 	const uint16_t        alt_chance;
@@ -151,7 +151,7 @@ struct XG_AnimFrame_t {
 };
 
 struct XG_Animation_t {
-	const XG_AnimFrame_t *frames;
+	XG_AnimFrame_t       *frames;
 	const uint16_t        frames_n;
 	uint16_t              frame_idx;
 	uint16_t              stay_cnt;
