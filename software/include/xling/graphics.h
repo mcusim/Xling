@@ -145,9 +145,9 @@ struct XG_Image_t {
 struct XG_AnimFrame_t {
 	XG_Point_t            base_pt;
 	const XG_Image_t     *img;
-	const uint16_t        alt;
-	const uint16_t        alt_chance;
-	const uint16_t        stay;
+	uint16_t              alt;
+	uint16_t              alt_chance;
+	uint16_t              stay;
 };
 
 struct XG_Animation_t {

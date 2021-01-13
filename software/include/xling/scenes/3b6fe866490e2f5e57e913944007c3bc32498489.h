@@ -18,23 +18,24 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef XG_IMGA_2e4e0b4778b421c6cd5d99be60a11576d4471ab4_H_
-#define XG_IMGA_2e4e0b4778b421c6cd5d99be60a11576d4471ab4_H_ 1
+#ifndef XG_IMG_3b6fe866490e2f5e57e913944007c3bc32498489_H_
+#define XG_IMG_3b6fe866490e2f5e57e913944007c3bc32498489_H_ 1
 
+#include <stdlib.h>
 #include <stdint.h>
 #include <avr/pgmspace.h>
 
 /*
- * This file with 1-bit alpha channel for monochrome image has been generated
+ * This file with monochrome image with 1-bit alpha channel has been generated
  * for Xling, a tamagotchi-like toy by LCD Image Converter.
  *
- * Data type: image (alpha channel)
- * Filename: 2e4e0b4778b421c6cd5d99be60a11576d4471ab4
+ * Data type: image
+ * Filename: 3b6fe866490e2f5e57e913944007c3bc32498489
  *
- * Preset name: Xling_SH1106_display_preset_alpha_channel
+ * Preset name: Xling_SH1106_display_preset
  * Data block size: 8 bit(s), uint8_t
  * RLE compression: no
- * Conversion type: Color, not_used not_used
+ * Conversion type: Monochrome, Diffuse Dither 128
  * Bits per pixel: 1
  * Bands used: yes
  * Band width: 8
@@ -46,9 +47,22 @@
  * LCD Image Converter: <https://www.riuson.com/lcd-image-converter>
  */
 
+/* Xling graphics header */
+#include "xling/graphics.h"
 
-const uint8_t PROGMEM XG_IMGA_2e4e0b4778b421c6cd5d99be60a11576d4471ab4[30] = {
-    0x03, 0x03, 0x0f, 0xdf, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xfe, 0x7c, 0x38, 0x00, 0x00, 0x00, 0x00, 0x00, 0x03, 0x0f, 0x1f, 0x3f, 0x3f, 0x3f, 0x3f, 0x3d, 0x38, 0x10, 0x00, 0x00
+/* Header file with alpha channel for the image. */
+#include "xling/scenes/3b6fe866490e2f5e57e913944007c3bc32498489_a.h"
+
+
+static const uint8_t PROGMEM XG_IMG_DATA_3b6fe866490e2f5e57e913944007c3bc32498489[10] = {
+    0xc0, 0xf0, 0xfc, 0x80, 0x80, 0xc0, 0xe0, 0x30, 0x10, 0x00
+};
+XG_Image_t XG_IMG_3b6fe866490e2f5e57e913944007c3bc32498489 = {
+        .data = XG_IMG_DATA_3b6fe866490e2f5e57e913944007c3bc32498489,
+	.alpha = XG_IMGA_3b6fe866490e2f5e57e913944007c3bc32498489,
+        .width = 10,
+        .height = 8,
+        .data_size = 8,
 };
 
-#endif /* XG_IMGA_2e4e0b4778b421c6cd5d99be60a11576d4471ab4_H_ */
+#endif /* XG_IMG_3b6fe866490e2f5e57e913944007c3bc32498489_H_ */

@@ -18,8 +18,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef XG_IMGA_8abb630a7eb5d726a2db9c2a2564790ec846d6cf_H_
-#define XG_IMGA_8abb630a7eb5d726a2db9c2a2564790ec846d6cf_H_ 1
+#ifndef XG_IMGA_61033d970b2cfa255b8170e788f37cd70a966eff_H_
+#define XG_IMGA_61033d970b2cfa255b8170e788f37cd70a966eff_H_ 1
 
 #include <stdint.h>
 #include <avr/pgmspace.h>
@@ -29,7 +29,7 @@
  * for Xling, a tamagotchi-like toy by LCD Image Converter.
  *
  * Data type: image (alpha channel)
- * Filename: 8abb630a7eb5d726a2db9c2a2564790ec846d6cf
+ * Filename: 61033d970b2cfa255b8170e788f37cd70a966eff
  *
  * Preset name: Xling_SH1106_display_preset_alpha_channel
  * Data block size: 8 bit(s), uint8_t
@@ -47,8 +47,8 @@
  */
 
 
-const uint8_t PROGMEM XG_IMGA_8abb630a7eb5d726a2db9c2a2564790ec846d6cf[30] = {
-    0x03, 0x07, 0x1f, 0xff, 0xff, 0xff, 0xe7, 0x1f, 0xff, 0xff, 0xfc, 0xe0, 0x00, 0x00, 0x00, 0x00, 0x0e, 0x1f, 0x3f, 0x3f, 0x3f, 0x3e, 0x3f, 0x3f, 0x3f, 0x3f, 0x3c, 0x3c, 0x38, 0x10
+const uint8_t PROGMEM XG_IMGA_61033d970b2cfa255b8170e788f37cd70a966eff[11] = {
+    0x7f, 0x7f, 0x7f, 0x7f, 0x7f, 0x7f, 0x7f, 0x7f, 0x7f, 0x7f, 0x7f
 };
 
-#endif /* XG_IMGA_8abb630a7eb5d726a2db9c2a2564790ec846d6cf_H_ */
+#endif /* XG_IMGA_61033d970b2cfa255b8170e788f37cd70a966eff_H_ */

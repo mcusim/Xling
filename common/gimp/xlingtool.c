@@ -1147,18 +1147,18 @@ chk_write_scenes_header(layer_ctx_t *ctx)
 			scn_layer = &_scene_layers[i];
 
 			if (scn_layer->obj_type == OT_IMAGE) {
-				fprintf(f_scenes, "\t{ "
+				fprintf(f_scenes, "\t /* %u */ { "
 				    ".obj = &XG_IMG_%s, "
 				    ".obj_type = XG_OT_Image, "
 				    ".base_pt = { %d, %d } },\n",
-				    scn_layer->name,
+				    i, scn_layer->name,
 				    scn_layer->base_pt.x,
 				    scn_layer->base_pt.y);
 			} else {
-				fprintf(f_scenes, "\t{ "
+				fprintf(f_scenes, "\t /* %u */ { "
 				    ".obj = &XG_ANM_%s, "
 				    ".obj_type = XG_OT_Animation },\n",
-				    scn_layer->name);
+				    i, scn_layer->name);
 			}
 		}
 		fprintf(f_scenes, "};\n\n");

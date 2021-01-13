@@ -18,8 +18,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef XG_IMG_a4a22152faab8db4a63de422ae0d5852fd35b04a_H_
-#define XG_IMG_a4a22152faab8db4a63de422ae0d5852fd35b04a_H_ 1
+#ifndef XG_IMG_2df2e22ec4c75adfa1a57f04e2ae6e62b7a24cea_H_
+#define XG_IMG_2df2e22ec4c75adfa1a57f04e2ae6e62b7a24cea_H_ 1
 
 #include <stdlib.h>
 #include <stdint.h>
@@ -30,7 +30,7 @@
  * for Xling, a tamagotchi-like toy by LCD Image Converter.
  *
  * Data type: image
- * Filename: a4a22152faab8db4a63de422ae0d5852fd35b04a
+ * Filename: 2df2e22ec4c75adfa1a57f04e2ae6e62b7a24cea
  *
  * Preset name: Xling_SH1106_display_preset
  * Data block size: 8 bit(s), uint8_t
@@ -47,19 +47,22 @@
  * LCD Image Converter: <https://www.riuson.com/lcd-image-converter>
  */
 
-/* Xling graphics header. */
+/* Xling graphics header */
 #include "xling/graphics.h"
 
+/* Header file with alpha channel for the image. */
+#include "xling/scenes/2df2e22ec4c75adfa1a57f04e2ae6e62b7a24cea_a.h"
 
-static const uint8_t PROGMEM XG_IMG_DATA_a4a22152faab8db4a63de422ae0d5852fd35b04a[2] = {
-    0x03, 0x03
+
+static const uint8_t PROGMEM XG_IMG_DATA_2df2e22ec4c75adfa1a57f04e2ae6e62b7a24cea[11] = {
+    0x7f, 0x67, 0x43, 0x41, 0x4d, 0x4d, 0x41, 0x43, 0x43, 0x67, 0x7f
 };
-XG_Image_t XG_IMG_a4a22152faab8db4a63de422ae0d5852fd35b04a = {
-        .data = XG_IMG_DATA_a4a22152faab8db4a63de422ae0d5852fd35b04a,
-	.alpha = NULL,
-        .width = 2,
-        .height = 2,
+XG_Image_t XG_IMG_2df2e22ec4c75adfa1a57f04e2ae6e62b7a24cea = {
+        .data = XG_IMG_DATA_2df2e22ec4c75adfa1a57f04e2ae6e62b7a24cea,
+	.alpha = XG_IMGA_2df2e22ec4c75adfa1a57f04e2ae6e62b7a24cea,
+        .width = 11,
+        .height = 7,
         .data_size = 8,
 };
 
-#endif /* XG_IMG_a4a22152faab8db4a63de422ae0d5852fd35b04a_H_ */
+#endif /* XG_IMG_2df2e22ec4c75adfa1a57f04e2ae6e62b7a24cea_H_ */
