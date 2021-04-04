@@ -1,4 +1,4 @@
-update=Fri Oct  2 19:31:04 2020
+update=Tue Jan 26 21:21:12 2021
 version=1
 last_client=kicad
 [cvpcb]
@@ -58,7 +58,7 @@ SolderPasteRatio=-0.05
 [schematic_editor]
 version=1
 PageLayoutDescrFile=
-PlotDirectoryName=output/Xling_v3.2_schematic.pdf
+PlotDirectoryName=output/
 SubpartIdSeparator=0
 SubpartFirstId=65
 NetFmtName=Pcbnew

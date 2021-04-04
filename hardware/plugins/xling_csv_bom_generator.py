@@ -88,50 +88,49 @@ def writerow( acsvwriter, columns ):
     acsvwriter.writerow( utf8row )
 
 # Output a set of rows as a header providing general information
-writerow( out, ['Source:', net.getSource()] )
-writerow( out, ['Date:', net.getDate()] )
-writerow( out, ['Tool:', net.getTool()] )
-writerow( out, ['Generator:', sys.argv[0]] )
-writerow( out, ['Component Count:', len(components)] )
-writerow( out, [] )
-writerow( out, ['Individual Components:'] )
-writerow( out, [] )                        # blank line
+# writerow( out, ['Source:', net.getSource()] )
+# writerow( out, ['Date:', net.getDate()] )
+# writerow( out, ['Tool:', net.getTool()] )
+# writerow( out, ['Generator:', sys.argv[0]] )
+# writerow( out, ['Component Count:', len(components)] )
+# writerow( out, [] )
+# writerow( out, ['Individual Components:'] )
+# writerow( out, [] )                        # blank line
 writerow( out, columns )
 
 # Output all the interesting components individually first:
 row = []
-for c in components:
-    del row[:]
-    row.append('')                                      # item is blank in individual table
-    row.append('')                                      # Qty is always 1, why print it
-    row.append( c.getRef() )                            # Reference
-    row.append( c.getValue() )                          # Value
-    row.append( c.getLibName() + ":" + c.getPartName() ) # LibPart
-    #row.append( c.getDescription() )
-    row.append( c.getFootprint() )
-    row.append( c.getDatasheet() )
+# for c in components:
+#     del row[:]
+#     row.append('')                                      # item is blank in individual table
+#     row.append('')                                      # Qty is always 1, why print it
+#     row.append( c.getRef() )                            # Reference
+#     row.append( c.getValue() )                          # Value
+#     row.append( c.getLibName() + ":" + c.getPartName() ) # LibPart
+#     #row.append( c.getDescription() )
+#     row.append( c.getFootprint() )
+#     row.append( c.getDatasheet() )
 
-    # from column 7 upwards, use the fieldnames to grab the data
-    for field in columns[7:]:
-        row.append( c.getField( field ) );
+#     # from column 7 upwards, use the fieldnames to grab the data
+#     for field in columns[7:]:
+#         row.append( c.getField( field ) );
 
-    writerow( out, row )
+#     writerow( out, row )
 
 
-writerow( out, [] )                        # blank line
-writerow( out, [] )                        # blank line
-writerow( out, [] )                        # blank line
+# writerow( out, [] )                        # blank line
+# writerow( out, [] )                        # blank line
+# writerow( out, [] )                        # blank line
 
-writerow( out, ['Collated Components:'] )
-writerow( out, [] )                        # blank line
-writerow( out, columns )                   # reuse same columns
+# writerow( out, ['Collated Components:'] )
+# writerow( out, [] )                        # blank line
+# writerow( out, columns )                   # reuse same columns
 
 
 
 # Get all of the components in groups of matching parts + values
 # (see kicad_netlist_reader.py)
 grouped = net.groupComponents(components)
-
 
 # Output component information organized by group, aka as collated:
 item = 0

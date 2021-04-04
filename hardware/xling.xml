@@ -2,18 +2,18 @@
 <export version="D">
   <design>
     <source>/home/dsl/git/Xling/hardware/xling.sch</source>
-    <date>Tue Oct  6 21:40:55 2020</date>
-    <tool>Eeschema 5.1.6</tool>
+    <date>Sat Apr  3 17:16:46 2021</date>
+    <tool>Eeschema 5.1.9</tool>
     <sheet number="1" name="/" tstamps="/">
       <title_block>
         <title>Schematic of Xling, a pocket demon</title>
-        <company>Designed by Dmitry Salychev &lt;dsl@mcusim.org&gt;, CERN-OHL-W-2.0</company>
-        <rev>4</rev>
-        <date>2020-09-12</date>
+        <company/>
+        <rev>4.1</rev>
+        <date>2021-03-30</date>
         <source>xling.sch</source>
-        <comment number="1" value=""/>
-        <comment number="2" value=""/>
-        <comment number="3" value=""/>
+        <comment number="1" value="https://mcusim.org/docs/xling"/>
+        <comment number="2" value="Licensed under CERN-OHL-W-2.0"/>
+        <comment number="3" value="Copyright (c) 2021 Dmitry Salychev"/>
         <comment number="4" value=""/>
       </title_block>
     </sheet>
@@ -23,7 +23,7 @@
       <value>2.55K</value>
       <footprint>Xling Footprints:R_0603_1608Metric</footprint>
       <fields>
-        <field name="Model">0603SAF2551T5E</field>
+        <field name="MPN">0603SAF2551T5E</field>
       </fields>
       <libsource lib="xling" part="R" description=""/>
       <sheetpath names="/" tstamps="/"/>
@@ -33,7 +33,7 @@
       <value>4.7uF</value>
       <footprint>Xling Footprints:C_0603_1608Metric</footprint>
       <fields>
-        <field name="Model">CL10A475KQ8NNNC</field>
+        <field name="MPN">CL10A475KQ8NNNC</field>
       </fields>
       <libsource lib="xling" part="C" description=""/>
       <sheetpath names="/" tstamps="/"/>
@@ -43,7 +43,7 @@
       <value>100K</value>
       <footprint>Xling Footprints:R_0603_1608Metric</footprint>
       <fields>
-        <field name="Model">0603SAJ0104T5E</field>
+        <field name="MPN">0603SAJ0104T5E</field>
       </fields>
       <libsource lib="xling" part="R" description=""/>
       <sheetpath names="/" tstamps="/"/>
@@ -53,7 +53,7 @@
       <value>4.7nF</value>
       <footprint>Xling Footprints:C_0603_1608Metric</footprint>
       <fields>
-        <field name="Model">CL10B472KB8NNNC</field>
+        <field name="MPN">CL10B472KB8NNNC</field>
       </fields>
       <libsource lib="xling" part="C" description=""/>
       <sheetpath names="/" tstamps="/"/>
@@ -63,7 +63,7 @@
       <value>100K</value>
       <footprint>Xling Footprints:R_0603_1608Metric</footprint>
       <fields>
-        <field name="Model">0603SAJ0104T5E</field>
+        <field name="MPN">0603SAJ0104T5E</field>
       </fields>
       <libsource lib="xling" part="R" description=""/>
       <sheetpath names="/" tstamps="/"/>
@@ -73,7 +73,7 @@
       <value>4.7nF</value>
       <footprint>Xling Footprints:C_0603_1608Metric</footprint>
       <fields>
-        <field name="Model">CL10B472KB8NNNC</field>
+        <field name="MPN">CL10B472KB8NNNC</field>
       </fields>
       <libsource lib="xling" part="C" description=""/>
       <sheetpath names="/" tstamps="/"/>
@@ -83,7 +83,7 @@
       <value>100K</value>
       <footprint>Xling Footprints:R_0603_1608Metric</footprint>
       <fields>
-        <field name="Model">0603SAJ0104T5E</field>
+        <field name="MPN">0603SAJ0104T5E</field>
       </fields>
       <libsource lib="xling" part="R" description=""/>
       <sheetpath names="/" tstamps="/"/>
@@ -93,7 +93,7 @@
       <value>4.7nF</value>
       <footprint>Xling Footprints:C_0603_1608Metric</footprint>
       <fields>
-        <field name="Model">CL10B472KB8NNNC</field>
+        <field name="MPN">CL10B472KB8NNNC</field>
       </fields>
       <libsource lib="xling" part="C" description=""/>
       <sheetpath names="/" tstamps="/"/>
@@ -101,10 +101,9 @@
     </comp>
     <comp ref="J3">
       <value>Battery</value>
-      <footprint>Xling Footprints:Molex_Pico-EZmate_Slim_202656-0021_1x02-1MP_P1.20mm_Vertical</footprint>
-      <datasheet>https://www.molex.com/webdocs/datasheets/pdf/en-us/2026560021_PCB_HEADERS.pdf</datasheet>
+      <footprint>Xling Footprints:Battery_SMD_pads_1x02_HandSoldering</footprint>
       <fields>
-        <field name="Model">EZmate_Slim_2026560021</field>
+        <field name="MPN">N/A</field>
       </fields>
       <libsource lib="xling" part="Conn_01x02" description=""/>
       <sheetpath names="/" tstamps="/"/>
@@ -114,7 +113,7 @@
       <value>4.7uF</value>
       <footprint>Xling Footprints:C_0603_1608Metric</footprint>
       <fields>
-        <field name="Model">CL10A475KQ8NNNC</field>
+        <field name="MPN">CL10A475KQ8NNNC</field>
       </fields>
       <libsource lib="xling" part="C" description=""/>
       <sheetpath names="/" tstamps="/"/>
@@ -124,7 +123,7 @@
       <value>110K</value>
       <footprint>Xling Footprints:R_0603_1608Metric</footprint>
       <fields>
-        <field name="Model">0603SAF1103T5E</field>
+        <field name="MPN">0603SAF1103T5E</field>
       </fields>
       <libsource lib="xling" part="R" description=""/>
       <sheetpath names="/" tstamps="/"/>
@@ -134,7 +133,7 @@
       <value>AP3401_TSOT26</value>
       <footprint>Xling Footprints:AP3401_TSOT26</footprint>
       <fields>
-        <field name="Model">AP3401KTTR-G1</field>
+        <field name="MPN">AP3401KTTR-G1</field>
       </fields>
       <libsource lib="xling" part="AP3401_TSOT26" description="1.5MHz, 1A DC-DC Buck Converter"/>
       <sheetpath names="/" tstamps="/"/>
@@ -144,7 +143,7 @@
       <value>100K</value>
       <footprint>Xling Footprints:R_0603_1608Metric</footprint>
       <fields>
-        <field name="Model">0603SAJ0104T5E</field>
+        <field name="MPN">0603SAJ0104T5E</field>
       </fields>
       <libsource lib="xling" part="R" description=""/>
       <sheetpath names="/" tstamps="/"/>
@@ -154,7 +153,7 @@
       <value>2.2uH</value>
       <footprint>Xling Footprints:L_1210_3225Metric</footprint>
       <fields>
-        <field name="Model">NLV32T-2R2J-PF</field>
+        <field name="MPN">NLV32T-2R2J-PF</field>
       </fields>
       <libsource lib="xling" part="L" description=""/>
       <sheetpath names="/" tstamps="/"/>
@@ -164,7 +163,7 @@
       <value>22pF</value>
       <footprint>Xling Footprints:C_0603_1608Metric</footprint>
       <fields>
-        <field name="Model">CL10C220JB8NNNC</field>
+        <field name="MPN">CL10C220JB8NNNC</field>
       </fields>
       <libsource lib="xling" part="C" description=""/>
       <sheetpath names="/" tstamps="/"/>
@@ -174,7 +173,7 @@
       <value>510K</value>
       <footprint>Xling Footprints:R_0603_1608Metric</footprint>
       <fields>
-        <field name="Model">0603SAJ0514T5E</field>
+        <field name="MPN">0603SAJ0514T5E</field>
       </fields>
       <libsource lib="xling" part="R" description=""/>
       <sheetpath names="/" tstamps="/"/>
@@ -184,7 +183,7 @@
       <value>4.7uF</value>
       <footprint>Xling Footprints:C_0603_1608Metric</footprint>
       <fields>
-        <field name="Model">CL10A475KQ8NNNC</field>
+        <field name="MPN">CL10A475KQ8NNNC</field>
       </fields>
       <libsource lib="xling" part="C" description=""/>
       <sheetpath names="/" tstamps="/"/>
@@ -194,7 +193,7 @@
       <value>0.22uF</value>
       <footprint>Xling Footprints:C_0603_1608Metric</footprint>
       <fields>
-        <field name="Model">CL10B224KO8NNNC</field>
+        <field name="MPN">CL10B224KO8NNNC</field>
       </fields>
       <libsource lib="xling" part="C" description=""/>
       <sheetpath names="/" tstamps="/"/>
@@ -204,7 +203,7 @@
       <value>0.22uF</value>
       <footprint>Xling Footprints:C_0603_1608Metric</footprint>
       <fields>
-        <field name="Model">CL10B224KO8NNNC</field>
+        <field name="MPN">CL10B224KO8NNNC</field>
       </fields>
       <libsource lib="xling" part="C" description=""/>
       <sheetpath names="/" tstamps="/"/>
@@ -214,7 +213,7 @@
       <value>4.7uF</value>
       <footprint>Xling Footprints:C_0603_1608Metric</footprint>
       <fields>
-        <field name="Model">CL10A475KQ8NNNC</field>
+        <field name="MPN">CL10A475KQ8NNNC</field>
       </fields>
       <libsource lib="xling" part="C" description=""/>
       <sheetpath names="/" tstamps="/"/>
@@ -224,7 +223,7 @@
       <value>4.7uF</value>
       <footprint>Xling Footprints:C_0603_1608Metric</footprint>
       <fields>
-        <field name="Model">CL10A475KQ8NNNC</field>
+        <field name="MPN">CL10A475KQ8NNNC</field>
       </fields>
       <libsource lib="xling" part="C" description=""/>
       <sheetpath names="/" tstamps="/"/>
@@ -234,7 +233,7 @@
       <value>510K</value>
       <footprint>Xling Footprints:R_0603_1608Metric</footprint>
       <fields>
-        <field name="Model">0603SAJ0514T5E</field>
+        <field name="MPN">0603SAJ0514T5E</field>
       </fields>
       <libsource lib="xling" part="R" description=""/>
       <sheetpath names="/" tstamps="/"/>
@@ -244,7 +243,7 @@
       <value>510K</value>
       <footprint>Xling Footprints:R_0603_1608Metric</footprint>
       <fields>
-        <field name="Model">0603SAJ0514T5E</field>
+        <field name="MPN">0603SAJ0514T5E</field>
       </fields>
       <libsource lib="xling" part="R" description=""/>
       <sheetpath names="/" tstamps="/"/>
@@ -254,7 +253,7 @@
       <value>100nF</value>
       <footprint>Xling Footprints:C_0603_1608Metric</footprint>
       <fields>
-        <field name="Model">CL10B104KO8NNNC</field>
+        <field name="MPN">CL10B104KO8NNNC</field>
       </fields>
       <libsource lib="xling" part="C" description=""/>
       <sheetpath names="/" tstamps="/"/>
@@ -264,7 +263,7 @@
       <value>100nF</value>
       <footprint>Xling Footprints:C_0603_1608Metric</footprint>
       <fields>
-        <field name="Model">CL10B104KO8NNNC</field>
+        <field name="MPN">CL10B104KO8NNNC</field>
       </fields>
       <libsource lib="xling" part="C" description=""/>
       <sheetpath names="/" tstamps="/"/>
@@ -274,7 +273,7 @@
       <value>10uH</value>
       <footprint>Xling Footprints:L_1210_3225Metric</footprint>
       <fields>
-        <field name="Model">B82422A1103K100</field>
+        <field name="MPN">B82422A1103K100</field>
       </fields>
       <libsource lib="xling" part="L" description=""/>
       <sheetpath names="/" tstamps="/"/>
@@ -284,7 +283,7 @@
       <value>510K</value>
       <footprint>Xling Footprints:R_0603_1608Metric</footprint>
       <fields>
-        <field name="Model">0603SAJ0514T5E</field>
+        <field name="MPN">0603SAJ0514T5E</field>
       </fields>
       <libsource lib="xling" part="R" description=""/>
       <sheetpath names="/" tstamps="/"/>
@@ -294,7 +293,7 @@
       <value>510K</value>
       <footprint>Xling Footprints:R_0603_1608Metric</footprint>
       <fields>
-        <field name="Model">0603SAJ0514T5E</field>
+        <field name="MPN">0603SAJ0514T5E</field>
       </fields>
       <libsource lib="xling" part="R" description=""/>
       <sheetpath names="/" tstamps="/"/>
@@ -304,7 +303,7 @@
       <value>100nF</value>
       <footprint>Xling Footprints:C_0603_1608Metric</footprint>
       <fields>
-        <field name="Model">CL10B104KO8NNNC</field>
+        <field name="MPN">CL10B104KO8NNNC</field>
       </fields>
       <libsource lib="xling" part="C" description=""/>
       <sheetpath names="/" tstamps="/"/>
@@ -315,7 +314,7 @@
       <footprint>Xling Footprints:Crystal_SMD_CFPX-104-4Pin_5x3.2mm</footprint>
       <datasheet>~</datasheet>
       <fields>
-        <field name="Model">LFXTAL032878BULK</field>
+        <field name="MPN">LFXTAL032878BULK</field>
       </fields>
       <libsource lib="xling" part="Crystal_GND24" description="Four pin crystal, GND on pins 2 and 4"/>
       <sheetpath names="/" tstamps="/"/>
@@ -325,7 +324,7 @@
       <value>22pF</value>
       <footprint>Xling Footprints:C_0603_1608Metric</footprint>
       <fields>
-        <field name="Model">CL10C220JB8NNNC</field>
+        <field name="MPN">CL10C220JB8NNNC</field>
       </fields>
       <libsource lib="xling" part="C" description=""/>
       <sheetpath names="/" tstamps="/"/>
@@ -335,7 +334,7 @@
       <value>22pF</value>
       <footprint>Xling Footprints:C_0603_1608Metric</footprint>
       <fields>
-        <field name="Model">CL10C220JB8NNNC</field>
+        <field name="MPN">CL10C220JB8NNNC</field>
       </fields>
       <libsource lib="xling" part="C" description=""/>
       <sheetpath names="/" tstamps="/"/>
@@ -345,7 +344,7 @@
       <value>MCP73831</value>
       <footprint>Xling Footprints:MCP73831_SOT_23</footprint>
       <fields>
-        <field name="Model">MCP73831T-2ATI/OT</field>
+        <field name="MPN">MCP73831T-2ATI/OT</field>
       </fields>
       <libsource lib="xling" part="MCP73831" description=""/>
       <sheetpath names="/" tstamps="/"/>
@@ -355,7 +354,7 @@
       <value>USB_OTG</value>
       <footprint>Xling Footprints:USB_Micro-B_Molex-105017-0001</footprint>
       <fields>
-        <field name="Model">105017-0001</field>
+        <field name="MPN">105017-0001</field>
       </fields>
       <libsource lib="xling" part="USB_OTG" description=""/>
       <sheetpath names="/" tstamps="/"/>
@@ -365,7 +364,7 @@
       <value>4.7uF</value>
       <footprint>Xling Footprints:C_0603_1608Metric</footprint>
       <fields>
-        <field name="Model">CL10A475KQ8NNNC</field>
+        <field name="MPN">CL10A475KQ8NNNC</field>
       </fields>
       <libsource lib="xling" part="C" description=""/>
       <sheetpath names="/" tstamps="/"/>
@@ -375,7 +374,7 @@
       <value>NTR0202PL</value>
       <footprint>Xling Footprints:SOT-23</footprint>
       <fields>
-        <field name="Model">NTR0202PLT1G</field>
+        <field name="MPN">NTR0202PLT1G</field>
       </fields>
       <libsource lib="xling" part="NTR2101P" description=""/>
       <sheetpath names="/" tstamps="/"/>
@@ -385,7 +384,7 @@
       <value>510K</value>
       <footprint>Xling Footprints:R_0603_1608Metric</footprint>
       <fields>
-        <field name="Model">0603SAJ0514T5E</field>
+        <field name="MPN">0603SAJ0514T5E</field>
       </fields>
       <libsource lib="xling" part="R" description=""/>
       <sheetpath names="/" tstamps="/"/>
@@ -395,7 +394,7 @@
       <value>1N5819</value>
       <footprint>Xling Footprints:D_SOD-123</footprint>
       <fields>
-        <field name="Model">1N5819HW-7-F</field>
+        <field name="MPN">1N5819HW-7-F</field>
       </fields>
       <libsource lib="xling" part="1N5818" description=""/>
       <sheetpath names="/" tstamps="/"/>
@@ -405,7 +404,7 @@
       <value>100K</value>
       <footprint>Xling Footprints:R_0603_1608Metric</footprint>
       <fields>
-        <field name="Model">0603SAJ0104T5E</field>
+        <field name="MPN">0603SAJ0104T5E</field>
       </fields>
       <libsource lib="xling" part="R" description=""/>
       <sheetpath names="/" tstamps="/"/>
@@ -415,7 +414,7 @@
       <value>110K</value>
       <footprint>Xling Footprints:R_0603_1608Metric</footprint>
       <fields>
-        <field name="Model">0603SAF1103T5E</field>
+        <field name="MPN">0603SAF1103T5E</field>
       </fields>
       <libsource lib="xling" part="R" description=""/>
       <sheetpath names="/" tstamps="/"/>
@@ -426,7 +425,7 @@
       <footprint>Xling Footprints:TQFP-44_10x10mm_P0.8mm</footprint>
       <datasheet>http://ww1.microchip.com/downloads/en/DeviceDoc/Atmel-8272-8-bit-AVR-microcontroller-ATmega164A_PA-324A_PA-644A_PA-1284_P_datasheet.pdf</datasheet>
       <fields>
-        <field name="Model">ATMEGA1284P-AU</field>
+        <field name="MPN">ATMEGA1284P-AU</field>
       </fields>
       <libsource lib="xling" part="ATmega1284P-AU" description="20MHz, 128kB Flash, 16kB SRAM, 4kB EEPROM, JTAG, TQFP-44"/>
       <sheetpath names="/" tstamps="/"/>
@@ -436,7 +435,7 @@
       <value>REX012864L</value>
       <footprint>Xling Footprints:DisplayPin_1x30_P0.7mm</footprint>
       <fields>
-        <field name="Model"> REX012864LWAP3N00000</field>
+        <field name="MPN"> REX012864LWAP3N00000</field>
       </fields>
       <libsource lib="xling" part="REX012864L" description=""/>
       <sheetpath names="/" tstamps="/"/>
@@ -446,7 +445,7 @@
       <value>ISP</value>
       <footprint>Xling Footprints:Molex_Pico-Lock_504050-0691_1x06-1MP_P1.50mm_Horizontal</footprint>
       <fields>
-        <field name="Model">504050-0691</field>
+        <field name="MPN">504050-0691</field>
       </fields>
       <libsource lib="xling" part="Conn_02x03_Odd_Even" description=""/>
       <sheetpath names="/" tstamps="/"/>
@@ -456,7 +455,7 @@
       <value>510K</value>
       <footprint>Xling Footprints:R_0603_1608Metric</footprint>
       <fields>
-        <field name="Model">0603SAJ0514T5E</field>
+        <field name="MPN">0603SAJ0514T5E</field>
       </fields>
       <libsource lib="xling" part="R" description=""/>
       <sheetpath names="/" tstamps="/"/>
@@ -466,7 +465,7 @@
       <value>10K</value>
       <footprint>Xling Footprints:R_0603_1608Metric</footprint>
       <fields>
-        <field name="Model">0603SAJ0103T5E</field>
+        <field name="MPN">0603SAJ0103T5E</field>
       </fields>
       <libsource lib="xling" part="R" description=""/>
       <sheetpath names="/" tstamps="/"/>
@@ -476,7 +475,7 @@
       <value>10K</value>
       <footprint>Xling Footprints:R_0603_1608Metric</footprint>
       <fields>
-        <field name="Model">0603SAJ0103T5E</field>
+        <field name="MPN">0603SAJ0103T5E</field>
       </fields>
       <libsource lib="xling" part="R" description=""/>
       <sheetpath names="/" tstamps="/"/>
@@ -486,7 +485,7 @@
       <value>100nF</value>
       <footprint>Xling Footprints:C_0603_1608Metric</footprint>
       <fields>
-        <field name="Model">CL10B104KO8NNNC</field>
+        <field name="MPN">CL10B104KO8NNNC</field>
       </fields>
       <libsource lib="xling" part="C" description=""/>
       <sheetpath names="/" tstamps="/"/>
@@ -496,7 +495,7 @@
       <value>100nF</value>
       <footprint>Xling Footprints:C_0603_1608Metric</footprint>
       <fields>
-        <field name="Model">CL10B104KO8NNNC</field>
+        <field name="MPN">CL10B104KO8NNNC</field>
       </fields>
       <libsource lib="xling" part="C" description=""/>
       <sheetpath names="/" tstamps="/"/>
@@ -506,7 +505,7 @@
       <value>100K</value>
       <footprint>Xling Footprints:R_0603_1608Metric</footprint>
       <fields>
-        <field name="Model">0603SAJ0104T5E</field>
+        <field name="MPN">0603SAJ0104T5E</field>
       </fields>
       <libsource lib="xling" part="R" description=""/>
       <sheetpath names="/" tstamps="/"/>
@@ -516,7 +515,7 @@
       <value>22pF</value>
       <footprint>Xling Footprints:C_0603_1608Metric</footprint>
       <fields>
-        <field name="Model">CL10C220JB8NNNC</field>
+        <field name="MPN">CL10C220JB8NNNC</field>
       </fields>
       <libsource lib="xling" part="C" description=""/>
       <sheetpath names="/" tstamps="/"/>
@@ -526,7 +525,7 @@
       <value>100nF</value>
       <footprint>Xling Footprints:C_0603_1608Metric</footprint>
       <fields>
-        <field name="Model">CL10B104KO8NNNC</field>
+        <field name="MPN">CL10B104KO8NNNC</field>
       </fields>
       <libsource lib="xling" part="C" description=""/>
       <sheetpath names="/" tstamps="/"/>
@@ -536,7 +535,7 @@
       <value>4.7uF</value>
       <footprint>Xling Footprints:C_0603_1608Metric</footprint>
       <fields>
-        <field name="Model">CL10A475KQ8NNNC</field>
+        <field name="MPN">CL10A475KQ8NNNC</field>
       </fields>
       <libsource lib="xling" part="C" description=""/>
       <sheetpath names="/" tstamps="/"/>
@@ -544,31 +543,23 @@
     </comp>
     <comp ref="TP2">
       <value>VBAT</value>
-      <footprint>Xling Footprints:TestPoint_Pad_D2.0mm</footprint>
+      <footprint>Xling Footprints:TestPoint_Pad_D0.5mm</footprint>
       <datasheet>~</datasheet>
       <libsource lib="Connector" part="TestPoint" description="test point"/>
       <sheetpath names="/" tstamps="/"/>
       <tstamp>5D7EC8BB</tstamp>
     </comp>
-    <comp ref="TP1">
-      <value>+3.3V</value>
-      <footprint>Xling Footprints:TestPoint_Pad_D2.0mm</footprint>
-      <datasheet>~</datasheet>
-      <libsource lib="Connector" part="TestPoint" description="test point"/>
-      <sheetpath names="/" tstamps="/"/>
-      <tstamp>5D8F0926</tstamp>
-    </comp>
     <comp ref="TP5">
       <value>GND</value>
-      <footprint>Xling Footprints:TestPoint_Pad_D2.0mm</footprint>
+      <footprint>Xling Footprints:TestPoint_Pad_D1.0mm</footprint>
       <datasheet>~</datasheet>
       <libsource lib="Connector" part="TestPoint" description="test point"/>
       <sheetpath names="/" tstamps="/"/>
       <tstamp>5D91C2BD</tstamp>
     </comp>
     <comp ref="OH1">
-      <value>OpenHardwareLogo</value>
-      <footprint>Xling Footprints:oshw</footprint>
+      <value>OpenHardware_Logo</value>
+      <footprint>Symbol:OSHW-Logo_5.7x6mm_SilkScreen</footprint>
       <libsource lib="xling" part="OpenHardwareLogo" description=""/>
       <sheetpath names="/" tstamps="/"/>
       <tstamp>5D70AEFD</tstamp>
@@ -577,7 +568,7 @@
       <value>10K</value>
       <footprint>Xling Footprints:R_0603_1608Metric</footprint>
       <fields>
-        <field name="Model">0603SAJ0103T5E</field>
+        <field name="MPN">0603SAJ0103T5E</field>
       </fields>
       <libsource lib="xling" part="R" description=""/>
       <sheetpath names="/" tstamps="/"/>
@@ -587,7 +578,7 @@
       <value>10K</value>
       <footprint>Xling Footprints:R_0603_1608Metric</footprint>
       <fields>
-        <field name="Model">0603SAJ0103T5E</field>
+        <field name="MPN">0603SAJ0103T5E</field>
       </fields>
       <libsource lib="xling" part="R" description=""/>
       <sheetpath names="/" tstamps="/"/>
@@ -597,7 +588,7 @@
       <value>10K</value>
       <footprint>Xling Footprints:R_0603_1608Metric</footprint>
       <fields>
-        <field name="Model">0603SAJ0103T5E</field>
+        <field name="MPN">0603SAJ0103T5E</field>
       </fields>
       <libsource lib="xling" part="R" description=""/>
       <sheetpath names="/" tstamps="/"/>
@@ -607,7 +598,7 @@
       <value>10K</value>
       <footprint>Xling Footprints:R_0603_1608Metric</footprint>
       <fields>
-        <field name="Model">0603SAJ0103T5E</field>
+        <field name="MPN">0603SAJ0103T5E</field>
       </fields>
       <libsource lib="xling" part="R" description=""/>
       <sheetpath names="/" tstamps="/"/>
@@ -617,7 +608,7 @@
       <value>10K</value>
       <footprint>Xling Footprints:R_0603_1608Metric</footprint>
       <fields>
-        <field name="Model">0603SAJ0103T5E</field>
+        <field name="MPN">0603SAJ0103T5E</field>
       </fields>
       <libsource lib="xling" part="R" description=""/>
       <sheetpath names="/" tstamps="/"/>
@@ -625,7 +616,7 @@
     </comp>
     <comp ref="TP3">
       <value>SCK</value>
-      <footprint>Xling Footprints:TestPoint_Pad_D2.0mm</footprint>
+      <footprint>Xling Footprints:TestPoint_Pad_D0.5mm</footprint>
       <datasheet>~</datasheet>
       <libsource lib="Connector" part="TestPoint" description="test point"/>
       <sheetpath names="/" tstamps="/"/>
@@ -633,7 +624,7 @@
     </comp>
     <comp ref="TP4">
       <value>MOSI</value>
-      <footprint>Xling Footprints:TestPoint_Pad_D2.0mm</footprint>
+      <footprint>Xling Footprints:TestPoint_Pad_D0.5mm</footprint>
       <datasheet>~</datasheet>
       <libsource lib="Connector" part="TestPoint" description="test point"/>
       <sheetpath names="/" tstamps="/"/>
@@ -641,7 +632,7 @@
     </comp>
     <comp ref="TP6">
       <value>CS</value>
-      <footprint>Xling Footprints:TestPoint_Pad_D2.0mm</footprint>
+      <footprint>Xling Footprints:TestPoint_Pad_D0.5mm</footprint>
       <datasheet>~</datasheet>
       <libsource lib="Connector" part="TestPoint" description="test point"/>
       <sheetpath names="/" tstamps="/"/>
@@ -649,55 +640,19 @@
     </comp>
     <comp ref="TP7">
       <value>DC</value>
-      <footprint>Xling Footprints:TestPoint_Pad_D2.0mm</footprint>
+      <footprint>Xling Footprints:TestPoint_Pad_D0.5mm</footprint>
       <datasheet>~</datasheet>
       <libsource lib="Connector" part="TestPoint" description="test point"/>
       <sheetpath names="/" tstamps="/"/>
       <tstamp>5DC508E5</tstamp>
     </comp>
     <comp ref="TP8">
-      <value>RST</value>
-      <footprint>Xling Footprints:TestPoint_Pad_D2.0mm</footprint>
+      <value>OLED_RST</value>
+      <footprint>Xling Footprints:TestPoint_Pad_D0.5mm</footprint>
       <datasheet>~</datasheet>
       <libsource lib="Connector" part="TestPoint" description="test point"/>
       <sheetpath names="/" tstamps="/"/>
       <tstamp>5DC8071C</tstamp>
-    </comp>
-    <comp ref="SW1">
-      <value>BTN</value>
-      <footprint>Xling Footprints:SW_Tact_5.2x5.2mm_TVCU11_Low_Profile</footprint>
-      <datasheet>https://www.tme.eu/en/details/tvcu11bb/microswitches-tact/jianfu/</datasheet>
-      <fields>
-        <field name="Model"> TVCU11BB</field>
-        <field name="Note">UP button</field>
-      </fields>
-      <libsource lib="xling" part="SW_Push_Shielded" description=""/>
-      <sheetpath names="/" tstamps="/"/>
-      <tstamp>5F66AE66</tstamp>
-    </comp>
-    <comp ref="SW2">
-      <value>BTN</value>
-      <footprint>Xling Footprints:SW_Tact_5.2x5.2mm_TVCU11_Low_Profile</footprint>
-      <datasheet>https://www.tme.eu/en/details/tvcu11bb/microswitches-tact/jianfu/</datasheet>
-      <fields>
-        <field name="Model"> TVCU11BB</field>
-        <field name="Note">SELECT button</field>
-      </fields>
-      <libsource lib="xling" part="SW_Push_Shielded" description=""/>
-      <sheetpath names="/" tstamps="/"/>
-      <tstamp>5F761AF1</tstamp>
-    </comp>
-    <comp ref="SW3">
-      <value>BTN</value>
-      <footprint>Xling Footprints:SW_Tact_5.2x5.2mm_TVCU11_Low_Profile</footprint>
-      <datasheet>https://www.tme.eu/en/details/tvcu11bb/microswitches-tact/jianfu/</datasheet>
-      <fields>
-        <field name="Model"> TVCU11BB</field>
-        <field name="Note">DOWN button</field>
-      </fields>
-      <libsource lib="xling" part="SW_Push_Shielded" description=""/>
-      <sheetpath names="/" tstamps="/"/>
-      <tstamp>5F762F49</tstamp>
     </comp>
     <comp ref="JP1">
       <value>Reset</value>
@@ -706,6 +661,99 @@
       <libsource lib="Jumper" part="SolderJumper_2_Open" description="Solder Jumper, 2-pole, open"/>
       <sheetpath names="/" tstamps="/"/>
       <tstamp>5F5FC8BA</tstamp>
+    </comp>
+    <comp ref="SW1">
+      <value>SW_Push</value>
+      <footprint>Xling Footprints:SW_Tact_4.5x4.5mm_TVCM09BB_Low_Profile</footprint>
+      <fields>
+        <field name="MPN"> TVCM09BB</field>
+      </fields>
+      <libsource lib="xling" part="SW_Push" description=""/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamp>60677EC5</tstamp>
+    </comp>
+    <comp ref="SW2">
+      <value>SW_Push</value>
+      <footprint>Xling Footprints:SW_Tact_4.5x4.5mm_TVCM09BB_Low_Profile</footprint>
+      <fields>
+        <field name="MPN"> TVCM09BB</field>
+      </fields>
+      <libsource lib="xling" part="SW_Push" description=""/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamp>606A4D81</tstamp>
+    </comp>
+    <comp ref="SW3">
+      <value>SW_Push</value>
+      <footprint>Xling Footprints:SW_Tact_4.5x4.5mm_TVCM09BB_Low_Profile</footprint>
+      <fields>
+        <field name="MPN"> TVCM09BB</field>
+      </fields>
+      <libsource lib="xling" part="SW_Push" description=""/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamp>606A5D22</tstamp>
+    </comp>
+    <comp ref="TP9">
+      <value>BAT_LVL</value>
+      <footprint>Xling Footprints:TestPoint_Pad_D0.5mm</footprint>
+      <datasheet>~</datasheet>
+      <libsource lib="Connector" part="TestPoint" description="test point"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamp>606A21A0</tstamp>
+    </comp>
+    <comp ref="TP10">
+      <value>BAT_STAT</value>
+      <footprint>Xling Footprints:TestPoint_Pad_D0.5mm</footprint>
+      <datasheet>~</datasheet>
+      <libsource lib="Connector" part="TestPoint" description="test point"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamp>606B021F</tstamp>
+    </comp>
+    <comp ref="TP11">
+      <value>USB</value>
+      <footprint>Xling Footprints:TestPoint_Pad_D0.5mm</footprint>
+      <datasheet>~</datasheet>
+      <libsource lib="Connector" part="TestPoint" description="test point"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamp>60734D51</tstamp>
+    </comp>
+    <comp ref="TP12">
+      <value>PWR</value>
+      <footprint>Xling Footprints:TestPoint_Pad_D0.5mm</footprint>
+      <datasheet>~</datasheet>
+      <libsource lib="Connector" part="TestPoint" description="test point"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamp>60752E86</tstamp>
+    </comp>
+    <comp ref="TP13">
+      <value>DCDC_FB</value>
+      <footprint>Xling Footprints:TestPoint_Pad_D0.5mm</footprint>
+      <datasheet>~</datasheet>
+      <libsource lib="Connector" part="TestPoint" description="test point"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamp>60766D48</tstamp>
+    </comp>
+    <comp ref="TP14">
+      <value>RST</value>
+      <footprint>Xling Footprints:TestPoint_Pad_D0.5mm</footprint>
+      <datasheet>~</datasheet>
+      <libsource lib="Connector" part="TestPoint" description="test point"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamp>607B930C</tstamp>
+    </comp>
+    <comp ref="TP1">
+      <value>+3.3V</value>
+      <footprint>Xling Footprints:TestPoint_Pad_D0.5mm</footprint>
+      <datasheet>~</datasheet>
+      <libsource lib="Connector" part="TestPoint" description="test point"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamp>5D8F0926</tstamp>
+    </comp>
+    <comp ref="OH2">
+      <value>ESD_Logo</value>
+      <footprint>Symbol:ESD-Logo_6.6x6mm_SilkScreen</footprint>
+      <libsource lib="xling" part="OpenHardwareLogo" description=""/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamp>608D89E7</tstamp>
     </comp>
   </components>
   <libparts>
@@ -993,16 +1041,14 @@
         <pin num="2" name="A" type="passive"/>
       </pins>
     </libpart>
-    <libpart lib="xling" part="SW_Push_Shielded">
+    <libpart lib="xling" part="SW_Push">
       <fields>
         <field name="Reference">SW</field>
-        <field name="Value">SW_Push_Shielded</field>
+        <field name="Value">SW_Push</field>
       </fields>
       <pins>
         <pin num="1" name="1" type="passive"/>
         <pin num="2" name="2" type="passive"/>
-        <pin num="3" name="3" type="passive"/>
-        <pin num="4" name="4" type="passive"/>
       </pins>
     </libpart>
     <libpart lib="xling" part="TP0610T">
@@ -1056,359 +1102,359 @@
     </library>
   </libraries>
   <nets>
-    <net code="1" name="/PWR">
-      <node ref="Q1" pin="2"/>
-      <node ref="D1" pin="1"/>
-      <node ref="C19" pin="1"/>
-      <node ref="R11" pin="2"/>
-      <node ref="R13" pin="2"/>
-      <node ref="U4" pin="4"/>
-    </net>
-    <net code="2" name="+3V3">
-      <node ref="U1" pin="9"/>
-      <node ref="U1" pin="6"/>
+    <net code="1" name="+3V3">
+      <node ref="TP1" pin="1"/>
       <node ref="R23" pin="2"/>
       <node ref="R22" pin="2"/>
-      <node ref="U1" pin="17"/>
-      <node ref="U1" pin="16"/>
       <node ref="R21" pin="2"/>
       <node ref="R2" pin="2"/>
       <node ref="R1" pin="2"/>
+      <node ref="C21" pin="1"/>
+      <node ref="C4" pin="1"/>
+      <node ref="R3" pin="1"/>
       <node ref="L2" pin="2"/>
       <node ref="C16" pin="1"/>
+      <node ref="C10" pin="1"/>
       <node ref="R12" pin="2"/>
       <node ref="C18" pin="1"/>
-      <node ref="U2" pin="5"/>
-      <node ref="C4" pin="1"/>
-      <node ref="U2" pin="38"/>
-      <node ref="TP1" pin="1"/>
-      <node ref="R3" pin="1"/>
-      <node ref="C21" pin="1"/>
+      <node ref="C3" pin="1"/>
+      <node ref="R7" pin="2"/>
       <node ref="J1" pin="6"/>
-      <node ref="U2" pin="17"/>
+      <node ref="U1" pin="9"/>
+      <node ref="U1" pin="6"/>
+      <node ref="U1" pin="17"/>
+      <node ref="U1" pin="16"/>
+      <node ref="U2" pin="5"/>
       <node ref="L1" pin="1"/>
+      <node ref="U2" pin="38"/>
+      <node ref="U2" pin="17"/>
       <node ref="R5" pin="2"/>
       <node ref="R6" pin="2"/>
-      <node ref="C3" pin="1"/>
-      <node ref="C10" pin="1"/>
-      <node ref="R7" pin="2"/>
     </net>
-    <net code="3" name="GND">
+    <net code="2" name="GND">
+      <node ref="C5" pin="1"/>
+      <node ref="C6" pin="1"/>
+      <node ref="SW3" pin="2"/>
+      <node ref="SW2" pin="2"/>
+      <node ref="U3" pin="2"/>
+      <node ref="SW1" pin="2"/>
+      <node ref="JP1" pin="2"/>
       <node ref="J2" pin="5"/>
       <node ref="J2" pin="6"/>
       <node ref="C20" pin="2"/>
-      <node ref="R15" pin="1"/>
-      <node ref="C10" pin="2"/>
-      <node ref="SW1" pin="4"/>
-      <node ref="SW1" pin="3"/>
-      <node ref="SW1" pin="2"/>
       <node ref="R16" pin="2"/>
-      <node ref="C3" pin="2"/>
       <node ref="C19" pin="2"/>
-      <node ref="U3" pin="2"/>
-      <node ref="C6" pin="1"/>
-      <node ref="C5" pin="1"/>
-      <node ref="Y1" pin="4"/>
+      <node ref="C13" pin="2"/>
+      <node ref="C14" pin="2"/>
+      <node ref="C15" pin="2"/>
+      <node ref="J3" pin="2"/>
+      <node ref="R15" pin="1"/>
+      <node ref="C17" pin="2"/>
+      <node ref="TP5" pin="1"/>
+      <node ref="R17" pin="2"/>
+      <node ref="U4" pin="2"/>
+      <node ref="C21" pin="2"/>
+      <node ref="C4" pin="2"/>
+      <node ref="C7" pin="2"/>
+      <node ref="U1" pin="8"/>
       <node ref="C22" pin="1"/>
+      <node ref="Y1" pin="4"/>
       <node ref="Y1" pin="2"/>
       <node ref="C12" pin="2"/>
       <node ref="R18" pin="1"/>
-      <node ref="C1" pin="2"/>
-      <node ref="C7" pin="2"/>
+      <node ref="C10" pin="2"/>
+      <node ref="C18" pin="2"/>
+      <node ref="C3" pin="2"/>
+      <node ref="U1" pin="29"/>
       <node ref="U2" pin="18"/>
-      <node ref="R4" pin="1"/>
-      <node ref="C2" pin="2"/>
-      <node ref="C21" pin="2"/>
-      <node ref="C13" pin="2"/>
+      <node ref="J1" pin="2"/>
       <node ref="U2" pin="28"/>
       <node ref="C11" pin="2"/>
-      <node ref="C4" pin="2"/>
+      <node ref="U1" pin="25"/>
       <node ref="U2" pin="39"/>
-      <node ref="TP5" pin="1"/>
-      <node ref="SW2" pin="2"/>
+      <node ref="U1" pin="24"/>
+      <node ref="U1" pin="23"/>
       <node ref="U2" pin="6"/>
-      <node ref="C18" pin="2"/>
-      <node ref="JP1" pin="2"/>
-      <node ref="C14" pin="2"/>
-      <node ref="U4" pin="2"/>
-      <node ref="R17" pin="2"/>
-      <node ref="SW2" pin="3"/>
+      <node ref="U1" pin="22"/>
+      <node ref="U1" pin="21"/>
+      <node ref="C1" pin="2"/>
+      <node ref="U1" pin="20"/>
+      <node ref="C2" pin="2"/>
       <node ref="U1" pin="10"/>
       <node ref="U1" pin="11"/>
       <node ref="U1" pin="12"/>
-      <node ref="C17" pin="2"/>
-      <node ref="SW2" pin="4"/>
-      <node ref="U1" pin="20"/>
-      <node ref="U1" pin="21"/>
-      <node ref="U1" pin="22"/>
-      <node ref="U1" pin="23"/>
-      <node ref="U1" pin="24"/>
-      <node ref="U1" pin="25"/>
-      <node ref="U1" pin="29"/>
-      <node ref="J3" pin="2"/>
-      <node ref="U1" pin="8"/>
-      <node ref="SW3" pin="2"/>
-      <node ref="C15" pin="2"/>
-      <node ref="SW3" pin="3"/>
-      <node ref="SW3" pin="4"/>
-      <node ref="J1" pin="2"/>
+      <node ref="R4" pin="1"/>
     </net>
-    <net code="4" name="Net-(L2-Pad1)">
-      <node ref="U4" pin="3"/>
+    <net code="3" name="Net-(L2-Pad1)">
       <node ref="L2" pin="1"/>
+      <node ref="U4" pin="3"/>
     </net>
-    <net code="5" name="Net-(R13-Pad1)">
-      <node ref="U4" pin="5"/>
+    <net code="4" name="Net-(R13-Pad1)">
       <node ref="R13" pin="1"/>
+      <node ref="U4" pin="5"/>
     </net>
-    <net code="6" name="Net-(C16-Pad2)">
-      <node ref="R18" pin="2"/>
-      <node ref="C16" pin="2"/>
-      <node ref="R12" pin="1"/>
-      <node ref="U4" pin="6"/>
-    </net>
-    <net code="7" name="Net-(C7-Pad1)">
+    <net code="5" name="Net-(C7-Pad1)">
       <node ref="U2" pin="29"/>
       <node ref="C7" pin="1"/>
     </net>
-    <net code="8" name="Net-(C1-Pad1)">
-      <node ref="U2" pin="27"/>
+    <net code="6" name="Net-(C1-Pad1)">
       <node ref="C1" pin="1"/>
       <node ref="L1" pin="2"/>
+      <node ref="U2" pin="27"/>
     </net>
-    <net code="9" name="Net-(R5-Pad1)">
+    <net code="7" name="Net-(R5-Pad1)">
       <node ref="R5" pin="1"/>
       <node ref="R8" pin="2"/>
       <node ref="SW1" pin="1"/>
     </net>
-    <net code="10" name="Net-(C5-Pad2)">
-      <node ref="Y1" pin="3"/>
+    <net code="8" name="Net-(C5-Pad2)">
       <node ref="C5" pin="2"/>
       <node ref="U2" pin="8"/>
+      <node ref="Y1" pin="3"/>
     </net>
-    <net code="11" name="Net-(R16-Pad1)">
+    <net code="9" name="Net-(R16-Pad1)">
       <node ref="R16" pin="1"/>
       <node ref="U3" pin="5"/>
     </net>
-    <net code="12" name="Net-(J2-Pad2)">
+    <net code="10" name="Net-(J2-Pad2)">
       <node ref="J2" pin="2"/>
     </net>
-    <net code="13" name="Net-(J2-Pad3)">
+    <net code="11" name="Net-(J2-Pad3)">
       <node ref="J2" pin="3"/>
     </net>
-    <net code="14" name="Net-(J2-Pad4)">
+    <net code="12" name="Net-(J2-Pad4)">
       <node ref="J2" pin="4"/>
     </net>
-    <net code="15" name="Net-(R11-Pad1)">
+    <net code="13" name="Net-(R11-Pad1)">
       <node ref="U4" pin="1"/>
       <node ref="R11" pin="1"/>
     </net>
-    <net code="16" name="MOSI">
-      <node ref="R20" pin="1"/>
-      <node ref="TP4" pin="1"/>
-      <node ref="R22" pin="1"/>
+    <net code="14" name="MOSI">
       <node ref="J1" pin="5"/>
+      <node ref="R22" pin="1"/>
+      <node ref="TP4" pin="1"/>
       <node ref="U2" pin="1"/>
+      <node ref="R20" pin="1"/>
     </net>
-    <net code="17" name="Net-(U2-Pad10)">
+    <net code="15" name="Net-(U2-Pad10)">
       <node ref="U2" pin="10"/>
     </net>
-    <net code="18" name="Net-(U2-Pad13)">
+    <net code="16" name="Net-(U2-Pad13)">
       <node ref="U2" pin="13"/>
     </net>
-    <net code="19" name="Net-(U2-Pad14)">
+    <net code="17" name="Net-(U2-Pad14)">
       <node ref="U2" pin="14"/>
     </net>
-    <net code="20" name="Net-(U2-Pad15)">
+    <net code="18" name="Net-(U2-Pad15)">
       <node ref="U2" pin="15"/>
     </net>
-    <net code="21" name="Net-(U2-Pad16)">
+    <net code="19" name="Net-(U2-Pad16)">
       <node ref="U2" pin="16"/>
     </net>
-    <net code="22" name="Net-(U2-Pad19)">
+    <net code="20" name="Net-(U2-Pad19)">
       <node ref="U2" pin="19"/>
     </net>
-    <net code="23" name="MISO">
-      <node ref="U2" pin="2"/>
+    <net code="21" name="MISO">
       <node ref="J1" pin="4"/>
+      <node ref="U2" pin="2"/>
     </net>
-    <net code="24" name="Net-(U2-Pad20)">
+    <net code="22" name="Net-(U2-Pad20)">
       <node ref="U2" pin="20"/>
     </net>
-    <net code="25" name="Net-(U2-Pad21)">
+    <net code="23" name="Net-(U2-Pad21)">
       <node ref="U2" pin="21"/>
     </net>
-    <net code="26" name="Net-(U2-Pad22)">
+    <net code="24" name="Net-(U2-Pad22)">
       <node ref="U2" pin="22"/>
     </net>
-    <net code="27" name="Net-(U2-Pad23)">
+    <net code="25" name="Net-(U2-Pad23)">
       <node ref="U2" pin="23"/>
     </net>
-    <net code="28" name="OLED_RST">
-      <node ref="U2" pin="25"/>
-      <node ref="U1" pin="14"/>
+    <net code="26" name="OLED_RST">
       <node ref="TP8" pin="1"/>
       <node ref="R2" pin="1"/>
+      <node ref="U2" pin="25"/>
+      <node ref="U1" pin="14"/>
     </net>
-    <net code="29" name="SCK">
+    <net code="27" name="SCK">
+      <node ref="R19" pin="1"/>
+      <node ref="U2" pin="3"/>
       <node ref="TP3" pin="1"/>
       <node ref="J1" pin="3"/>
-      <node ref="R19" pin="1"/>
       <node ref="R23" pin="1"/>
-      <node ref="U2" pin="3"/>
     </net>
-    <net code="30" name="Net-(U2-Pad30)">
+    <net code="28" name="Net-(U2-Pad30)">
       <node ref="U2" pin="30"/>
     </net>
-    <net code="31" name="Net-(U2-Pad31)">
+    <net code="29" name="Net-(U2-Pad31)">
       <node ref="U2" pin="31"/>
     </net>
-    <net code="32" name="Net-(U2-Pad32)">
+    <net code="30" name="Net-(U2-Pad32)">
       <node ref="U2" pin="32"/>
     </net>
-    <net code="33" name="Net-(U2-Pad33)">
+    <net code="31" name="Net-(U2-Pad33)">
       <node ref="U2" pin="33"/>
     </net>
-    <net code="34" name="Net-(U2-Pad35)">
+    <net code="32" name="Net-(U2-Pad35)">
       <node ref="U2" pin="35"/>
     </net>
-    <net code="35" name="Net-(U2-Pad36)">
+    <net code="33" name="Net-(U2-Pad36)">
       <node ref="U2" pin="36"/>
     </net>
-    <net code="36" name="Net-(U2-Pad40)">
+    <net code="34" name="Net-(U2-Pad40)">
       <node ref="U2" pin="40"/>
     </net>
-    <net code="37" name="Net-(U2-Pad41)">
+    <net code="35" name="Net-(U2-Pad41)">
       <node ref="U2" pin="41"/>
     </net>
-    <net code="38" name="Net-(U2-Pad43)">
+    <net code="36" name="Net-(U2-Pad43)">
       <node ref="U2" pin="43"/>
     </net>
-    <net code="39" name="Net-(U2-Pad44)">
+    <net code="37" name="Net-(U2-Pad44)">
       <node ref="U2" pin="44"/>
     </net>
-    <net code="40" name="Net-(C6-Pad2)">
+    <net code="38" name="Net-(C6-Pad2)">
       <node ref="C6" pin="2"/>
-      <node ref="Y1" pin="1"/>
       <node ref="U2" pin="7"/>
+      <node ref="Y1" pin="1"/>
     </net>
-    <net code="41" name="Net-(U2-Pad9)">
+    <net code="39" name="Net-(U2-Pad9)">
       <node ref="U2" pin="9"/>
     </net>
-    <net code="42" name="Net-(U1-Pad1)">
+    <net code="40" name="Net-(U1-Pad1)">
       <node ref="U1" pin="1"/>
     </net>
-    <net code="43" name="Net-(R19-Pad2)">
+    <net code="41" name="Net-(R19-Pad2)">
       <node ref="R19" pin="2"/>
       <node ref="U1" pin="18"/>
     </net>
-    <net code="44" name="Net-(R20-Pad2)">
-      <node ref="R20" pin="2"/>
+    <net code="42" name="Net-(R20-Pad2)">
       <node ref="U1" pin="19"/>
+      <node ref="R20" pin="2"/>
     </net>
-    <net code="45" name="Net-(C8-Pad1)">
-      <node ref="C8" pin="1"/>
+    <net code="43" name="Net-(C8-Pad1)">
       <node ref="U1" pin="2"/>
+      <node ref="C8" pin="1"/>
     </net>
-    <net code="46" name="Net-(R4-Pad2)">
+    <net code="44" name="Net-(R4-Pad2)">
       <node ref="U1" pin="26"/>
       <node ref="R4" pin="2"/>
     </net>
-    <net code="47" name="Net-(C11-Pad1)">
+    <net code="45" name="Net-(C11-Pad1)">
       <node ref="U1" pin="27"/>
       <node ref="C11" pin="1"/>
     </net>
-    <net code="48" name="Net-(C2-Pad1)">
+    <net code="46" name="Net-(C2-Pad1)">
       <node ref="U1" pin="28"/>
       <node ref="C2" pin="1"/>
     </net>
-    <net code="49" name="Net-(C8-Pad2)">
-      <node ref="U1" pin="3"/>
+    <net code="47" name="Net-(C8-Pad2)">
       <node ref="C8" pin="2"/>
+      <node ref="U1" pin="3"/>
     </net>
-    <net code="50" name="Net-(U1-Pad30)">
+    <net code="48" name="Net-(U1-Pad30)">
       <node ref="U1" pin="30"/>
     </net>
-    <net code="51" name="Net-(C9-Pad1)">
-      <node ref="U1" pin="4"/>
+    <net code="49" name="Net-(C9-Pad1)">
       <node ref="C9" pin="1"/>
+      <node ref="U1" pin="4"/>
     </net>
-    <net code="52" name="Net-(C9-Pad2)">
-      <node ref="U1" pin="5"/>
+    <net code="50" name="Net-(C9-Pad2)">
       <node ref="C9" pin="2"/>
+      <node ref="U1" pin="5"/>
     </net>
-    <net code="53" name="Net-(U1-Pad7)">
+    <net code="51" name="Net-(U1-Pad7)">
       <node ref="U1" pin="7"/>
     </net>
-    <net code="54" name="Net-(R10-Pad2)">
-      <node ref="R7" pin="1"/>
+    <net code="52" name="Net-(R10-Pad2)">
       <node ref="R10" pin="2"/>
+      <node ref="R7" pin="1"/>
       <node ref="SW3" pin="1"/>
     </net>
-    <net code="55" name="Net-(R6-Pad1)">
+    <net code="53" name="Net-(R6-Pad1)">
+      <node ref="R6" pin="1"/>
       <node ref="R9" pin="2"/>
       <node ref="SW2" pin="1"/>
-      <node ref="R6" pin="1"/>
     </net>
-    <net code="56" name="RST">
+    <net code="54" name="RST">
+      <node ref="TP14" pin="1"/>
       <node ref="U2" pin="4"/>
       <node ref="R3" pin="2"/>
-      <node ref="JP1" pin="1"/>
       <node ref="J1" pin="1"/>
+      <node ref="JP1" pin="1"/>
       <node ref="C12" pin="1"/>
     </net>
-    <net code="57" name="OLED_CS">
-      <node ref="R21" pin="1"/>
+    <net code="55" name="OLED_CS">
       <node ref="U1" pin="13"/>
-      <node ref="TP6" pin="1"/>
       <node ref="U2" pin="26"/>
+      <node ref="TP6" pin="1"/>
+      <node ref="R21" pin="1"/>
     </net>
-    <net code="58" name="BAT_STAT">
+    <net code="56" name="BAT_STAT">
+      <node ref="TP10" pin="1"/>
       <node ref="U3" pin="1"/>
       <node ref="U2" pin="37"/>
     </net>
-    <net code="59" name="BAT_LVL">
-      <node ref="R14" pin="1"/>
+    <net code="57" name="BAT_LVL">
       <node ref="C22" pin="2"/>
-      <node ref="R17" pin="1"/>
       <node ref="U2" pin="34"/>
+      <node ref="R17" pin="1"/>
+      <node ref="TP9" pin="1"/>
+      <node ref="R14" pin="1"/>
     </net>
-    <net code="60" name="BTN1">
-      <node ref="U2" pin="12"/>
+    <net code="58" name="BTN1">
       <node ref="R8" pin="1"/>
       <node ref="C13" pin="1"/>
+      <node ref="U2" pin="12"/>
     </net>
-    <net code="61" name="BTN2">
-      <node ref="C14" pin="1"/>
+    <net code="59" name="BTN2">
       <node ref="R9" pin="1"/>
+      <node ref="C14" pin="1"/>
       <node ref="U2" pin="11"/>
     </net>
-    <net code="62" name="BTN3">
+    <net code="60" name="BTN3">
       <node ref="R10" pin="1"/>
       <node ref="U2" pin="42"/>
       <node ref="C15" pin="1"/>
     </net>
-    <net code="63" name="/BAT">
-      <node ref="J3" pin="1"/>
-      <node ref="C17" pin="1"/>
-      <node ref="TP2" pin="1"/>
-      <node ref="Q1" pin="3"/>
-      <node ref="R14" pin="2"/>
+    <net code="61" name="/BAT">
       <node ref="U3" pin="3"/>
+      <node ref="J3" pin="1"/>
+      <node ref="R14" pin="2"/>
+      <node ref="TP2" pin="1"/>
+      <node ref="C17" pin="1"/>
+      <node ref="Q1" pin="3"/>
     </net>
-    <net code="64" name="/USB">
-      <node ref="C20" pin="1"/>
-      <node ref="J2" pin="1"/>
-      <node ref="U3" pin="4"/>
-      <node ref="Q1" pin="1"/>
-      <node ref="R15" pin="2"/>
-      <node ref="D1" pin="2"/>
-    </net>
-    <net code="65" name="OLED_DC">
+    <net code="62" name="OLED_DC">
       <node ref="U2" pin="24"/>
+      <node ref="TP7" pin="1"/>
       <node ref="U1" pin="15"/>
       <node ref="R1" pin="1"/>
-      <node ref="TP7" pin="1"/>
+    </net>
+    <net code="63" name="USB">
+      <node ref="TP11" pin="1"/>
+      <node ref="Q1" pin="1"/>
+      <node ref="D1" pin="2"/>
+      <node ref="R15" pin="2"/>
+      <node ref="U3" pin="4"/>
+      <node ref="C20" pin="1"/>
+      <node ref="J2" pin="1"/>
+    </net>
+    <net code="64" name="PWR">
+      <node ref="Q1" pin="2"/>
+      <node ref="TP12" pin="1"/>
+      <node ref="U4" pin="4"/>
+      <node ref="R13" pin="2"/>
+      <node ref="R11" pin="2"/>
+      <node ref="C19" pin="1"/>
+      <node ref="D1" pin="1"/>
+    </net>
+    <net code="65" name="DCDC_FB">
+      <node ref="U4" pin="6"/>
+      <node ref="R18" pin="2"/>
+      <node ref="C16" pin="2"/>
+      <node ref="R12" pin="1"/>
+      <node ref="TP13" pin="1"/>
     </net>
   </nets>
 </export>
