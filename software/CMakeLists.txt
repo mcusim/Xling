@@ -59,7 +59,7 @@ project(Xling-firmware C)
 # Xling-firmware version
 set(XLING_MAJOR_VERSION 0)
 set(XLING_MINOR_VERSION 4)
-set(XLING_PATCH_VERSION 18)
+set(XLING_PATCH_VERSION 19)
 
 # Target file name (without extension) and version
 set(TARGET_OUTPUT_BASENAME "Xling-firmware-${XLING_MAJOR_VERSION}.${XLING_MINOR_VERSION}.${XLING_PATCH_VERSION}")
@@ -183,7 +183,7 @@ set(CMAKE_CXX_COMPILER ${AVR_CXX})
 # ------------------------------------------------------------------------------
 # Define includes
 # ------------------------------------------------------------------------------
-include_directories("./")
+#include_directories("./")
 include_directories("include/")
 include_directories("include/rtos/")
 
@@ -212,6 +212,7 @@ set(XLING_SRC
 add_executable(${TARGET_OUTPUT_FILE} ${XLING_SRC})
 add_custom_target("mcu")
 add_custom_target("upload")
+add_custom_target("fuses")
 
 # ------------------------------------------------------------------------------
 # Prepare files for MCU
@@ -256,13 +257,15 @@ add_custom_command(
 	COMMAND ${AVR_DUDE} -p ${AVR_PART} -b ${AVR_BAUDRATE} -P ${AVR_PORT} -c ${AVR_PROG})
 
 # ------------------------------------------------------------------------------
-# Upload command configurtion
-#
-# Arguments to program fuse bytes:
-#
-#     -Uhfuse:w:0xd9:m
-#     -Ulfuse:w:0xaf:m
+# Upload command configuration
 # ------------------------------------------------------------------------------
 add_custom_command(
 	TARGET "upload" POST_BUILD
 	COMMAND ${AVR_DUDE} -p ${AVR_PART} -b ${AVR_BAUDRATE} -P ${AVR_PORT} -c ${AVR_PROG} -Uflash:w:${TARGET_OUTPUT_DIR}/${TARGET_OUTPUT_BASENAME}.hex)
+
+# ------------------------------------------------------------------------------
+# Command to program fuses
+# ------------------------------------------------------------------------------
+add_custom_command(
+	TARGET "fuses" POST_BUILD
+	COMMAND ${AVR_DUDE} -p ${AVR_PART} -b ${AVR_BAUDRATE} -P ${AVR_PORT} -c ${AVR_PROG} -Uhfuse:w:0xD9:m -Ulfuse:w:0xAF:m)

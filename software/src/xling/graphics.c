@@ -25,14 +25,21 @@
 
 #include "xling/graphics.h"
 
-#define CHAR_WIDTH	3 /* bits */
-#define PHEIGHT		8 /* bits */
-#define PAGES		8 /* in graphic RAM */
-#define NOT(u8)		((uint8_t)(~(u8)))
-#define PGM(a)		((uint8_t)(pgm_read_byte_far((a))))
+#define CHAR_WIDTH		3 /* bits */
+#define PHEIGHT			8 /* bits */
+#define PAGES			8 /* in graphic RAM */
+#define MAX_CACHED_LAYERS	64
+#define NOT(u8)			((uint8_t)(~(u8)))
+#define PGM(a)			((uint8_t)(pgm_read_byte_far((a))))
 
-static void	get_img_byte(const XG_Image_t * const image,
+typedef enum {
+	CACHE_INVALID = 0,
+	CACHE_VALID
+} cache_state_e;
+
+static void	get_img_byte(const xg_image_t * const image,
     const uint32_t idx, uint8_t *data, uint8_t *alpha);
+static void	copy_canvas(xg_canvas_t *dest, const xg_canvas_t *src);
 
 /*
  * Calculates an auxiliary point with non-negative coordinates (__x, __y) which
@@ -63,15 +70,20 @@ static void	get_img_byte(const XG_Image_t * const image,
 	    : (uint16_t)(__sh - (__sy - (__pt)->y));			\
 } while (0)
 
+static xg_canvas_t *cache_canvas = NULL;
+static xg_point_t cache_pts[MAX_CACHED_LAYERS];
+static uint8_t cached_layers = 0;
+static cache_state_e cache_state = CACHE_INVALID;
+
 /*
  * Prints text on the canvas at the given coordinates.
  */
 int
-XG_Print(XG_Canvas_t *canvas, const XG_Text_t *text, XG_Point_t pt)
+xg_print(xg_canvas_t *canvas, const xg_text_t *text, xg_point_t pt)
 {
 	const size_t len = strlen(text->text);
-	const XG_Font_t *font = text->font;
-	XG_Image_t image;
+	const xg_font_t *font = text->font;
+	xg_image_t image;
 	char ch;
 	int rc;
 
@@ -87,7 +99,7 @@ XG_Print(XG_Canvas_t *canvas, const XG_Text_t *text, XG_Point_t pt)
 		image.height = font->glyphs[ch-0x20].height;
 		image.data_size = font->glyphs[ch-0x20].data_size;
 
-		rc = XG_Draw_PF(canvas, &image, pt);
+		rc = xg_draw_pf(canvas, &image, pt);
 		pt.x += image.width > INT16_MAX ? 0 : (int16_t)image.width;
 		if (rc != 0) {
 			break;
@@ -104,7 +116,7 @@ XG_Print(XG_Canvas_t *canvas, const XG_Text_t *text, XG_Point_t pt)
  *       by a far (32-bit) pointer. Canvas data will be accessed directly.
  */
 int
-XG_Draw_PF(XG_Canvas_t *canvas, const XG_Image_t *image, XG_Point_t pt)
+xg_draw_pf(xg_canvas_t *canvas, const xg_image_t *image, xg_point_t pt)
 {
 	uint16_t x, y;
 	uint16_t iw, ih;
@@ -206,7 +218,7 @@ XG_Draw_PF(XG_Canvas_t *canvas, const XG_Image_t *image, XG_Point_t pt)
 }
 
 void
-XG_TransferCanvas(MSIM_SH1106_t *display, const XG_Canvas_t *canvas)
+xg_transfer_canvas(MSIM_SH1106_t *display, const xg_canvas_t *canvas)
 {
 	for (uint32_t i = 0; i < 8; i++) {
 		MSIM_SH1106_bufClear(display);
@@ -222,30 +234,63 @@ XG_TransferCanvas(MSIM_SH1106_t *display, const XG_Canvas_t *canvas)
 }
 
 int
-XG_DrawScene(XG_Canvas_t *canvas, const XG_Scene_t *scene)
+xg_draw_scene(xg_canvas_t *canvas, const xg_scene_t *scene)
 {
-	const XG_Layer_t *layer;
-	const XG_Image_t *img;
-	XG_Animation_t *anim;
-	const XG_AnimFrame_t *frames;
-	const XG_AnimFrame_t *frame;
+	const xg_layer_t *layer;
+	const xg_anim_frame_t *frames;
+	const xg_anim_frame_t *frame;
+	xg_anim_t *anim;
 	uint16_t rnd;
+	uint16_t cache_idx;
 
-	for (uint16_t i = scene->layers_n; i > 0; i--) {
+	for (uint16_t i = scene->layers_n; i >= 1; i--) {
 		layer = &scene->layers[i - 1];
+		cache_idx = scene->layers_n - i; /* [0, layers_n - 1] */
 
 		switch (layer->obj_type) {
-		case XG_OT_Image:
-			/* Let's draw a static image. */
-			img = (const XG_Image_t *) layer->obj;
-			XG_Draw_PF(canvas, img, layer->base_pt);
+		case XG_OT_IMG:
+			if (cache_canvas != NULL &&
+			    cached_layers >= (cache_idx + 1) &&
+			    cache_pts[cache_idx].x == layer->base_pt.x &&
+			    cache_pts[cache_idx].y == layer->base_pt.y) {
+				/* Skip cached layer */
+				continue;
+			} else {
+				xg_draw_pf(canvas, (const xg_image_t *)
+				    layer->obj, layer->base_pt);
 
+				/* Invalidate previously cached canvas */
+				if (cache_state == CACHE_VALID) {
+					cache_state = CACHE_INVALID;
+					cached_layers = 0;
+				}
+
+				/* Cache this layer */
+				if (cache_canvas != NULL) {
+					cached_layers++;
+					cache_pts[cache_idx] = layer->base_pt;
+				}
+			}
 			break;
-		case XG_OT_Animation:
-			/* Let's draw an animation. */
-			anim = (XG_Animation_t *) layer->obj;
-			frames = (const XG_AnimFrame_t *) anim->frames;
+		case XG_OT_ANIM:
+			anim = (xg_anim_t *) layer->obj;
+			frames = (const xg_anim_frame_t *) anim->frames;
 			frame = &frames[anim->frame_idx];
+
+			/* Update cache state */
+			if (cache_canvas != NULL &&
+			    cached_layers == cache_idx &&
+			    cache_state == CACHE_INVALID) {
+				copy_canvas(cache_canvas, canvas);
+				cache_state = CACHE_VALID;
+			}
+
+			/* Restore canvas from cache */
+			if (cache_canvas != NULL &&
+			    cached_layers == cache_idx &&
+			    cache_state == CACHE_VALID) {
+				copy_canvas(canvas, cache_canvas);
+			}
 
 			/* Don't draw an inactive animation. */
 			if (anim->active == 0) {
@@ -253,7 +298,7 @@ XG_DrawScene(XG_Canvas_t *canvas, const XG_Scene_t *scene)
 			}
 
 			/* Draw the current frame. */
-			XG_Draw_PF(canvas, frame->img, frame->base_pt);
+			xg_draw_pf(canvas, frame->img, frame->base_pt);
 
 			/* Choose the next frame index. */
 			if (anim->stay_cnt == 0u) {
@@ -298,8 +343,20 @@ XG_DrawScene(XG_Canvas_t *canvas, const XG_Scene_t *scene)
 	return 0;
 }
 
+/*
+ * Provides an additional canvas to cache parts of a scene which might not
+ * be changed, i.e. static images.
+ */
+int
+xg_cache_canvas(xg_canvas_t *canvas)
+{
+	cache_canvas = canvas;
+	cached_layers = 0;
+	return 0;
+}
+
 static void
-get_img_byte(const XG_Image_t * const image, const uint32_t idx,
+get_img_byte(const xg_image_t * const image, const uint32_t idx,
     uint8_t *data, uint8_t *alpha)
 {
 	if (image->alpha == NULL) {
@@ -311,4 +368,14 @@ get_img_byte(const XG_Image_t * const image, const uint32_t idx,
 		(*data) = PGM(&image->data[idx]);
 		(*alpha) = PGM(&image->alpha[idx]);
 	}
+}
+
+static void
+copy_canvas(xg_canvas_t *dest, const xg_canvas_t *src)
+{
+	dest->width = src->width;
+	dest->height = src->height;
+	dest->data_size = src->data_size;
+	memcpy(dest->data, src->data,
+	    (src->width * src->height) / src->data_size);
 }

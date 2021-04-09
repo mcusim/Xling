@@ -219,6 +219,11 @@ int	MSIM_SH1106_DisplayNormal(MSIM_SH1106_t *);
 int	MSIM_SH1106_DisplayInvert(MSIM_SH1106_t *);
 int	MSIM_SH1106_SetStartLine(MSIM_SH1106_t *, uint8_t line);
 int	MSIM_SH1106_SetScanDirection(MSIM_SH1106_t *, uint8_t reverse);
+int	MSIM_SH1106_SetChargePeriod(MSIM_SH1106_t *, uint8_t dclks);
+int	MSIM_SH1106_SetPumpVoltage(MSIM_SH1106_t *, uint8_t voltage);
+int	MSIM_SH1106_SetDCDCMode(MSIM_SH1106_t *, uint8_t mode);
+int	MSIM_SH1106_SetVCOMDeselectLevel(MSIM_SH1106_t *, uint8_t level);
+int	MSIM_SH1106_SetDivFreq(MSIM_SH1106_t *, uint8_t val);
 
 #ifdef __cplusplus
 }

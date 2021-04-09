@@ -62,7 +62,7 @@ $(end_block_images_table)
 };
 
 /* Glyphs */
-static const XG_Glyph_t XG_FONT_$(doc_name)_glyphs[] = {
+static const xg_glyph_t XG_FONT_$(doc_name)_glyphs[] = {
 $(start_block_images_table)
 	{ .code=0x$(out_char_code), .data=&XG_FONT_$(doc_name)_bitmaps[$(out_char_offset)], .width=$(out_image_width), .height=$(out_image_height), .data_size=$(img_data_block_size), },	/* '$(out_char_text)' */
 $(end_block_images_table)
@@ -70,7 +70,7 @@ $(end_block_images_table)
 
 /* Font */
 $(start_block_font_def)
-const XG_Font_t XG_FONT_$(doc_name) = {
+const xg_font_t XG_FONT_$(doc_name) = {
 	.length = $(out_images_count),
 	.glyphs = XG_FONT_$(doc_name)_glyphs,
 };

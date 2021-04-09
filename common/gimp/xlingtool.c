@@ -157,10 +157,12 @@ struct point_t {
 
 /* Different types of checks for layers. */
 typedef enum layer_chk_kind_t {
-	CHECK_BEFORE_ALL,
-	CHECK_AFTER_ALL,
+	CHECK_INACTIVE = 0,
+	CHECK_BEFORE_IMG,
+	CHECK_AFTER_IMG,
 	CHECK_PER_LAYER,
-	CHECK_INACTIVE
+	CHECK_BEFORE_ALL,
+	CHECK_AFTER_ALL
 } layer_chk_kind_t;
 
 /* Helps to describe checks for layers. */
@@ -274,6 +276,10 @@ static void	 chk_print_animations(layer_ctx_t *ctx);
 static void	 chk_print_scene_layers(layer_ctx_t *ctx);
 static void	 chk_write_animations_header(layer_ctx_t *ctx);
 static void	 chk_write_scenes_header(layer_ctx_t *ctx);
+static void	 chk_open_animations_header(layer_ctx_t *ctx);
+static void	 chk_open_scenes_header(layer_ctx_t *ctx);
+static void	 chk_close_animations_header(layer_ctx_t *ctx);
+static void	 chk_close_scenes_header(layer_ctx_t *ctx);
 
 /* Plugin lifecycle functions. */
 static void      query(void);
@@ -309,6 +315,9 @@ static GimpParamDef _proc_args[] = {
 
 /* List of check functions to be applied to image layers. */
 static layer_chk_t _layer_checks[] = {
+	{ .kind = CHECK_BEFORE_ALL,	.cbk = &chk_open_animations_header },
+	{ .kind = CHECK_BEFORE_ALL,	.cbk = &chk_open_scenes_header },
+
 	{ .kind = CHECK_PER_LAYER,	.cbk = &chk_parse_ignore_tag },
 	{ .kind = CHECK_PER_LAYER,	.cbk = &chk_parse_kbd_tag },
 	{ .kind = CHECK_PER_LAYER,	.cbk = &chk_parse_frame },
@@ -317,12 +326,16 @@ static layer_chk_t _layer_checks[] = {
 	{ .kind = CHECK_PER_LAYER,	.cbk = &chk_parse_stay_tag },
 	{ .kind = CHECK_PER_LAYER,	.cbk = &chk_parse_anim_frame },
 	{ .kind = CHECK_PER_LAYER,	.cbk = &chk_parse_inactive_tag },
-	{ .kind = CHECK_AFTER_ALL,	.cbk = &chk_link_anim_frames },
-	{ .kind = CHECK_AFTER_ALL,	.cbk = &chk_update_anim_frame_indexes },
-//	{ .kind = CHECK_AFTER_ALL,	.cbk = &chk_print_animations },
-//	{ .kind = CHECK_AFTER_ALL,	.cbk = &chk_print_scene_layers },
-	{ .kind = CHECK_AFTER_ALL,	.cbk = &chk_write_animations_header },
-	{ .kind = CHECK_AFTER_ALL,	.cbk = &chk_write_scenes_header },
+
+	{ .kind = CHECK_AFTER_IMG,	.cbk = &chk_link_anim_frames },
+	{ .kind = CHECK_AFTER_IMG,	.cbk = &chk_update_anim_frame_indexes },
+	/* { .kind = CHECK_AFTER_IMG,	.cbk = &chk_print_animations }, */
+	/* { .kind = CHECK_AFTER_IMG,	.cbk = &chk_print_scene_layers }, */
+	{ .kind = CHECK_AFTER_IMG,	.cbk = &chk_write_animations_header },
+	{ .kind = CHECK_AFTER_IMG,	.cbk = &chk_write_scenes_header },
+
+	{ .kind = CHECK_AFTER_ALL,	.cbk = &chk_close_animations_header },
+	{ .kind = CHECK_AFTER_ALL,	.cbk = &chk_close_scenes_header }
 };
 static uint32_t _layer_checks_n =
     sizeof(_layer_checks)/sizeof(_layer_checks[0]);
@@ -358,6 +371,9 @@ static gchar *image_name;
  * process keyboard events. This function should be implemented explicitly.
  */
 static gboolean kbd = FALSE;
+
+static FILE *f_scenes;
+static FILE *f_anim;
 
 /******************************************************************************
  * Implementation.
@@ -395,9 +411,9 @@ run(const gchar *name, gint nparams, const GimpParam *param,
 
 	GimpPDBStatusType status = GIMP_PDB_SUCCESS;
 	GimpRunMode run_mode;
-	gint *layer;
-	gint layers_n;
+	gint *image_ids, *layer;
 	gint image_id;
+	gint images_n, layers_n;
 	char *pos;
 	layer_ctx_t ctx;
 
@@ -410,62 +426,98 @@ run(const gchar *name, gint nparams, const GimpParam *param,
 	/* Getting run_mode. */
 	run_mode = param[0].data.d_int32;
 
-	/* Obtain information about an image. */
-	image_id = param[1].data.d_image;
-	image_name = gimp_image_get_name(image_id);
-
-	/* Get rid of the image file extension. */
-	pos = strstr(image_name, ".");
-	if (pos != NULL) {
-		image_name[pos - image_name] = '\0';
-	}
-
-	/* Find a number of the image layers. */
-	layer = gimp_image_get_layers(image_id, &layers_n);
-
-	/* 1. Call checks before all layers. */
-	util_reset_layer_context(&ctx);
-	for (uint32_t j = 0; j < _layer_checks_n; j++) {
-		switch (_layer_checks[j].kind) {
+	/* 1. Run before-all checks. */
+	for (uint32_t i = 0; i < _layer_checks_n; i++) {
+		switch (_layer_checks[i].kind) {
 		case CHECK_BEFORE_ALL:
-			_layer_checks[j].cbk(&ctx);
+			_layer_checks[i].cbk(NULL);
 			break;
 		default:
 			break;
 		}
 	}
 
-	/* 2. Process all layers. */
-	util_reset_layer_context(&ctx);
-	for (gint i = 0; i < layers_n; i++) {
-		/* Setup context before start of the next layer. */
-		ctx.is_anim_frame = FALSE;
-		ctx.has_hash = FALSE;
-		ctx.has_base_pt = FALSE;
-		ctx.has_layer_id = TRUE;
-		ctx.ignore = FALSE;
-		ctx.layer_id = layer[i];
-		ctx.anim_alt_path_chance = 0;
-		ctx.anim_frame_stay = 0;
+	/* Convert all images currently open in GIMP. */
+	image_ids = gimp_image_list(&images_n);
+	for (gint i = 0; i < images_n; i++) {
+		printf("Exporting: %s\n", gimp_image_get_name(image_ids[i]));
 
-		/* Call all per-layer checks for the current layer. */
+		/* Reset plugin-wide variables */
+		_scene_layers_n = 0;
+		_animations_n = 0;
+		_frames_n = 0;
+		_paths_n = 0;
+		kbd = FALSE;
+
+		/* Obtain information about an image. */
+		image_id = image_ids[i];
+		image_name = gimp_image_get_name(image_id);
+
+		/* Get rid of the image file extension. */
+		pos = strstr(image_name, ".");
+		if (pos != NULL) {
+			image_name[pos - image_name] = '\0';
+		}
+
+		/* Find a number of the image layers. */
+		layer = gimp_image_get_layers(image_id, &layers_n);
+
+		/* 2. Call checks before all layers. */
+		util_reset_layer_context(&ctx);
 		for (uint32_t j = 0; j < _layer_checks_n; j++) {
 			switch (_layer_checks[j].kind) {
-			case CHECK_PER_LAYER:
+			case CHECK_BEFORE_IMG:
 				_layer_checks[j].cbk(&ctx);
 				break;
 			default:
 				break;
 			}
 		}
+
+		/* 3. Process all layers. */
+		util_reset_layer_context(&ctx);
+		for (gint j = 0; j < layers_n; j++) {
+			/* Setup context before start of the next layer. */
+			ctx.is_anim_frame = FALSE;
+			ctx.has_hash = FALSE;
+			ctx.has_base_pt = FALSE;
+			ctx.has_layer_id = TRUE;
+			ctx.ignore = FALSE;
+			ctx.layer_id = layer[j];
+			ctx.anim_alt_path_chance = 0;
+			ctx.anim_frame_stay = 0;
+
+			/* Call all per-layer checks for the current layer. */
+			for (uint32_t k = 0; k < _layer_checks_n; k++) {
+				switch (_layer_checks[k].kind) {
+				case CHECK_PER_LAYER:
+					_layer_checks[k].cbk(&ctx);
+					break;
+				default:
+					break;
+				}
+			}
+		}
+
+		/* 4. Call checks after all layers. */
+		util_reset_layer_context(&ctx);
+		for (uint32_t j = 0; j < _layer_checks_n; j++) {
+			switch (_layer_checks[j].kind) {
+			case CHECK_AFTER_IMG:
+				_layer_checks[j].cbk(&ctx);
+				break;
+			default:
+				break;
+			}
+		}
+
 	}
 
-	/* 3. Call checks after all layers. */
-	util_reset_layer_context(&ctx);
-	for (uint32_t j = 0; j < _layer_checks_n; j++) {
-		switch (_layer_checks[j].kind) {
+	/* 5. Run after-all checks. */
+	for (uint32_t i = 0; i < _layer_checks_n; i++) {
+		switch (_layer_checks[i].kind) {
 		case CHECK_AFTER_ALL:
-			_layer_checks[j].cbk(&ctx);
+			_layer_checks[i].cbk(NULL);
 			break;
 		default:
 			break;
@@ -498,8 +550,10 @@ chk_parse_kbd_tag(layer_ctx_t *ctx)
 	const gchar *gpos = gimp_item_get_name(ctx->layer_id);
 	gboolean visible = gimp_item_get_visible(ctx->layer_id);
 
-	if ((ctx->ignore == FALSE) && (visible) &&
-	    ((strstr(gpos, "!kbd()") != NULL) || (strcmp(gpos, "!kbd()") == 0))) {
+	if ((ctx->ignore == FALSE) &&
+	    (visible) &&
+	    ((strstr(gpos, "!kbd()") != NULL) ||
+	     (strcmp(gpos, "!kbd()") == 0))) {
 		/* Ignore the layer in any other parsing routines. */
 		ctx->ignore = TRUE;
 		/* Attach a keyboard callback function to the scene. */
@@ -508,8 +562,8 @@ chk_parse_kbd_tag(layer_ctx_t *ctx)
 }
 
 /*
- * Exports image data of the layer as a separate header file named
- * as <SHA-1>.h (and <SHA-1>_a.h if layer has an alpha channel).
+ * Exports image data of the layer as a separate header file named as <SHA-1>.h
+ * (and <SHA-1>_a.h if layer has an alpha channel).
  */
 static void
 chk_parse_frame(layer_ctx_t *ctx)
@@ -540,16 +594,15 @@ chk_parse_frame(layer_ctx_t *ctx)
 	}
 
 	/*
-	 * Ignore invisible layers and layers which
-	 * drawables can't be obtained.
+	 * Ignore invisible layers and layers which drawables can't be obtained.
 	 */
 	if ((rc == 0) && (visible) && (dwb != NULL)) {
 		/* Prepare a temporary image file. */
 		img_file_name = gimp_temp_name("png");
 
 		/*
-		 * Get coordinates of the top-left corner of
-		 * the drawable on the image.
+		 * Get coordinates of the top-left corner of the drawable on the
+		 * image.
 		 */
 		gimp_drawable_offsets(dwb->drawable_id, &pt.x, &pt.y);
 		if (!ctx->has_base_pt) {
@@ -826,8 +879,8 @@ chk_parse_stay_tag(layer_ctx_t *ctx)
 }
 
 /*
- * Adds current layer's image as an animation frame to the list of frames
- * and updates its animation path.
+ * Adds current layer's image as an animation frame to the list of frames and
+ * updates its animation path.
  */
 static void
 chk_parse_anim_frame(layer_ctx_t *ctx)
@@ -883,7 +936,6 @@ chk_parse_inactive_tag(layer_ctx_t *ctx)
 		    (strcmp(gpos, "!inactive()") == 0)) {
 			/* Mark animation as inactive. */
 			ctx->anim->active = 0;
-			//printf("Ignoring: %s\n", gpos);
 		}
 	} else {
 		/* Not an animation frame - do nothing. */
@@ -1006,26 +1058,46 @@ chk_print_scene_layers(layer_ctx_t *ctx)
 }
 
 static void
+chk_open_animations_header(layer_ctx_t *ctx)
+{
+	f_anim = fopen(OUTPUT_DIR "/anim.h", "w");
+
+	if (f_anim != NULL) {
+		fprintf(f_anim, "#ifndef XG_ANIMATIONS_H_\n");
+		fprintf(f_anim, "#define XG_ANIMATIONS_H_ 1\n");
+		fprintf(f_anim, "\n");
+		fprintf(f_anim, "#include \"xling/graphics.h\"\n");
+	}
+}
+
+static void
+chk_close_animations_header(layer_ctx_t *ctx)
+{
+	if (f_anim != NULL) {
+		fprintf(f_anim, "\n#endif /* XG_ANIMATIONS_H_ */");
+		fclose(f_anim);
+	}
+}
+
+static void
 chk_write_animations_header(layer_ctx_t *ctx)
 {
-	FILE *f_anim = fopen(OUTPUT_DIR "/anim.h", "w");
 	anim_t *anim;
 	anim_path_t *path;
 	anim_frame_t *frame;
 	uint16_t n;
 	char hasht[(2 * HASH_SZ) + 1];
 
-	if (f_anim) {
-		fprintf(f_anim, "#ifndef XG_ANIMATIONS_H_\n");
-		fprintf(f_anim, "#define XG_ANIMATIONS_H_ 1\n");
+	if (f_anim != NULL) {
 		fprintf(f_anim, "\n");
-		fprintf(f_anim, "#include \"xling/graphics.h\"\n");
+		fprintf(f_anim, "/* -------------------------------------------------------------------------- */\n");
+		fprintf(f_anim, "/* Scene: %s */\n", image_name);
+		fprintf(f_anim, "/* -------------------------------------------------------------------------- */\n");
 
 		/*
 		 * Iterate over all of the animations in order to include
 		 * headers with frames data.
 		 */
-		/* Animations */
 		for (uint32_t i = 0; i < _animations_n; i++) {
 			anim = &_animations[i];
 			/* Paths */
@@ -1052,7 +1124,7 @@ chk_write_animations_header(layer_ctx_t *ctx)
 			n = 0;
 
 			fprintf(f_anim, "\n");
-			fprintf(f_anim, "XG_AnimFrame_t XG_ANMF_%s[] = {\n",
+			fprintf(f_anim, "xg_anim_frame_t XG_ANMF_%s[] = {\n",
 			    anim->name);
 
 			/* Paths */
@@ -1086,7 +1158,7 @@ chk_write_animations_header(layer_ctx_t *ctx)
 			}
 
 			fprintf(f_anim, "};\n");
-			fprintf(f_anim, "XG_Animation_t XG_ANM_%s = { "
+			fprintf(f_anim, "xg_anim_t XG_ANM_%s = { "
 			    ".frames = XG_ANMF_%s, "
 			    ".frames_n = %d, "
 			    ".frame_idx = 0, "
@@ -1096,10 +1168,29 @@ chk_write_animations_header(layer_ctx_t *ctx)
 			    anim->name, anim->name, n, anim->active
 			);
 		}
+	}
+}
 
-		fprintf(f_anim, "\n");
-		fprintf(f_anim, "#endif /* XG_ANIMATIONS_H_ */");
-		fclose(f_anim);
+static void
+chk_open_scenes_header(layer_ctx_t *ctx)
+{
+	f_scenes = fopen(OUTPUT_DIR "/scenes.h", "w");
+
+	if (f_scenes != NULL) {
+		fprintf(f_scenes, "#ifndef XG_SCENES_H_\n");
+		fprintf(f_scenes, "#define XG_SCENES_H_ 1\n");
+		fprintf(f_scenes, "\n");
+		fprintf(f_scenes, "#include \"xling/graphics.h\"\n");
+		fprintf(f_scenes, "#include \"xling/scenes/anim.h\"\n\n");
+	}
+}
+
+static void
+chk_close_scenes_header(layer_ctx_t *ctx)
+{
+	if (f_scenes != NULL) {
+		fprintf(f_scenes, "#endif /* XG_SCENES_H_ */");
+		fclose(f_scenes);
 	}
 }
 
@@ -1107,19 +1198,16 @@ static void
 chk_write_scenes_header(layer_ctx_t *ctx)
 {
 	char kbd_cbk_name[256];
-	FILE *f_scenes = fopen(OUTPUT_DIR "/scenes.h", "w");
 	scene_layer_t *scn_layer;
 
-	if (f_scenes) {
-		fprintf(f_scenes, "#ifndef XG_SCENES_H_\n");
-		fprintf(f_scenes, "#define XG_SCENES_H_ 1\n");
-		fprintf(f_scenes, "\n");
-		fprintf(f_scenes, "#include \"xling/graphics.h\"\n");
-		fprintf(f_scenes, "#include \"xling/scenes/anim.h\"\n");
+	if (f_scenes != NULL) {
+		fprintf(f_scenes, "/* -------------------------------------------------------------------------- */\n");
+		fprintf(f_scenes, "/* Scene: %s */\n", image_name);
+		fprintf(f_scenes, "/* -------------------------------------------------------------------------- */\n");
 
 		/*
-		 * Iterate over scene layers to write down header files
-		 * for static images.
+		 * Iterate over scene layers to write down header files for
+		 * static images.
 		 */
 		for (uint32_t i = 0; i < _scene_layers_n; i++) {
 			scn_layer = &_scene_layers[i];
@@ -1135,13 +1223,13 @@ chk_write_scenes_header(layer_ctx_t *ctx)
 		/* Declare a keyboard callback function (if needed). */
 		if (kbd == TRUE) {
 			fprintf(f_scenes,
-			    "void XG_SCNKBD_%s(XG_ButtonState_e, void *);\n\n",
+			    "void XG_SCNKBD_%s(void *scene_ctx);\n\n",
 			    image_name
 			);
 		}
 
 		/* Write scene layers down. */
-		fprintf(f_scenes, "XG_Layer_t XG_SCNL_%s[] = {\n",
+		fprintf(f_scenes, "xg_layer_t XG_SCNL_%s[] = {\n",
 		    image_name);
 		for (uint32_t i = 0; i < _scene_layers_n; i++) {
 			scn_layer = &_scene_layers[i];
@@ -1149,7 +1237,7 @@ chk_write_scenes_header(layer_ctx_t *ctx)
 			if (scn_layer->obj_type == OT_IMAGE) {
 				fprintf(f_scenes, "\t /* %u */ { "
 				    ".obj = &XG_IMG_%s, "
-				    ".obj_type = XG_OT_Image, "
+				    ".obj_type = XG_OT_IMG, "
 				    ".base_pt = { %d, %d } },\n",
 				    i, scn_layer->name,
 				    scn_layer->base_pt.x,
@@ -1157,21 +1245,18 @@ chk_write_scenes_header(layer_ctx_t *ctx)
 			} else {
 				fprintf(f_scenes, "\t /* %u */ { "
 				    ".obj = &XG_ANM_%s, "
-				    ".obj_type = XG_OT_Animation },\n",
+				    ".obj_type = XG_OT_ANIM },\n",
 				    i, scn_layer->name);
 			}
 		}
 		fprintf(f_scenes, "};\n\n");
 
-		/*
-		 * Prepare a name of the keyboard callback
-		 * function (if needed).
-		 */
+		/* Prepare a name of the keyboard callback function. */
 		snprintf(kbd_cbk_name, 256,
 		    (kbd == TRUE ? "XG_SCNKBD_%s" : "%s"),
 		    (kbd == TRUE ? image_name : "NULL"));
 
-		fprintf(f_scenes, "XG_Scene_t XG_SCN_%s = {\n"
+		fprintf(f_scenes, "xg_scene_t XG_SCN_%s = {\n"
 		    "\t.layers = XG_SCNL_%s,\n"
 		    "\t.layers_n = %d,\n"
 		    "\t.kbd_cbk = %s,\n"
@@ -1181,9 +1266,6 @@ chk_write_scenes_header(layer_ctx_t *ctx)
 		    _scene_layers_n,
 		    kbd_cbk_name
 		);
-		fprintf(f_scenes, "#endif /* XG_SCENES_H_ */");
-
-		fclose(f_scenes);
 	}
 }
 
@@ -1243,8 +1325,8 @@ util_sha1_to_text(uint8_t *hash, uint32_t hash_sz, char *hasht, uint32_t hasht_s
 	char *val = NULL;
 
 	/*
-	 * Do we have enough buffer space to keep text representation
-	 * of the hash?
+	 * Check whether we have enough buffer space to keep text representation
+	 * of the hash or not.
 	 */
 	if (hasht_sz >= ((hash_sz * 2) + 1)) {
 		/* Print hash byte by byte. */

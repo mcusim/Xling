@@ -34,20 +34,16 @@
  * NOTE: The ADC interrupt will be occupied by the task.
  */
 
-/* FreeRTOS headers. */
 #include "FreeRTOS.h"
 #include "task.h"
 #include "queue.h"
 
-/* Xling headers. */
 #include "xling/tasks.h"
 #include "xling/msg.h"
 
-/*
- * ----------------------------------------------------------------------------
+/* ----------------------------------------------------------------------------
  * Local macros.
- * ----------------------------------------------------------------------------
- */
+ * -------------------------------------------------------------------------- */
 #define SET_BIT(byte, bit)	((byte) |= (1U << (bit)))
 #define CLEAR_BIT(byte, bit)	((byte) &= (uint8_t) ~(1U << (bit)))
 #define TASK_NAME		"Battery Monitor Task"
@@ -76,8 +72,8 @@ static void init_adc(void);
 static void batmon_task(void *) __attribute__((noreturn));
 
 int
-XG_InitBatteryMonitorTask(XG_TaskArgs_t *arg, UBaseType_t priority,
-                          TaskHandle_t *task_handle)
+xt_init_battery_monitor(xt_args_t *args, UBaseType_t prio,
+    TaskHandle_t *task_handle)
 {
 	BaseType_t status;
 	int rc = 0;
@@ -91,7 +87,7 @@ XG_InitBatteryMonitorTask(XG_TaskArgs_t *arg, UBaseType_t priority,
 
 	/* Create the battery monitor task. */
 	status = xTaskCreate(batmon_task, TASK_NAME, STACK_SZ,
-	                     arg, priority, task_handle);
+	                     args, prio, task_handle);
 
 	if (status != pdPASS) {
 		/* Sleep mode task couldn't be created. */
@@ -107,12 +103,12 @@ XG_InitBatteryMonitorTask(XG_TaskArgs_t *arg, UBaseType_t priority,
 static void
 batmon_task(void *arg)
 {
-	const XG_TaskArgs_t * const args = (XG_TaskArgs_t *) arg;
+	const xt_args_t * const args = (xt_args_t *) arg;
 	const QueueHandle_t display_queue = args->display_info.queue_handle;
 	const QueueHandle_t battery_queue = args->battery_info.queue_handle;
 	TickType_t last_wake_time;
 	BaseType_t status;
-	XG_Msg_t msg;
+	xm_msg_t msg;
 
 	/* Initialize the last wake time. */
 	last_wake_time = xTaskGetTickCount();
@@ -136,7 +132,7 @@ batmon_task(void *arg)
 			/* Message has been received. */
 			if (status == pdPASS) {
 				switch (msg.type) {
-				case XG_MSG_TASKSUSP_REQ:
+				case XM_MSG_TASKSUSP_REQ:
 					/*
 					 * Block the task indefinitely to wait
 					 * for a notification.
@@ -158,7 +154,7 @@ batmon_task(void *arg)
 		}
 
 		/* Send the battery level message. */
-		msg.type = XG_MSG_BATLVL;
+		msg.type = XM_MSG_BATLVL;
 		msg.value = BAT_PERCENT(_bat_lvl);
 		status = xQueueSendToBack(display_queue, &msg, 0);
 
@@ -172,7 +168,7 @@ batmon_task(void *arg)
 		}
 
 		/* Send the battery status pin message. */
-		msg.type = XG_MSG_BATSTATPIN;
+		msg.type = XM_MSG_BATSTATPIN;
 		msg.value = _bat_stat;
 		status = xQueueSendToBack(display_queue, &msg, 0);
 

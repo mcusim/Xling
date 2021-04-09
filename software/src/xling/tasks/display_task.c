@@ -74,7 +74,6 @@
 /******************************************************************************
  * Local variables.
  ******************************************************************************/
-
 /* Configuration of the OLED display driver. */
 static const MSIM_SH1106DrvConf_t _driver_conf = {
 	.port_spi = &PORTB,		/* I/O port with SPI. */
@@ -104,22 +103,25 @@ static volatile TaskHandle_t _task_handle;
  *       which resolution is 128x64 px.
  */
 static uint8_t _display_buffer[1024];
-static XG_Canvas_t _canvas = {
-	.data = &_display_buffer[0],
-	.width = 128,
-	.height = 64,
-	.data_size = 8,
+static uint8_t _cache_buffer[1024];
+static xg_canvas_t _canvas = {
+	.data = _display_buffer, .width = 128, .height = 64, .data_size = 8,
+};
+static xg_canvas_t _cache_canvas = {
+	.data = _cache_buffer, .width = 128, .height = 64, .data_size = 8,
 };
 static char _text_buf[TEXT_BUFSZ];
-static XG_Text_t _text = {
+static xg_text_t _text = {
 	.font = &XG_FONT_Alagard_12pt,
 	.text = &_text_buf[0],
 	.text_sz = TEXT_BUFSZ,
 };
-static XG_SceneCtx_t _scene_ctx = {
+static xg_scene_ctx_t _scene_ctx = {
 	//.scene = &XG_SCN_walking_01,
-	.scene = &XG_SCN_smoking_02,
+	//.scene = &XG_SCN_smoking_02,
 	//.scene = &XG_SCN_test_brick,
+	.scene = &XG_SCN_peasant_house,
+	//.scene = &XG_SCN_forest,
 	.canvas = &_canvas,
 	.text = &_text,
 	.frame_delay = 0,
@@ -130,24 +132,21 @@ static XG_SceneCtx_t _scene_ctx = {
 /******************************************************************************
  * Prototypes of the local functions.
  ******************************************************************************/
-
 static void	display_task(void *arg) __attribute__((noreturn));
-static void	receive_msgs(const QueueHandle_t q,
-                    MSIM_SH1106_t * const display, XG_SceneCtx_t * const sctx);
+static void	receive_msgs(const QueueHandle_t q, MSIM_SH1106_t *display,
+    xg_scene_ctx_t *scene_ctx);
 
 /******************************************************************************
  * Implementation.
  ******************************************************************************/
-
 int
-XG_InitDisplayTask(XG_TaskArgs_t *arg, UBaseType_t priority,
-                   TaskHandle_t *task_handle)
+xt_init_display(xt_args_t *args, UBaseType_t prio, TaskHandle_t *task_handle)
 {
 	BaseType_t stat;
 	int rc = 0;
 
 	/*
-	 * Configure the display and its driver. We don't have to worry about
+	 * Configure the display and its driver. Don't have to worry about
 	 * interrupts and FreeRTOS scheduler - they shouldn't be active at the
 	 * moment.
 	 */
@@ -167,10 +166,10 @@ XG_InitDisplayTask(XG_TaskArgs_t *arg, UBaseType_t priority,
 
 	/* Create the display task. */
 	stat = xTaskCreate(display_task, TASK_NAME, STACK_SZ,
-	                   arg, priority, task_handle);
+	                   args, prio, task_handle);
 
 	if (stat != pdPASS) {
-		/* Sleep mode task couldn't be created. */
+		/* Display task couldn't be created. */
 		rc = 1;
 	} else {
 		/* Task has been created successfully. */
@@ -183,7 +182,7 @@ XG_InitDisplayTask(XG_TaskArgs_t *arg, UBaseType_t priority,
 static void
 display_task(void *arg)
 {
-	const XG_TaskArgs_t * const args = (XG_TaskArgs_t *) arg;
+	const xt_args_t * const args = (xt_args_t *) arg;
 	MSIM_SH1106_t * const display = MSIM_SH1106_Init(&_display_conf);
 	TickType_t ticks;
 	TickType_t last_wake;
@@ -193,7 +192,13 @@ display_task(void *arg)
 
 	/* Setup an OLED display. */
 	MSIM_SH1106_DisplayOff(display);
+
+	MSIM_SH1106_SetDivFreq(display, 0xB0);
+	MSIM_SH1106_SetPumpVoltage(display, 0x32);
+	MSIM_SH1106_SetChargePeriod(display, 0x22);
+	MSIM_SH1106_SetVCOMDeselectLevel(display, 0x35);
 	MSIM_SH1106_SetContrast(display, 0x75);
+
 	MSIM_SH1106_DisplayNormal(display);
 	MSIM_SH1106_SetScanDirection(display, 0);
 	MSIM_SH1106_DisplayOn(display);
@@ -201,6 +206,9 @@ display_task(void *arg)
 
 	/* Remember the last wake time. */
 	last_wake = xTaskGetTickCount();
+
+	/* Setup a canvas for cache */
+	xg_cache_canvas(&_cache_canvas);
 
 	/* Task loop */
 	while (1) {
@@ -222,14 +230,13 @@ display_task(void *arg)
 
 		/* Process keyboard events. */
 		if (_scene_ctx.scene->kbd_cbk != NULL) {
-			_scene_ctx.scene->kbd_cbk(_scene_ctx.btn_stat,
-			    &_scene_ctx);
+			_scene_ctx.scene->kbd_cbk(&_scene_ctx);
 		}
 
-		XG_DrawScene(&_canvas, _scene_ctx.scene);
+		xg_draw_scene(&_canvas, _scene_ctx.scene);
 
 		/* Transfer canvas buffer to the display. */
-		XG_TransferCanvas(display, &_canvas);
+		xg_transfer_canvas(display, &_canvas);
 
 		/*
 		 * Calculate a delay to receive a message from the queue and
@@ -249,10 +256,10 @@ display_task(void *arg)
 
 static void
 receive_msgs(const QueueHandle_t q, MSIM_SH1106_t * const display,
-             XG_SceneCtx_t * const ctx)
+             xg_scene_ctx_t * const ctx)
 {
 	static uint8_t bat_lvl_skip = 5;
-	XG_Msg_t msg;
+	xm_msg_t msg;
 	BaseType_t status;
 
 	/* Receive all of the messages from the queue. */
@@ -263,7 +270,7 @@ receive_msgs(const QueueHandle_t q, MSIM_SH1106_t * const display,
 		/* Message has been received. */
 		if (status == pdPASS) {
 			switch (msg.type) {
-			case XG_MSG_BATLVL:
+			case XM_MSG_BATLVL:
 				/* Skip several values initially. */
 				if (bat_lvl_skip > 0) {
 					bat_lvl_skip--;
@@ -274,10 +281,10 @@ receive_msgs(const QueueHandle_t q, MSIM_SH1106_t * const display,
 				}
 
 				break;
-			case XG_MSG_BATSTATPIN:
+			case XM_MSG_BATSTATPIN:
 				ctx->bat_stat = msg.value;
 				break;
-			case XG_MSG_TASKSUSP_REQ:
+			case XM_MSG_TASKSUSP_REQ:
 				/* Switch the display off. */
 				MSIM_SH1106_bufClear(display);
 				MSIM_SH1106_DisplayOff(display);
@@ -304,8 +311,8 @@ receive_msgs(const QueueHandle_t q, MSIM_SH1106_t * const display,
 				bat_lvl_skip = 5;
 
 				break;
-			case XG_MSG_KEYBOARD:
-				ctx->btn_stat = (XG_ButtonState_e)msg.value;
+			case XM_MSG_KEYBOARD:
+				ctx->btn_stat = (xm_btn_state_t) msg.value;
 				break;
 			default:
 				/* Ignore other messages silently. */

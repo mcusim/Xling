@@ -18,56 +18,39 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef XG_GRAPHICS_H_
-#define XG_GRAPHICS_H_ 1
+#ifndef XLING_GRAPHICS_H_
+#define XLING_GRAPHICS_H_ 1
 
-/* FreeRTOS headers. */
 #include "FreeRTOS.h"
 #include "task.h"
 #include "queue.h"
 
-/* SH1106 driver headers. */
 #include "mcusim/drivers/avr-gcc/avr/display/sh1106/sh1106.h"
 
-/* Xling headers. */
 #include "xling/msg.h"
 
-/******************************************************************************
- * Xling graphics types (images, scenes, text, etc.)
- ******************************************************************************/
-typedef struct XG_Point_t     XG_Point_t;
-typedef struct XG_Scene_t     XG_Scene_t;
-typedef struct XG_SceneCtx_t  XG_SceneCtx_t;
-typedef struct XG_Layer_t     XG_Layer_t;
-typedef struct XG_Canvas_t    XG_Canvas_t;
-typedef struct XG_Image_t     XG_Image_t;
-typedef struct XG_AnimFrame_t XG_AnimFrame_t;
-typedef struct XG_Animation_t XG_Animation_t;
-
-typedef struct XG_Text_t      XG_Text_t;
-typedef struct XG_Glyph_t     XG_Glyph_t;
-typedef struct XG_Font_t      XG_Font_t;
+/* A callback function to handle keyboard input, interactive objects, etc. */
+typedef void (*xg_cbk_t)(void *scene_ctx);
 
 /*
- * A callback function which can be used by a scene to process a keyboard
- * input.
+ * Enumerator which denotes a type of a layer in the Xling scene. It helps to
+ * draw different layers (images, animations, etc.) of a scene correctly.
  */
-typedef void (*XG_KbdCallback_t)(XG_ButtonState_e, void *);
+typedef enum xg_object_t {
+	XG_OT_IMG,
+	XG_OT_ANIM,
+} xg_object_t;
 
-/*
- * Enumerator which denotes a type of a layer in Xling scene.
- * It helps to draw different layers (images, animations, etc.)
- * of a scene correctly.
- */
-typedef enum XG_ObjectType_t {
-	XG_OT_Image,
-	XG_OT_Animation,
-} XG_ObjectType_t;
+typedef struct xg_point_t {
+	int16_t			 x;
+	int16_t			 y;
+} xg_point_t;
 
-struct XG_Point_t {
-	int16_t x;
-	int16_t y;
-};
+typedef struct xg_layer_t {
+	xg_point_t		 base_pt;
+	void			*obj;
+	xg_object_t		 obj_type;
+} xg_layer_t;
 
 /*
  * Scene represents a full state of the display at the given moment
@@ -92,44 +75,26 @@ struct XG_Point_t {
  *
  *     Number of layers.
  */
-struct XG_Scene_t {
-	XG_Layer_t           *layers;
-	const uint16_t        layers_n;
-	XG_KbdCallback_t      kbd_cbk;
-};
+typedef struct xg_scene_t {
+	xg_layer_t		*layers;
+	const uint16_t		 layers_n;
+	xg_cbk_t		 kbd_cbk;
+} xg_scene_t;
 
-/* Scene context. */
-struct XG_SceneCtx_t {
-	XG_Scene_t		*scene;
-	XG_Canvas_t		*canvas;
-	XG_Text_t		*text;
+typedef struct xg_canvas_t {
+	uint8_t			*data;
+	uint16_t		 width;
+	uint16_t		 height;
+	uint16_t		 data_size;
+} xg_canvas_t;
 
-	TickType_t		 frame_delay;
-	uint16_t		 bat_lvl;
-	uint16_t		 bat_stat;
-	XG_ButtonState_e	 btn_stat;
-};
-
-struct XG_Layer_t {
-	XG_Point_t            base_pt;
-	void                 *obj;
-	XG_ObjectType_t       obj_type;
-};
-
-struct XG_Canvas_t {
-	uint8_t              *data;
-	uint16_t              width;
-	uint16_t              height;
-	uint16_t              data_size;
-};
-
-struct XG_Image_t {
-	const uint8_t        *data;
-	const uint8_t        *alpha;
-	uint16_t              width;
-	uint16_t              height;
-	uint16_t              data_size;
-};
+typedef struct xg_image_t {
+	const uint8_t		*data;
+	const uint8_t		*alpha;
+	uint16_t		 width;
+	uint16_t		 height;
+	uint16_t		 data_size;
+} xg_image_t;
 
 /*
  * A single animation frame.
@@ -139,50 +104,60 @@ struct XG_Image_t {
  *  1. An image with visual data for this frame;
  *  2. A point to start painting this frame from (in relative coordinates
  *     which start from the layer's base point);
- *  3. Number of frame update cycles to stay at the screen (~24 FPS);
+ *  3. Number of frame update cycles to stay at the screen;
  *  4. Frames counter to understand when to switch to the next animation frame.
  */
-struct XG_AnimFrame_t {
-	XG_Point_t            base_pt;
-	const XG_Image_t     *img;
-	uint16_t              alt;
-	uint16_t              alt_chance;
-	uint16_t              stay;
-};
+typedef struct xg_anim_frame_t {
+	xg_point_t		 base_pt;
+	const xg_image_t	*img;
+	uint16_t		 alt;
+	uint16_t		 alt_chance;
+	uint16_t		 stay;
+} xg_anim_frame_t;
 
-struct XG_Animation_t {
-	XG_AnimFrame_t       *frames;
-	const uint16_t        frames_n;
-	uint16_t              frame_idx;
-	uint16_t              stay_cnt;
-	uint8_t               active;
-};
+typedef struct xg_anim_t {
+	xg_anim_frame_t		*frames;
+	const uint16_t		 frames_n;
+	uint16_t		 frame_idx;
+	uint16_t		 stay_cnt;
+	uint8_t			 active;
+} xg_anim_t;
 
-struct XG_Glyph_t {
-	uint32_t              code;
-	const uint8_t        *data;
-	uint16_t              width;
-	uint16_t              height;
-	uint16_t              data_size;
-};
+typedef struct xg_glyph_t {
+	uint32_t		 code;
+	const uint8_t		*data;
+	uint16_t		 width;
+	uint16_t		 height;
+	uint16_t		 data_size;
+} xg_glyph_t;
 
-struct XG_Font_t {
-	uint32_t              length;
-	const XG_Glyph_t     *glyphs;
-};
+typedef struct xg_font_t {
+	uint32_t		 length;
+	const xg_glyph_t	*glyphs;
+} xg_font_t;
 
-struct XG_Text_t {
-	const XG_Font_t      *font;
-	char                 *text;
-	size_t                text_sz;
-};
+typedef struct xg_text_t {
+	const xg_font_t		*font;
+	char			*text;
+	size_t			 text_sz;
+} xg_text_t;
 
-/******************************************************************************
- * Xling graphics API.
- ******************************************************************************/
-int    XG_Print(XG_Canvas_t *canvas, const XG_Text_t *text, XG_Point_t p);
-int    XG_Draw_PF(XG_Canvas_t *canvas, const XG_Image_t *image, XG_Point_t p);
-int    XG_DrawScene(XG_Canvas_t *canvas, const XG_Scene_t *scene);
-void   XG_TransferCanvas(MSIM_SH1106_t *display, const XG_Canvas_t *canvas);
+/* Scene context. */
+typedef struct xg_scene_ctx_t {
+	xg_scene_t		*scene;
+	xg_canvas_t		*canvas;
+	xg_text_t		*text;
+	uint16_t		 frame_delay;
+	uint16_t		 bat_lvl;
+	uint16_t		 bat_stat;
+	xm_btn_state_t		 btn_stat;
+} xg_scene_ctx_t;
 
-#endif /* XG_GRAPHICS_H_ */
+/* Xling graphics API */
+int	xg_print(xg_canvas_t *canvas, const xg_text_t *text, xg_point_t p);
+int	xg_draw_pf(xg_canvas_t *canvas, const xg_image_t *image, xg_point_t p);
+int	xg_draw_scene(xg_canvas_t *canvas, const xg_scene_t *scene);
+int	xg_cache_canvas(xg_canvas_t *canvas);
+void	xg_transfer_canvas(MSIM_SH1106_t *display, const xg_canvas_t *canvas);
+
+#endif /* XLING_GRAPHICS_H_ */

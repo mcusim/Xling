@@ -56,19 +56,20 @@
 #define SET_BIT(byte, bit)	((byte) |= (1U << (bit)))
 #define CLEAR_BIT(byte, bit)	((byte) &= (uint8_t) ~(1U << (bit)))
 #define IS_SET(byte, bit)	(((byte) & (1U << (bit))) >> (bit))
-#define NEW_QUEUE(n)		(xQueueCreate((n), sizeof(XG_Msg_t)))
+#define NEW_QUEUE(n)		(xQueueCreate((n), sizeof(xm_msg_t)))
 
 /* Local variables. */
-static XG_TaskArgs_t _display_args;
-static XG_TaskArgs_t _battery_args;
-static XG_TaskArgs_t _sleep_args;
-static XG_TaskArgs_t _keyboard_args;
-static uint8_t _mcusr_mirror __attribute__ ((section (".noinit")));
+static xt_args_t _display_args;
+static xt_args_t _battery_args;
+static xt_args_t _sleep_args;
+static xt_args_t _keyboard_args;
+static uint8_t _mcusr_mirror
+	__attribute__ ((section (".noinit")));
 
 /* Local functions declarations. */
-static void	disable_wdt(void)
-		__attribute__((naked))
-		__attribute__((section(".init3")));
+static void disable_wdt(void)
+	__attribute__((naked))
+	__attribute__((section(".init3")));
 
 /* Entry point. */
 int
@@ -103,11 +104,8 @@ main(void)
 	_keyboard_args = _display_args;
 
 	do {
-		/*
-		 * Initialize display task.
-		 */
 		task_handle = &(_display_args.display_info.task_handle);
-		rc = XG_InitDisplayTask(&_display_args, 1, task_handle);
+		rc = xt_init_display(&_display_args, 1, task_handle);
 		if (rc != 0) {
 			break;
 		} else {
@@ -116,11 +114,8 @@ main(void)
 			_keyboard_args.display_info.task_handle = *task_handle;
 		}
 
-		/*
-		 * Initialize battery monitor task.
-		 */
 		task_handle = &(_battery_args.battery_info.task_handle);
-		rc = XG_InitBatteryMonitorTask(&_battery_args, 2, task_handle);
+		rc = xt_init_battery_monitor(&_battery_args, 2, task_handle);
 		if (rc != 0) {
 			break;
 		} else {
@@ -129,11 +124,8 @@ main(void)
 			_keyboard_args.battery_info.task_handle = *task_handle;
 		}
 
-		/*
-		 * Initialize sleep mode task.
-		 */
 		task_handle = &(_sleep_args.sleep_info.task_handle);
-		rc = XG_InitSleepModeTask(&_sleep_args, 2, task_handle);
+		rc = xt_init_sleep_mode(&_sleep_args, 2, task_handle);
 		if (rc != 0) {
 			break;
 		} else {
@@ -142,11 +134,8 @@ main(void)
 			_keyboard_args.sleep_info.task_handle = *task_handle;
 		}
 
-		/*
-		 * Initialize keyboard task.
-		 */
 		task_handle = &(_keyboard_args.keyboard_info.task_handle);
-		rc = XG_InitKeyboardTask(&_keyboard_args, 3, task_handle);
+		rc = xt_init_keyboard(&_keyboard_args, 3, task_handle);
 		if (rc != 0) {
 			break;
 		} else {

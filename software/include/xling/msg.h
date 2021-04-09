@@ -18,17 +18,15 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef XG_MSG_H_
-#define XG_MSG_H_ 1
+#ifndef XLING_MSG_H_
+#define XLING_MSG_H_ 1
 
-/*
- * Types of the messages transmitted via queues.
- */
-typedef enum XG_MsgType_t {
-	XG_MSG_BATLVL,			/* Current battery level, in %. */
-	XG_MSG_BATSTATPIN,		/* Battery status pin value. */
-	XG_MSG_BATCHARGING,		/* Battery started charging. */
-	XG_MSG_BATSTOPCHARGING,		/* Battery stopped charging. */
+/* Types of the messages transmitted between tasks. */
+typedef enum xm_msg_type_t {
+	XM_MSG_BATLVL,			/* Current battery level, in %. */
+	XM_MSG_BATSTATPIN,		/* Battery status pin value. */
+	XM_MSG_BATCHARGING,		/* Battery started charging. */
+	XM_MSG_BATSTOPCHARGING,		/* Battery stopped charging. */
 
 	/*
 	 * Messages of this type are intended to be used by the Sleep Mode task
@@ -38,39 +36,32 @@ typedef enum XG_MsgType_t {
 	 * It's done by suspending all of the tasks by the Sleep Mode task
 	 * in order to let Idle to be the only one which is able to run.
 	 */
-	XG_MSG_TASKSUSP_REQ,		/* Request to suspend the task. */
+	XM_MSG_TASKSUSP_REQ,		/* Request to suspend the task. */
 
-	XG_MSG_KEYBOARD,		/* Keyboard events. */
-} XG_MsgType_t;
+	XM_MSG_KEYBOARD,		/* Keyboard events. */
+} xm_msg_type_t;
 
-/*
- * Message to be transmitted via queues.
- */
-typedef struct XG_Msg_t {
+/* Message to be transmitted between tasks. */
+typedef struct xm_msg_t {
 	uint16_t	value;		/* Message value, depends on a type. */
-	XG_MsgType_t	type;		/* Type of the message. */
-} XG_Msg_t;
+	xm_msg_type_t	type;		/* Type of the message. */
+} xm_msg_t;
 
-/*
- * State of the buttons.
- *
- * NOTE: Button states are sent by the keyboard task as message values
- * together with the keyboard message type.
- */
-typedef enum XG_ButtonState_e {
-	XG_BTN_LEFT_RELEASED = 75,
-	XG_BTN_LEFT_PRESSED,
-	XG_BTN_LEFT_HOLD,
-	XG_BTN_CENTER_RELEASED,
-	XG_BTN_CENTER_PRESSED,
-	XG_BTN_CENTER_HOLD,
-	XG_BTN_RIGHT_RELEASED,
-	XG_BTN_RIGHT_PRESSED,
-	XG_BTN_RIGHT_HOLD,
+/* State of a button. */
+typedef enum xm_btn_state_t {
+	XM_BTN_LEFT_RELEASED = 75,
+	XM_BTN_LEFT_PRESSED,
+	XM_BTN_LEFT_HOLD,
+	XM_BTN_CENTER_RELEASED,
+	XM_BTN_CENTER_PRESSED,
+	XM_BTN_CENTER_HOLD,
+	XM_BTN_RIGHT_RELEASED,
+	XM_BTN_RIGHT_PRESSED,
+	XM_BTN_RIGHT_HOLD,
 	/* Additional states */
-	XG_BTN_LEFT_DBLPRESSED,
-	XG_BTN_CENTER_DBLPRESSED,
-	XG_BTN_RIGHT_DBLPRESSED,
-} XG_ButtonState_e;
+	XM_BTN_LEFT_DBLPRESSED,
+	XM_BTN_CENTER_DBLPRESSED,
+	XM_BTN_RIGHT_DBLPRESSED,
+} xm_btn_state_t;
 
-#endif /* XG_MSG_H_ */
+#endif /* XLING_MSG_H_ */

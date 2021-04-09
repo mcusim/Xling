@@ -37,19 +37,16 @@
  * be occupied by the task.
  */
 
-/* FreeRTOS headers. */
 #include "FreeRTOS.h"
 #include "task.h"
 #include "queue.h"
 
-/* Xling headers. */
 #include "xling/tasks.h"
 #include "xling/msg.h"
 
 /******************************************************************************
  * Local macros.
  ******************************************************************************/
-
 #define TASK_NAME		"Sleep Mode Task"
 #define STACK_SZ		(configMINIMAL_STACK_SIZE)
 #define SET_BIT(byte, bit)	((byte) |= (1U << (bit)))
@@ -88,8 +85,8 @@ static volatile wake_source_e _wake_source = WAKE_FROM_TIMER;
  ******************************************************************************/
 
 static void	sleepmod_task(void *) __attribute__((noreturn));
-static void	ask_tasks_wait(const XG_TaskArgs_t *arg);
-static void	notify_tasks(const XG_TaskArgs_t *arg);
+static void	ask_tasks_wait(const xt_args_t *args);
+static void	notify_tasks(const xt_args_t *args);
 static void	init_timer0(void);
 static void	stop_timer0(void);
 static void	start_timer0(void);
@@ -101,8 +98,7 @@ static void	disable_extint(void);
  ******************************************************************************/
 
 int
-XG_InitSleepModeTask(XG_TaskArgs_t *arg, UBaseType_t priority,
-                     TaskHandle_t *task_handle)
+xt_init_sleep_mode(xt_args_t *args, UBaseType_t prio, TaskHandle_t *task_handle)
 {
 	BaseType_t status;
 	int rc = 0;
@@ -117,7 +113,7 @@ XG_InitSleepModeTask(XG_TaskArgs_t *arg, UBaseType_t priority,
 
 	/* Create the sleep mode task. */
 	status = xTaskCreate(sleepmod_task, TASK_NAME, STACK_SZ,
-	                     arg, priority, task_handle);
+	                     args, prio, task_handle);
 
 	if (status != pdPASS) {
 		/* Sleep mode task couldn't be created. */
@@ -133,16 +129,16 @@ XG_InitSleepModeTask(XG_TaskArgs_t *arg, UBaseType_t priority,
 static void
 sleepmod_task(void *arg)
 {
-	const XG_TaskArgs_t * const args = (XG_TaskArgs_t *) arg;
+	const xt_args_t * const args = (xt_args_t *) arg;
 	const QueueHandle_t sleep_queue = args->sleep_info.queue_handle;
 	BaseType_t status;
-	XG_Msg_t msg;
+	xm_msg_t msg;
 
 	/* Task loop */
 	while (1) {
 		/*
 		 * Block the task indefinitely to wait for a notification
-		 * (interrupt from a timer or an external one).
+		 * (interrupt from a timer or an external one from a button).
 		 */
 		xTaskNotifyWait(0, 0, NULL, portMAX_DELAY);
 
@@ -154,7 +150,7 @@ sleepmod_task(void *arg)
 			/* Message has been received. */
 			if (status == pdPASS) {
 				switch (msg.type) {
-				case XG_MSG_KEYBOARD:
+				case XM_MSG_KEYBOARD:
 					/*
 					 * A message from keyboard task means
 					 * that there is an activity, and the
@@ -249,18 +245,15 @@ sleepmod_task(void *arg)
 }
 
 static void
-ask_tasks_wait(const XG_TaskArgs_t *arg)
+ask_tasks_wait(const xt_args_t *args)
 {
 	const QueueHandle_t q[] = {
-		arg->battery_info.queue_handle,
-		arg->display_info.queue_handle,
-		arg->keyboard_info.queue_handle,
+		args->battery_info.queue_handle,
+		args->display_info.queue_handle,
+		args->keyboard_info.queue_handle,
 	};
 	const size_t qnum = sizeof(q) / sizeof(q[0]);
-
-	XG_Msg_t msg = {
-		.type = XG_MSG_TASKSUSP_REQ
-	};
+	xm_msg_t msg = { .type = XM_MSG_TASKSUSP_REQ };
 
 	/* Send suspend requests to the tasks. */
 	for (size_t i = 0; i < qnum; i++) {
@@ -269,12 +262,12 @@ ask_tasks_wait(const XG_TaskArgs_t *arg)
 }
 
 static void
-notify_tasks(const XG_TaskArgs_t *arg)
+notify_tasks(const xt_args_t *args)
 {
 	const TaskHandle_t t[] = {
-		arg->battery_info.task_handle,
-		arg->display_info.task_handle,
-		arg->keyboard_info.task_handle,
+		args->battery_info.task_handle,
+		args->display_info.task_handle,
+		args->keyboard_info.task_handle,
 	};
 	const size_t tnum = sizeof(t) / sizeof(t[0]);
 

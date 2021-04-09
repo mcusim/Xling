@@ -1,137 +1,186 @@
+/*-
+ * SPDX-License-Identifier: BSD-3-Clause
+ *
+ * This file is part of a firmware for Xling, a tamagotchi-like toy.
+ *
+ * Copyright (c) 2021 Dmitry Salychev
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ *
+ *      * Redistributions of source code must retain the above copyright notice,
+ *        this list of conditions and the following disclaimer.
+ *      * Redistributions in binary form must reproduce the above copyright
+ *        notice, this list of conditions and the following disclaimer in the
+ *        documentation and/or other materials provided with the distribution.
+ *      * Neither the name of the copyright holder nor the names of its
+ *        contributors may be used to endorse or promote products derived from
+ *        this software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED. IN NO EVENT SHALL COPYRIGHT HOLDER BE LIABLE FOR ANY DIRECT, 
+ * INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
+ * BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+ * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+ * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
+ * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
 #include <stdio.h>
 
-/* Xling headers. */
 #include "xling/graphics.h"
 #include "xling/msg.h"
 
+#define LEFT_BORDER		((uint8_t) 20u)
+#define RIGHT_BORDER		((uint8_t) 90u)
+
 void
-XG_SCNKBD_smoking_02(XG_ButtonState_e stat, void *arg)
+XG_SCNKBD_peasant_house(void *arg)
 {
 	static uint8_t show_stat = 0;
 	static uint8_t stat_lock = 0;
 	static uint8_t right = 1;
-	XG_SceneCtx_t *scene_ctx = (XG_SceneCtx_t *)arg;
-	XG_Scene_t *scene = scene_ctx->scene;
-	XG_Text_t *text = scene_ctx->text;
-	XG_Point_t pt = { 0, 0 };
-	XG_Animation_t *anim;
+	xg_scene_ctx_t *scene_ctx = (xg_scene_ctx_t *) arg;
+	xg_scene_t *scene = scene_ctx->scene;
+	xg_text_t *text = scene_ctx->text;
+	xg_point_t pt = { 0, 0 };
+	xg_anim_t *anim;
 
-	switch (stat) {
-	case XG_BTN_LEFT_PRESSED:
+	switch (scene_ctx->btn_stat) {
+	case XM_BTN_LEFT_PRESSED:
 		/* Does Exy need to turn around? */
 		if (right) {
 			/* Turn around */
 			for (uint8_t i = 0; i <= 5; i++) {
-				anim = (XG_Animation_t *) scene->layers[i].obj;
+				anim = (xg_anim_t *) scene->layers[i].obj;
 				anim->active = 0;
 			}
-			anim = (XG_Animation_t *) scene->layers[12].obj;
+			anim = (xg_anim_t *) scene->layers[12].obj;
 			anim->active = 0;
 			for (uint8_t i = 6; i <= 11; i++) {
-				anim = (XG_Animation_t *) scene->layers[i].obj;
+				anim = (xg_anim_t *) scene->layers[i].obj;
 				anim->active = 1;
 			}
-			anim = (XG_Animation_t *) scene->layers[13].obj;
+			anim = (xg_anim_t *) scene->layers[13].obj;
 			anim->active = 1;
 		}
 		right = 0;
 
-		/* Move all of the Exy animations */
-		for (uint8_t i = 0; i <= 13; i++) {
-			if (scene->layers[i].obj_type == XG_OT_Animation) {
-				anim = (XG_Animation_t *) scene->layers[i].obj;
-				for (uint8_t j = 0; j < anim->frames_n; j++) {
-					anim->frames[j].base_pt.x -= 2;
+		/* Move scene or all of the Exy animations */
+		anim = (xg_anim_t *) scene->layers[0].obj;
+		if (anim->frames[0].base_pt.x <= LEFT_BORDER) {
+			for (uint8_t i = 14; i <= 26; i++) {
+				/* Move all of the other layers */
+				scene->layers[i].base_pt.x += 2;
+			}
+		} else {
+			for (uint8_t i = 0; i <= 13; i++) {
+				if (scene->layers[i].obj_type == XG_OT_ANIM) {
+					anim = (xg_anim_t *) scene->layers[i].obj;
+					for (uint8_t j = 0; j < anim->frames_n; j++) {
+						anim->frames[j].base_pt.x -= 2;
+					}
 				}
 			}
 		}
 
 		/* Enable legs animation */
-		anim = (XG_Animation_t *) scene->layers[10].obj;
+		anim = (xg_anim_t *) scene->layers[10].obj;
 		anim->active = 0;
-		anim = (XG_Animation_t *) scene->layers[11].obj;
+		anim = (xg_anim_t *) scene->layers[11].obj;
 		anim->active = 1;
 
 		/* Paws up! */
-		anim = (XG_Animation_t *) scene->layers[8].obj;
+		anim = (xg_anim_t *) scene->layers[8].obj;
 		anim->frames[0].alt_chance = 0;
 		anim->frames[1].alt_chance = 100;
 		break;
-	case XG_BTN_LEFT_RELEASED:
+	case XM_BTN_LEFT_RELEASED:
 		if (!right) {
 			/* Disable legs animation */
-			anim = (XG_Animation_t *) scene->layers[10].obj;
+			anim = (xg_anim_t *) scene->layers[10].obj;
 			anim->active = 1;
-			anim = (XG_Animation_t *) scene->layers[11].obj;
+			anim = (xg_anim_t *) scene->layers[11].obj;
 			anim->active = 0;
 
 			/* Paws down! */
-			anim = (XG_Animation_t *) scene->layers[8].obj;
+			anim = (xg_anim_t *) scene->layers[8].obj;
 			anim->frames[0].alt_chance = 100;
 			anim->frames[1].alt_chance = 0;
 		}
 		break;
-	case XG_BTN_RIGHT_PRESSED:
+	case XM_BTN_RIGHT_PRESSED:
 		/* Does Exy need to turn around? */
 		if (!right) {
 			/* Turn around */
 			for (uint8_t i = 0; i <= 5; i++) {
-				anim = (XG_Animation_t *) scene->layers[i].obj;
+				anim = (xg_anim_t *) scene->layers[i].obj;
 				anim->active = 1;
 			}
-			anim = (XG_Animation_t *) scene->layers[12].obj;
+			anim = (xg_anim_t *) scene->layers[12].obj;
 			anim->active = 1;
 			for (uint8_t i = 6; i <= 11; i++) {
-				anim = (XG_Animation_t *) scene->layers[i].obj;
+				anim = (xg_anim_t *) scene->layers[i].obj;
 				anim->active = 0;
 			}
-			anim = (XG_Animation_t *) scene->layers[13].obj;
+			anim = (xg_anim_t *) scene->layers[13].obj;
 			anim->active = 0;
 		}
 		right = 1;
 
-		/* Move all of the Exy animations */
-		for (uint8_t i = 0; i <= 13; i++) {
-			if (scene->layers[i].obj_type == XG_OT_Animation) {
-				anim = (XG_Animation_t *) scene->layers[i].obj;
-				for (uint8_t j = 0; j < anim->frames_n; j++) {
-					anim->frames[j].base_pt.x += 2;
+		/* Move scene or all of the Exy animations */
+		anim = (xg_anim_t *) scene->layers[0].obj;
+		if (anim->frames[0].base_pt.x >= RIGHT_BORDER) {
+			for (uint8_t i = 14; i <= 26; i++) {
+				/* Move all of the other layers */
+				scene->layers[i].base_pt.x -= 2;
+			}
+		} else {
+			for (uint8_t i = 0; i <= 13; i++) {
+				if (scene->layers[i].obj_type == XG_OT_ANIM) {
+					anim = (xg_anim_t *) scene->layers[i].obj;
+					for (uint8_t j = 0; j < anim->frames_n; j++) {
+						anim->frames[j].base_pt.x += 2;
+					}
 				}
 			}
 		}
 
 		/* Enable legs animation */
-		anim = (XG_Animation_t *) scene->layers[4].obj;
+		anim = (xg_anim_t *) scene->layers[4].obj;
 		anim->active = 0;
-		anim = (XG_Animation_t *) scene->layers[5].obj;
+		anim = (xg_anim_t *) scene->layers[5].obj;
 		anim->active = 1;
 
 		/* Paws up! */
-		anim = (XG_Animation_t *) scene->layers[2].obj;
+		anim = (xg_anim_t *) scene->layers[2].obj;
 		anim->frames[0].alt_chance = 0;
 		anim->frames[1].alt_chance = 100;
 		break;
-	case XG_BTN_RIGHT_RELEASED:
+	case XM_BTN_RIGHT_RELEASED:
 		if (right) {
 			/* Disable legs animation */
-			anim = (XG_Animation_t *) scene->layers[4].obj;
+			anim = (xg_anim_t *) scene->layers[4].obj;
 			anim->active = 1;
-			anim = (XG_Animation_t *) scene->layers[5].obj;
+			anim = (xg_anim_t *) scene->layers[5].obj;
 			anim->active = 0;
 
 			/* Paws down! */
-			anim = (XG_Animation_t *) scene->layers[2].obj;
+			anim = (xg_anim_t *) scene->layers[2].obj;
 			anim->frames[0].alt_chance = 100;
 			anim->frames[1].alt_chance = 0;
 		}
 		break;
-	case XG_BTN_CENTER_PRESSED:
+	case XM_BTN_CENTER_PRESSED:
 		if (stat_lock == 0) {
 			stat_lock = 1;
 			show_stat = (show_stat == 0) ? 1 : 0;
 		}
 		break;
-	case XG_BTN_CENTER_RELEASED:
+	case XM_BTN_CENTER_RELEASED:
 		if (stat_lock == 1) {
 			stat_lock = 0;
 		}
@@ -142,135 +191,19 @@ XG_SCNKBD_smoking_02(XG_ButtonState_e stat, void *arg)
 	}
 
 	if (show_stat == 1) {
-		snprintf(text->text, text->text_sz, "%lu ms",
+		snprintf(text->text, text->text_sz, "%u ms",
 		    scene_ctx->frame_delay << 1);
 		pt.x = 85;
 		pt.y = 20;
-		XG_Print(scene_ctx->canvas, text, pt);
+		xg_print(scene_ctx->canvas, text, pt);
 
 		snprintf(text->text, text->text_sz, "%u%%", scene_ctx->bat_lvl);
 		pt.y = 31;
-		XG_Print(scene_ctx->canvas, text, pt);
+		xg_print(scene_ctx->canvas, text, pt);
 
 		snprintf(text->text, text->text_sz, (scene_ctx->bat_stat == 1)
 		    ? "yes" : "no");
 		pt.y = 42;
-		XG_Print(scene_ctx->canvas, text, pt);
-	}
-}
-
-void
-XG_SCNKBD_walking_01(XG_ButtonState_e stat, void *arg)
-{
-	static uint8_t show_stat = 0;
-	static uint8_t stat_lock = 0;
-	XG_SceneCtx_t *scene_ctx = (XG_SceneCtx_t *)arg;
-	XG_Text_t *text = scene_ctx->text;
-	XG_Point_t pt = { 0, 0 };
-
-	switch (stat) {
-	case XG_BTN_CENTER_PRESSED:
-		if (stat_lock == 0) {
-			stat_lock = 1;
-			show_stat = (show_stat == 0) ? 1 : 0;
-		}
-		break;
-	case XG_BTN_CENTER_RELEASED:
-		if (stat_lock == 1) {
-			stat_lock = 0;
-		}
-		break;
-	default:
-		break;
-	}
-
-	if (show_stat == 1) {
-		snprintf(text->text, text->text_sz, "%lu ms",
-		    scene_ctx->frame_delay);
-		pt.x = 85;
-		pt.y = 20;
-		XG_Print(scene_ctx->canvas, text, pt);
-
-		snprintf(text->text, text->text_sz, "%u%%", scene_ctx->bat_lvl);
-		pt.y = 31;
-		XG_Print(scene_ctx->canvas, text, pt);
-
-		snprintf(text->text, text->text_sz, (scene_ctx->bat_stat == 1)
-		    ? "yes" : "no");
-		pt.y = 42;
-		XG_Print(scene_ctx->canvas, text, pt);
-	}
-}
-
-void
-XG_SCNKBD_test_brick(XG_ButtonState_e stat, void *arg)
-{
-	static uint8_t show_stat = 0;
-	static uint8_t stat_lock = 0;
-	static uint8_t y_lock = 0;
-	XG_SceneCtx_t *scene_ctx = (XG_SceneCtx_t *)arg;
-	XG_Scene_t *scene = scene_ctx->scene;
-	XG_Text_t *text = scene_ctx->text;
-	XG_Point_t pt = { 0, 0 };
-
-	switch (stat) {
-	case XG_BTN_LEFT_PRESSED:
-		if (y_lock == 0) {
-			y_lock = 1;
-			scene->layers[0].base_pt.x--;
-		}
-		break;
-	case XG_BTN_LEFT_RELEASED:
-		if (y_lock == 1) {
-			y_lock = 0;
-		}
-		break;
-	case XG_BTN_RIGHT_PRESSED:
-		if (y_lock == 0) {
-			y_lock = 1;
-			scene->layers[0].base_pt.y--;
-		}
-		break;
-	case XG_BTN_RIGHT_RELEASED:
-		if (y_lock == 1) {
-			y_lock = 0;
-		}
-		break;
-	case XG_BTN_CENTER_PRESSED:
-		if (stat_lock == 0) {
-			stat_lock = 1;
-			show_stat = (show_stat == 0) ? 1 : 0;
-		}
-		break;
-	case XG_BTN_CENTER_RELEASED:
-		if (stat_lock == 1) {
-			stat_lock = 0;
-		}
-		break;
-	default:
-		/* All of the other keyboard events are ignored silently. */
-		break;
-	}
-
-	if (show_stat == 1) {
-		snprintf(text->text, text->text_sz, "%lu ms",
-		    scene_ctx->frame_delay);
-		pt.x = 85;
-		pt.y = 10;
-		XG_Print(scene_ctx->canvas, text, pt);
-
-		snprintf(text->text, text->text_sz, "%u%%", scene_ctx->bat_lvl);
-		pt.y = 21;
-		XG_Print(scene_ctx->canvas, text, pt);
-
-		snprintf(text->text, text->text_sz, (scene_ctx->bat_stat == 1)
-		    ? "yes" : "no");
-		pt.y = 32;
-		XG_Print(scene_ctx->canvas, text, pt);
-
-		snprintf(text->text, text->text_sz, "(%d,%d)",
-		    scene->layers[0].base_pt.x, scene->layers[0].base_pt.y);
-		pt.y = 43;
-		XG_Print(scene_ctx->canvas, text, pt);
+		xg_print(scene_ctx->canvas, text, pt);
 	}
 }

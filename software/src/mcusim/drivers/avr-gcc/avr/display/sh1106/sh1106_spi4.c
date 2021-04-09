@@ -46,15 +46,15 @@
 #define CMD_COLHADDR		((uint8_t) 0x10U)
 #define CMD_COLLADDR		((uint8_t) 0x00U)
 #define CMD_SETSCANDIR		((uint8_t) 0xC0U)
-
+#define CMD_CHARGE_PERIOD	((uint8_t) 0xD9U)
 /*
- * Pump voltage commands.
- * Specifies output voltage (Vpp) of the internal charger pump.
+ * Specifies output voltage of the internal charge pump: +6.4V, +7.4V, +8.0V and
+ * +9.0V.
  */
-#define CMD_PUMPV_6V4		((uint8_t) 0x30U) /* Vpump = 6.4V */
-#define CMD_PUMPV_7V4		((uint8_t) 0x31U) /* Vpump = 7.4V */
-#define CMD_PUMPV_8V0		((uint8_t) 0x32U) /* Vpump = 8.0V */
-#define CMD_PUMPV_9V0		((uint8_t) 0x33U) /* Vpump = 9.0V */
+#define CMD_PUMPV		((uint8_t) 0x30U) /* prefix for 0x30-0x33 */
+#define CMD_DCDC_MODE		((uint8_t) 0xADU)
+#define CMD_VCOMD_LEVEL		((uint8_t) 0xDBU)
+#define CMD_DIVFREQ		((uint8_t) 0xD5U)
 
 /* Most significant nibble */
 #define MSN(v)		((uint8_t) (((uint8_t)(v)) & ((uint8_t) 0xF0U)))
@@ -132,6 +132,7 @@ struct MSIM_SH1106_t {
 	volatile buf_dtype	dat_type;	/* Buffer data type */
 	volatile uint8_t	init;		/* Display initialized flag */
 	volatile uint8_t	buf[BUFSZ];	/* DCB's buffer */
+	volatile uint8_t	pdchrg_period;	/* Pre-/dis-charge period */
 };
 
 /* Local function declarations. */
@@ -225,6 +226,8 @@ MSIM_SH1106_Init(const MSIM_SH1106Conf_t *conf)
 		dev->dat_type = DC_UNKNOWN;
 		dev->sent_i = 0;
 		dev->sent_len = 0;
+		/* 2 DCLKs pre-charge, 2 DCLKs dis-charge */
+		dev->pdchrg_period = 0x22;
 
 		/* Copy reset (RST) pin config */
 		dev->con.rst_port = conf->rst_port;
@@ -470,6 +473,40 @@ MSIM_SH1106_SetScanDirection(MSIM_SH1106_t *dev, uint8_t rvrs)
 {
 	return append_byte(dev, DC_CMD, (uint8_t)
 	                   (MSN(CMD_SETSCANDIR) | (uint8_t)((rvrs << 3)&0x08)));
+}
+
+int
+MSIM_SH1106_SetChargePeriod(MSIM_SH1106_t *dev, uint8_t dclks)
+{
+	append_byte(dev, DC_CMD, CMD_CHARGE_PERIOD);
+	return append_byte(dev, DC_CMD, dclks);
+}
+
+int
+MSIM_SH1106_SetPumpVoltage(MSIM_SH1106_t *dev, uint8_t voltage)
+{
+	append_byte(dev, DC_CMD, CMD_PUMPV);
+	return append_byte(dev, DC_CMD, voltage);
+}
+
+int
+MSIM_SH1106_SetDCDCMode(MSIM_SH1106_t *dev, uint8_t mode)
+{
+	return 0;
+}
+
+int
+MSIM_SH1106_SetVCOMDeselectLevel(MSIM_SH1106_t *dev, uint8_t level)
+{
+	append_byte(dev, DC_CMD, CMD_VCOMD_LEVEL);
+	return append_byte(dev, DC_CMD, level);
+}
+
+int
+MSIM_SH1106_SetDivFreq(MSIM_SH1106_t *dev, uint8_t val)
+{
+	append_byte(dev, DC_CMD, CMD_DIVFREQ);
+	return append_byte(dev, DC_CMD, val);
 }
 
 /*

@@ -29,12 +29,10 @@
  * A task to process keyboard events.
  */
 
-/* FreeRTOS headers. */
 #include "FreeRTOS.h"
 #include "task.h"
 #include "queue.h"
 
-/* Xling headers. */
 #include "xling/tasks.h"
 #include "xling/msg.h"
 
@@ -46,10 +44,10 @@
 #define NO_DELAY		(0)
 
 /* Local variables. */
-static XG_ButtonState_e _keyboard[] = {
-	XG_BTN_LEFT_RELEASED,   /* 0 - Left button. */
-	XG_BTN_CENTER_RELEASED, /* 1 - Center button. */
-	XG_BTN_RIGHT_RELEASED,  /* 2 - Right button. */
+static xm_btn_state_t _keyboard[] = {
+	XM_BTN_LEFT_RELEASED,   /* 0 - Left button. */
+	XM_BTN_CENTER_RELEASED, /* 1 - Center button. */
+	XM_BTN_RIGHT_RELEASED,  /* 2 - Right button. */
 };
 static TaskHandle_t _task_handle;
 
@@ -57,15 +55,14 @@ static TaskHandle_t _task_handle;
 static void keyboard_task(void *) __attribute__((noreturn));
 
 int
-XG_InitKeyboardTask(XG_TaskArgs_t *arg, UBaseType_t priority,
-                    TaskHandle_t *task_handle)
+xt_init_keyboard(xt_args_t *args, UBaseType_t prio, TaskHandle_t *task_handle)
 {
 	BaseType_t status;
 	int rc = 0;
 
 	/* Create the keyboard task. */
-	status = xTaskCreate(keyboard_task, TASK_NAME, STACK_SIZE, arg,
-	                     priority, task_handle);
+	status = xTaskCreate(keyboard_task, TASK_NAME, STACK_SIZE,
+	    args, prio, task_handle);
 
 	if (status != pdPASS) {
 		/* Task couldn't be created. */
@@ -81,13 +78,13 @@ XG_InitKeyboardTask(XG_TaskArgs_t *arg, UBaseType_t priority,
 static void
 keyboard_task(void *arg)
 {
-	const XG_TaskArgs_t * const args = (XG_TaskArgs_t *) arg;
+	const xt_args_t * const args = (xt_args_t *) arg;
 	const QueueHandle_t display_queue = args->display_info.queue_handle;
 	const QueueHandle_t sleep_queue = args->sleep_info.queue_handle;
 	const QueueHandle_t keyboard_queue = args->keyboard_info.queue_handle;
 	BaseType_t status;
 	TickType_t last_wake_time;
-	XG_Msg_t msg;
+	xm_msg_t msg;
 
 	/* Initialize the last wake time. */
 	last_wake_time = xTaskGetTickCount();
@@ -111,7 +108,7 @@ keyboard_task(void *arg)
 			/* Message has been received. */
 			if (status == pdPASS) {
 				switch (msg.type) {
-				case XG_MSG_TASKSUSP_REQ:
+				case XM_MSG_TASKSUSP_REQ:
 					/*
 					 * Block the task indefinitely to wait
 					 * for a notification.
@@ -135,24 +132,24 @@ keyboard_task(void *arg)
 		/* Scan buttons and send messages. */
 
 		/* Read left button, PD3. */
-		if (_keyboard[0] == XG_BTN_LEFT_RELEASED) {
+		if (_keyboard[0] == XM_BTN_LEFT_RELEASED) {
 			if (((PIND & 8U) >> 3) == 0U) {
-				_keyboard[0] = XG_BTN_LEFT_PRESSED;
+				_keyboard[0] = XM_BTN_LEFT_PRESSED;
 
-				msg.type = XG_MSG_KEYBOARD;
-				msg.value = XG_BTN_LEFT_PRESSED;
+				msg.type = XM_MSG_KEYBOARD;
+				msg.value = XM_BTN_LEFT_PRESSED;
 
 				status = xQueueSendToBack(
 				        display_queue, &msg, 0);
 				status = xQueueSendToBack(
 				        sleep_queue, &msg, 0);
 			}
-		} else if (_keyboard[0] == XG_BTN_LEFT_PRESSED) {
+		} else if (_keyboard[0] == XM_BTN_LEFT_PRESSED) {
 			if (((PIND & 8U) >> 3) == 1U) {
-				_keyboard[0] = XG_BTN_LEFT_RELEASED;
+				_keyboard[0] = XM_BTN_LEFT_RELEASED;
 
-				msg.type = XG_MSG_KEYBOARD;
-				msg.value = XG_BTN_LEFT_RELEASED;
+				msg.type = XM_MSG_KEYBOARD;
+				msg.value = XM_BTN_LEFT_RELEASED;
 
 				status = xQueueSendToBack(
 				        display_queue, &msg, 0);
@@ -164,24 +161,24 @@ keyboard_task(void *arg)
 		}
 
 		/* Read center button, PD2. */
-		if (_keyboard[1] == XG_BTN_CENTER_RELEASED) {
+		if (_keyboard[1] == XM_BTN_CENTER_RELEASED) {
 			if (((PIND & 4U) >> 2) == 0U) {
-				_keyboard[1] = XG_BTN_CENTER_PRESSED;
+				_keyboard[1] = XM_BTN_CENTER_PRESSED;
 
-				msg.type = XG_MSG_KEYBOARD;
-				msg.value = XG_BTN_CENTER_PRESSED;
+				msg.type = XM_MSG_KEYBOARD;
+				msg.value = XM_BTN_CENTER_PRESSED;
 
 				status = xQueueSendToBack(
 				        display_queue, &msg, 0);
 				status = xQueueSendToBack(
 				        sleep_queue, &msg, 0);
 			}
-		} else if (_keyboard[1] == XG_BTN_CENTER_PRESSED) {
+		} else if (_keyboard[1] == XM_BTN_CENTER_PRESSED) {
 			if (((PIND & 4U) >> 2) == 1U) {
-				_keyboard[1] = XG_BTN_CENTER_RELEASED;
+				_keyboard[1] = XM_BTN_CENTER_RELEASED;
 
-				msg.type = XG_MSG_KEYBOARD;
-				msg.value = XG_BTN_CENTER_RELEASED;
+				msg.type = XM_MSG_KEYBOARD;
+				msg.value = XM_BTN_CENTER_RELEASED;
 
 				status = xQueueSendToBack(
 				        display_queue, &msg, 0);
@@ -193,24 +190,24 @@ keyboard_task(void *arg)
 		}
 
 		/* Read right button, PB2. */
-		if (_keyboard[2] == XG_BTN_RIGHT_RELEASED) {
+		if (_keyboard[2] == XM_BTN_RIGHT_RELEASED) {
 			if (((PINB & 4U) >> 2) == 0U) {
-				_keyboard[2] = XG_BTN_RIGHT_PRESSED;
+				_keyboard[2] = XM_BTN_RIGHT_PRESSED;
 
-				msg.type = XG_MSG_KEYBOARD;
-				msg.value = XG_BTN_RIGHT_PRESSED;
+				msg.type = XM_MSG_KEYBOARD;
+				msg.value = XM_BTN_RIGHT_PRESSED;
 
 				status = xQueueSendToBack(
 				        display_queue, &msg, 0);
 				status = xQueueSendToBack(
 				        sleep_queue, &msg, 0);
 			}
-		} else if (_keyboard[2] == XG_BTN_RIGHT_PRESSED) {
+		} else if (_keyboard[2] == XM_BTN_RIGHT_PRESSED) {
 			if (((PINB & 4U) >> 2) == 1U) {
-				_keyboard[2] = XG_BTN_RIGHT_RELEASED;
+				_keyboard[2] = XM_BTN_RIGHT_RELEASED;
 
-				msg.type = XG_MSG_KEYBOARD;
-				msg.value = XG_BTN_RIGHT_RELEASED;
+				msg.type = XM_MSG_KEYBOARD;
+				msg.value = XM_BTN_RIGHT_RELEASED;
 
 				status = xQueueSendToBack(
 				        display_queue, &msg, 0);
