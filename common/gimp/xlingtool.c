@@ -19,7 +19,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -30,7 +29,6 @@
 /******************************************************************************
  * Plugin information.
  ******************************************************************************/
-
 #define PLUGIN_NAME		"xlingtool"
 #define PLUGIN_SHORT_DESC 	"Helper tool for Xling, a pocket demon"
 #define PLUGIN_LONG_DESC  	"Converts layers of the scene image into "    \
@@ -45,7 +43,6 @@
 /******************************************************************************
  * Configuration of the animations.
  ******************************************************************************/
-
 #define ANIM_MAX_NAME		(64u)  /* Max. length of the animation name */
 #define ANIM_MAX		(128u) /* Max. # of animations per scene. */
 #define ANIM_MAX_PATHS		(16u)  /* Max. # of paths per animation. */
@@ -60,7 +57,6 @@
 /******************************************************************************
  * Basic configuration.
  ******************************************************************************/
-
 #define CONVERTER_PATH          "/home/dsl/git/lcd-image-converter/release/" \
                                 "linux/output/lcd-image-converter"
 #define XLING_CFG_DIR           "/home/dsl/git/Xling/common/lcd-image-converter/"
@@ -80,10 +76,16 @@
 #define LAYER_MAX_NAME		(128u)
 #define LAYERS_MAX		(2 * ANIM_MAX * ANIM_MAX_PATHS * ANIM_MAX_FRAMES)
 
+#define SCENE_COMMENT							\
+"/* ----------------------------------------------------------"		\
+"---------------- */\n"							\
+"/* Scene: %s */\n"							\
+"/* ----------------------------------------------------------"		\
+"---------------- */\n"
+
 /******************************************************************************
  * Local function-like macros.
  ******************************************************************************/
-
 #define IMGA_CMD(buf, bufsz, name, img_path) do {			\
 	snprintf((buf), (bufsz),					\
 	    "%s "							\
@@ -139,7 +141,6 @@
 /******************************************************************************
  * Local types.
  ******************************************************************************/
-
 typedef struct point_t point_t;
 typedef struct scene_layer_t scene_layer_t;
 typedef struct layer_chk_t layer_chk_t;
@@ -260,8 +261,6 @@ struct anim_path_t {
 /******************************************************************************
  * Prototypes of the local functions.
  ******************************************************************************/
-
-/* Check functions to be applied to layer/layers. */
 static void	 chk_parse_frame(layer_ctx_t *ctx);
 static void	 chk_parse_ignore_tag(layer_ctx_t *ctx);
 static void	 chk_parse_kbd_tag(layer_ctx_t *ctx);
@@ -285,36 +284,33 @@ static void	 chk_close_scenes_header(layer_ctx_t *ctx);
 static void      query(void);
 static void      run(const gchar *name, gint nparams, const GimpParam *param,
                      gint *nreturn_vals, GimpParam **return_vals);
-
 /* Hash helper functions. */
 static uint8_t   util_calc_sha1(GimpDrawable *drawable, uint8_t *hash,
                      uint32_t hash_sz);
 static char	*util_sha1_to_text(uint8_t *hash, uint32_t hash_sz, char *hasht,
                      uint32_t hasht_sz);
-
 /* Files helper functions. */
 static FILE	*util_open_scenes_file(void);
 static void	 util_close_scenes_file(void);
 static FILE	*util_open_anim_file(void);
 static void	 util_close_anim_file(void);
-
 static void	 util_reset_layer_context(layer_ctx_t *ctx);
+static void	 util_process_layer(const gint layer_id);
 
 /******************************************************************************
  * Plugin-wide variables.
  ******************************************************************************/
-
 GimpPlugInInfo PLUG_IN_INFO = { NULL, NULL, query, run };
 
 /* Arguments for the GIMP procedure. */
-static GimpParamDef _proc_args[] = {
+static GimpParamDef proc_args[] = {
 	{ GIMP_PDB_INT32,    "run-mode", "Run mode" },
 	{ GIMP_PDB_IMAGE,    "image",    "Input image" },
 	{ GIMP_PDB_DRAWABLE, "drawable", "Input drawable" }
 };
 
 /* List of check functions to be applied to image layers. */
-static layer_chk_t _layer_checks[] = {
+static layer_chk_t layer_checks[] = {
 	{ .kind = CHECK_BEFORE_ALL,	.cbk = &chk_open_animations_header },
 	{ .kind = CHECK_BEFORE_ALL,	.cbk = &chk_open_scenes_header },
 
@@ -337,8 +333,8 @@ static layer_chk_t _layer_checks[] = {
 	{ .kind = CHECK_AFTER_ALL,	.cbk = &chk_close_animations_header },
 	{ .kind = CHECK_AFTER_ALL,	.cbk = &chk_close_scenes_header }
 };
-static uint32_t _layer_checks_n =
-    sizeof(_layer_checks)/sizeof(_layer_checks[0]);
+static uint32_t layer_checks_n =
+    sizeof(layer_checks)/sizeof(layer_checks[0]);
 
 /*
  * Information about scane layers.
@@ -348,22 +344,22 @@ static uint32_t _layer_checks_n =
  *       layer, but might contain several frames (each per
  *       single image layer).
  */
-static scene_layer_t _scene_layers[LAYERS_MAX];
-static uint32_t _scene_layers_n;
+static scene_layer_t scene_layers[LAYERS_MAX];
+static uint32_t scene_layers_n;
 
 /* Animations in the scene. */
-static anim_t _animations[ANIM_MAX];
-static uint32_t _animations_n;
+static anim_t animations[ANIM_MAX];
+static uint32_t animations_n;
 
 /* Animation paths in the scene. */
-static anim_path_t _paths[ANIM_MAX * ANIM_MAX_PATHS];
-static uint32_t _paths_n;
+static anim_path_t paths[ANIM_MAX * ANIM_MAX_PATHS];
+static uint32_t paths_n;
 
 /* Animation frames in the scene. */
-static anim_frame_t _frames[ANIM_MAX * ANIM_MAX_PATHS * ANIM_MAX_FRAMES];
-static uint32_t _frames_n;
+static anim_frame_t frames[ANIM_MAX * ANIM_MAX_PATHS * ANIM_MAX_FRAMES];
+static uint32_t frames_n;
 
-static gchar _text_buf[TEXT_BUFSZ];
+static gchar text_buf[TEXT_BUFSZ];
 static gchar *image_name;
 
 /*
@@ -398,7 +394,7 @@ query(void)
 	    PLUGIN_AUTHOR, PLUGIN_COPYRIGHT, PLUGIN_YEAR,
 	    PLUGIN_MENU_ITEM, PLUGIN_IMG_TYPES,
 	    GIMP_PLUGIN,
-	    G_N_ELEMENTS(_proc_args), 0, _proc_args, NULL);
+	    G_N_ELEMENTS(proc_args), 0, proc_args, NULL);
 
 	gimp_plugin_menu_register(PLUGIN_NAME, PLUGIN_MENU_PATH);
 }
@@ -408,10 +404,9 @@ run(const gchar *name, gint nparams, const GimpParam *param,
     gint *nreturn_vals, GimpParam **return_vals)
 {
 	static GimpParam values[1];
-
 	GimpPDBStatusType status = GIMP_PDB_SUCCESS;
 	GimpRunMode run_mode;
-	gint *image_ids, *layer;
+	gint *image_ids, *layers;
 	gint image_id;
 	gint images_n, layers_n;
 	char *pos;
@@ -426,27 +421,28 @@ run(const gchar *name, gint nparams, const GimpParam *param,
 	/* Getting run_mode. */
 	run_mode = param[0].data.d_int32;
 
-	/* 1. Run before-all checks. */
-	for (uint32_t i = 0; i < _layer_checks_n; i++) {
-		switch (_layer_checks[i].kind) {
+	/* Run before-all checks. */
+	for (uint32_t i = 0; i < layer_checks_n; i++) {
+		switch (layer_checks[i].kind) {
 		case CHECK_BEFORE_ALL:
-			_layer_checks[i].cbk(NULL);
+			layer_checks[i].cbk(NULL);
 			break;
 		default:
 			break;
 		}
 	}
 
-	/* Convert all images currently open in GIMP. */
 	image_ids = gimp_image_list(&images_n);
+
+	/* Convert all images currently open in GIMP. */
 	for (gint i = 0; i < images_n; i++) {
 		printf("Exporting: %s\n", gimp_image_get_name(image_ids[i]));
 
 		/* Reset plugin-wide variables */
-		_scene_layers_n = 0;
-		_animations_n = 0;
-		_frames_n = 0;
-		_paths_n = 0;
+		scene_layers_n = 0;
+		animations_n = 0;
+		frames_n = 0;
+		paths_n = 0;
 		kbd = FALSE;
 
 		/* Obtain information about an image. */
@@ -459,52 +455,34 @@ run(const gchar *name, gint nparams, const GimpParam *param,
 			image_name[pos - image_name] = '\0';
 		}
 
-		/* Find a number of the image layers. */
-		layer = gimp_image_get_layers(image_id, &layers_n);
-
-		/* 2. Call checks before all layers. */
+		layers = gimp_image_get_layers(image_id, &layers_n);
 		util_reset_layer_context(&ctx);
-		for (uint32_t j = 0; j < _layer_checks_n; j++) {
-			switch (_layer_checks[j].kind) {
+
+		/* Call checks before all layers. */
+		for (uint32_t j = 0; j < layer_checks_n; j++) {
+			switch (layer_checks[j].kind) {
 			case CHECK_BEFORE_IMG:
-				_layer_checks[j].cbk(&ctx);
+				layer_checks[j].cbk(&ctx);
 				break;
 			default:
 				break;
 			}
 		}
 
-		/* 3. Process all layers. */
 		util_reset_layer_context(&ctx);
-		for (gint j = 0; j < layers_n; j++) {
-			/* Setup context before start of the next layer. */
-			ctx.is_anim_frame = FALSE;
-			ctx.has_hash = FALSE;
-			ctx.has_base_pt = FALSE;
-			ctx.has_layer_id = TRUE;
-			ctx.ignore = FALSE;
-			ctx.layer_id = layer[j];
-			ctx.anim_alt_path_chance = 0;
-			ctx.anim_frame_stay = 0;
 
-			/* Call all per-layer checks for the current layer. */
-			for (uint32_t k = 0; k < _layer_checks_n; k++) {
-				switch (_layer_checks[k].kind) {
-				case CHECK_PER_LAYER:
-					_layer_checks[k].cbk(&ctx);
-					break;
-				default:
-					break;
-				}
-			}
+		/* Process all layers and groups of layers. */
+		for (gint j = 0; j < layers_n; j++) {
+			util_process_layer(layers[j]);
 		}
 
-		/* 4. Call checks after all layers. */
 		util_reset_layer_context(&ctx);
-		for (uint32_t j = 0; j < _layer_checks_n; j++) {
-			switch (_layer_checks[j].kind) {
+
+		/* Call checks after all layers. */
+		for (uint32_t j = 0; j < layer_checks_n; j++) {
+			switch (layer_checks[j].kind) {
 			case CHECK_AFTER_IMG:
-				_layer_checks[j].cbk(&ctx);
+				layer_checks[j].cbk(&ctx);
 				break;
 			default:
 				break;
@@ -513,14 +491,56 @@ run(const gchar *name, gint nparams, const GimpParam *param,
 
 	}
 
-	/* 5. Run after-all checks. */
-	for (uint32_t i = 0; i < _layer_checks_n; i++) {
-		switch (_layer_checks[i].kind) {
+	/* Run after-all checks. */
+	for (uint32_t i = 0; i < layer_checks_n; i++) {
+		switch (layer_checks[i].kind) {
 		case CHECK_AFTER_ALL:
-			_layer_checks[i].cbk(NULL);
+			layer_checks[i].cbk(NULL);
 			break;
 		default:
 			break;
+		}
+	}
+}
+
+static void
+util_process_layer(const gint layer_id)
+{
+	const gchar *name = gimp_item_get_name(layer_id);
+	const gboolean is_group = gimp_item_is_group(layer_id);
+	const gboolean is_visible = gimp_item_get_visible(layer_id);
+	gint *children;
+	gint children_n;
+	layer_ctx_t ctx;
+
+	/* printf("Processing: %s\n", name); */
+	if (is_visible) {
+		if (is_group) {
+			children = gimp_item_get_children(layer_id, &children_n);
+			for (uint32_t i = 0; i < children_n; i++) {
+				util_process_layer(children[i]);
+			}
+		} else {
+			/* Setup context before start of the "leaf" layer. */
+			ctx.is_anim_frame = FALSE;
+			ctx.has_hash = FALSE;
+			ctx.has_base_pt = FALSE;
+			ctx.has_layer_id = TRUE;
+			ctx.ignore = FALSE;
+			ctx.layer_id = layer_id;
+			ctx.anim_alt_path_chance = 0;
+			ctx.anim_frame_stay = 0;
+
+			/* Call all per-layer checks for the current layer. */
+			for (uint32_t i = 0; i < layer_checks_n; i++) {
+				switch (layer_checks[i].kind) {
+				case CHECK_PER_LAYER:
+					layer_checks[i].cbk(&ctx);
+					break;
+				default:
+					break;
+				}
+			}
 		}
 	}
 }
@@ -532,12 +552,13 @@ static void
 chk_parse_ignore_tag(layer_ctx_t *ctx)
 {
 	const gchar *gpos = gimp_item_get_name(ctx->layer_id);
+	const gboolean is_group = gimp_item_is_group(ctx->layer_id);
 
 	if ((strstr(gpos, "!ignore()") != NULL) ||
-	    (strcmp(gpos, "!ignore()") == 0)) {
-		/* Ignore tag found in the layer name. */
+	    (strcmp(gpos, "!ignore()") == 0) ||
+	    (is_group)) {
 		ctx->ignore = TRUE;
-		//printf("Ignoring: %s\n", gpos);
+		/* printf("Ignoring: %s\n", gpos); */
 	}
 }
 
@@ -635,15 +656,15 @@ chk_parse_frame(layer_ctx_t *ctx)
 
 		if (has_alpha) {
 			/* Export image with alpha channel. */
-			IMGA_CMD(_text_buf, TEXT_BUFSZ, hasht, img_file_name);
-			rc = system(_text_buf);
+			IMGA_CMD(text_buf, TEXT_BUFSZ, hasht, img_file_name);
+			rc = system(text_buf);
 
-			ALPHA_CMD(_text_buf, TEXT_BUFSZ, hasht, img_file_name);
-			rc = system(_text_buf);
+			ALPHA_CMD(text_buf, TEXT_BUFSZ, hasht, img_file_name);
+			rc = system(text_buf);
 		} else {
 			/* Export image without alpha channel. */
-			IMG_CMD(_text_buf, TEXT_BUFSZ, hasht, img_file_name);
-			rc = system(_text_buf);
+			IMG_CMD(text_buf, TEXT_BUFSZ, hasht, img_file_name);
+			rc = system(text_buf);
 		}
 
 		/* Remove temporary image. */
@@ -710,15 +731,15 @@ chk_parse_anim_tag(layer_ctx_t *ctx)
 			if ((ctx->anim == NULL) ||
 			    (IS_NOT_SAME_NAME(anim_name, ctx->anim->name))) {
 				/* Update current animation in the context. */
-				ctx->anim = &_animations[_animations_n];
-				ctx->anim->anim_idx = _animations_n;
+				ctx->anim = &animations[animations_n];
+				ctx->anim->anim_idx = animations_n;
 
 				/* Copy name of the animation */
 				strncpy(ctx->anim->name, anim_name,
 				    ANIM_MAX_NAME);
 
 				/* Append animation as a new scene layer. */
-				scn_layer = &_scene_layers[_scene_layers_n];
+				scn_layer = &scene_layers[scene_layers_n];
 				scn_layer->obj_type = OT_ANIMATION;
 				scn_layer->layer_id = ctx->layer_id;
 				scn_layer->base_pt.x = 0;
@@ -730,9 +751,9 @@ chk_parse_anim_tag(layer_ctx_t *ctx)
 				ctx->anim->active = 1;
 
 				/* Increase # of the known animations. */
-				_animations_n++;
+				animations_n++;
 				/* Increase # of the known scene layers. */
-				_scene_layers_n++;
+				scene_layers_n++;
 			}
 
 			/*
@@ -746,13 +767,13 @@ chk_parse_anim_tag(layer_ctx_t *ctx)
 				 * Update current animation path in the
 				 * context.
 				 */
-				ctx->anim_path = &_paths[_paths_n];
-				ctx->anim_path->path_idx = _paths_n;
+				ctx->anim_path = &paths[paths_n];
+				ctx->anim_path->path_idx = paths_n;
 				ctx->anim_path->anim_idx = ctx->anim->anim_idx;
 
 				/* Append current path to the animation. */
 				ctx->anim->paths_idx[ctx->anim->paths_n] =
-				    _paths_n;
+				    paths_n;
 				ctx->anim->paths_n++;
 
 				/* Copy name of the path. */
@@ -760,13 +781,13 @@ chk_parse_anim_tag(layer_ctx_t *ctx)
 				    ANIM_MAX_NAME);
 
 				/* Increment number of the known paths. */
-				_paths_n++;
+				paths_n++;
 			}
 		} else {
 			/* Static image frame. */
 
 			/* Append image as a new scene layer. */
-			scn_layer = &_scene_layers[_scene_layers_n];
+			scn_layer = &scene_layers[scene_layers_n];
 			scn_layer->obj_type = OT_IMAGE;
 			scn_layer->layer_id = ctx->layer_id;
 			scn_layer->base_pt.x = ctx->base_pt.x;
@@ -780,7 +801,7 @@ chk_parse_anim_tag(layer_ctx_t *ctx)
 			strncpy(scn_layer->name, hasht, ANIM_MAX_NAME);
 
 			/* Increase # of the known scene layers. */
-			_scene_layers_n++;
+			scene_layers_n++;
 		}
 	}
 }
@@ -889,7 +910,7 @@ chk_parse_anim_frame(layer_ctx_t *ctx)
 
 	if (!ctx->ignore && ctx->is_anim_frame) {
 		/* An animation frame. */
-		frame = &_frames[_frames_n];
+		frame = &frames[frames_n];
 		frame->anim_idx = ctx->anim->anim_idx;
 		frame->path_idx = ctx->anim_path->path_idx;
 		frame->base_pt = ctx->base_pt;
@@ -904,14 +925,14 @@ chk_parse_anim_frame(layer_ctx_t *ctx)
 
 		/* Append frame to the path */
 		ctx->anim_path->frames_idx[ctx->anim_path->frames_n] =
-		    _frames_n;
+		    frames_n;
 		ctx->anim_path->frames_n++;
 
 		/* Copy hash of the frame. */
 		memcpy(frame->hash, ctx->hash, HASH_SZ);
 
 		/* Increment number of the known animation frames. */
-		_frames_n++;
+		frames_n++;
 	} else {
 		/* Not an animation frame - do nothing. */
 	}
@@ -949,14 +970,14 @@ chk_link_anim_frames(layer_ctx_t *ctx)
 	anim_frame_t *frame;
 	char hasht[(2 * HASH_SZ) + 1];
 
-	for (uint32_t i = 0; i < _frames_n; i++) {
-		frame = &_frames[i];
+	for (uint32_t i = 0; i < frames_n; i++) {
+		frame = &frames[i];
 
 		if (frame->alt_path_chance > 0u) {
 			/* Frame has an alternative path. */
-			for (uint32_t j = 0; j < _paths_n; j++) {
+			for (uint32_t j = 0; j < paths_n; j++) {
 				if (IS_SAME_NAME(frame->alt_path_name,
-				    _paths[j].name)) {
+				    paths[j].name)) {
 					frame->alt_path_idx = j;
 					break;
 				}
@@ -974,19 +995,19 @@ chk_update_anim_frame_indexes(layer_ctx_t *ctx)
 	uint32_t frame_idx;
 
 	/* Animations */
-	for (uint32_t i = 0; i < _animations_n; i++) {
+	for (uint32_t i = 0; i < animations_n; i++) {
 		/* Reset frame index for each animation. */
 		frame_idx = 0;
 
-		anim = &_animations[i];
+		anim = &animations[i];
 
 		/* Paths */
 		for (uint32_t j = 0; j < anim->paths_n; j++) {
-			path = &_paths[anim->paths_idx[j]];
+			path = &paths[anim->paths_idx[j]];
 
 			/* Frames */
 			for (uint32_t k = 0; k < path->frames_n; k++) {
-				frame = &_frames[path->frames_idx[k]];
+				frame = &frames[path->frames_idx[k]];
 
 				frame->frame_idx = frame_idx;
 				frame_idx++;
@@ -1007,18 +1028,18 @@ chk_print_animations(layer_ctx_t *ctx)
 	printf("\n--- Animations ---\n");
 
 	/* Animations */
-	for (uint32_t i = 0; i < _animations_n; i++) {
-		anim = &_animations[i];
+	for (uint32_t i = 0; i < animations_n; i++) {
+		anim = &animations[i];
 		printf("%s\n", anim->name);
 
 		/* Paths */
 		for (uint32_t j = 0; j < anim->paths_n; j++) {
-			path = &_paths[anim->paths_idx[j]];
+			path = &paths[anim->paths_idx[j]];
 			printf("\t%s\n", path->name);
 
 			/* Frames */
 			for (uint32_t k = 0; k < path->frames_n; k++) {
-				frame = &_frames[path->frames_idx[k]];
+				frame = &frames[path->frames_idx[k]];
 
 				util_sha1_to_text(frame->hash, HASH_SZ, hasht,
 				    sizeof(hasht));
@@ -1026,13 +1047,13 @@ chk_print_animations(layer_ctx_t *ctx)
 				if (frame->alt_path_chance > 0u) {
 					/* There's an alternative path */
 					util_sha1_to_text(
-					    _frames[_paths[frame->alt_path_idx].frames_idx[0]].hash,
+					    frames[paths[frame->alt_path_idx].frames_idx[0]].hash,
 					    HASH_SZ, hasht2, sizeof(hasht2));
 
 					printf("\t\t#%d %s at (%d, %d) ---> #%d %s %d%%\n",
 					    frame->frame_idx, hasht,
 					    frame->base_pt.x, frame->base_pt.y,
-					    _frames[_paths[frame->alt_path_idx].frames_idx[0]].frame_idx,
+					    frames[paths[frame->alt_path_idx].frames_idx[0]].frame_idx,
 					    hasht2,
 					    frame->alt_path_chance);
 				} else {
@@ -1052,8 +1073,8 @@ chk_print_scene_layers(layer_ctx_t *ctx)
 {
 	printf("\n--- Scene layers ---\n");
 
-	for (uint32_t i = 0; i < _scene_layers_n; i++) {
-		printf("%d %s\n", i, _scene_layers[i].name);
+	for (uint32_t i = 0; i < scene_layers_n; i++) {
+		printf("%d %s\n", i, scene_layers[i].name);
 	}
 }
 
@@ -1063,8 +1084,8 @@ chk_open_animations_header(layer_ctx_t *ctx)
 	f_anim = fopen(OUTPUT_DIR "/anim.h", "w");
 
 	if (f_anim != NULL) {
-		fprintf(f_anim, "#ifndef XG_ANIMATIONS_H_\n");
-		fprintf(f_anim, "#define XG_ANIMATIONS_H_ 1\n");
+		fprintf(f_anim, "#ifndef XGANIMATIONS_H_\n");
+		fprintf(f_anim, "#define XGANIMATIONS_H_ 1\n");
 		fprintf(f_anim, "\n");
 		fprintf(f_anim, "#include \"xling/graphics.h\"\n");
 	}
@@ -1074,7 +1095,7 @@ static void
 chk_close_animations_header(layer_ctx_t *ctx)
 {
 	if (f_anim != NULL) {
-		fprintf(f_anim, "\n#endif /* XG_ANIMATIONS_H_ */");
+		fprintf(f_anim, "\n#endif /* XGANIMATIONS_H_ */");
 		fclose(f_anim);
 	}
 }
@@ -1090,22 +1111,20 @@ chk_write_animations_header(layer_ctx_t *ctx)
 
 	if (f_anim != NULL) {
 		fprintf(f_anim, "\n");
-		fprintf(f_anim, "/* -------------------------------------------------------------------------- */\n");
-		fprintf(f_anim, "/* Scene: %s */\n", image_name);
-		fprintf(f_anim, "/* -------------------------------------------------------------------------- */\n");
+		fprintf(f_anim, SCENE_COMMENT, image_name);
 
 		/*
 		 * Iterate over all of the animations in order to include
 		 * headers with frames data.
 		 */
-		for (uint32_t i = 0; i < _animations_n; i++) {
-			anim = &_animations[i];
+		for (uint32_t i = 0; i < animations_n; i++) {
+			anim = &animations[i];
 			/* Paths */
 			for (uint32_t j = 0; j < anim->paths_n; j++) {
-				path = &_paths[anim->paths_idx[j]];
+				path = &paths[anim->paths_idx[j]];
 				/* Frames */
 				for (uint32_t k = 0; k < path->frames_n; k++) {
-					frame = &_frames[path->frames_idx[k]];
+					frame = &frames[path->frames_idx[k]];
 
 					/* Obtain a text form of the hash */
 					util_sha1_to_text(frame->hash, HASH_SZ,
@@ -1119,21 +1138,21 @@ chk_write_animations_header(layer_ctx_t *ctx)
 		}
 
 		/* Animations */
-		for (uint32_t i = 0; i < _animations_n; i++) {
-			anim = &_animations[i];
+		for (uint32_t i = 0; i < animations_n; i++) {
+			anim = &animations[i];
 			n = 0;
 
 			fprintf(f_anim, "\n");
-			fprintf(f_anim, "xg_anim_frame_t XG_ANMF_%s[] = {\n",
-			    anim->name);
+			fprintf(f_anim, "xg_anim_frame_t XG_ANMF_%s_%s[] = {\n",
+			    image_name, anim->name);
 
 			/* Paths */
 			for (uint32_t j = 0; j < anim->paths_n; j++) {
-				path = &_paths[anim->paths_idx[j]];
+				path = &paths[anim->paths_idx[j]];
 
 				/* Frames */
 				for (uint32_t k = 0; k < path->frames_n; k++) {
-					frame = &_frames[path->frames_idx[k]];
+					frame = &frames[path->frames_idx[k]];
 
 					/* Obtain a text form of the hash */
 					util_sha1_to_text(frame->hash, HASH_SZ,
@@ -1147,7 +1166,7 @@ chk_write_animations_header(layer_ctx_t *ctx)
 					    ".stay = %d, "
 					    "},\n",
 					    frame->base_pt.x, frame->base_pt.y,
-					    _frames[_paths[frame->alt_path_idx].frames_idx[0]].frame_idx,
+					    frames[paths[frame->alt_path_idx].frames_idx[0]].frame_idx,
 					    hasht, frame->alt_path_chance,
 					    frame->stay
 					);
@@ -1158,14 +1177,15 @@ chk_write_animations_header(layer_ctx_t *ctx)
 			}
 
 			fprintf(f_anim, "};\n");
-			fprintf(f_anim, "xg_anim_t XG_ANM_%s = { "
-			    ".frames = XG_ANMF_%s, "
+			fprintf(f_anim, "xg_anim_t XG_ANM_%s_%s = { "
+			    ".frames = XG_ANMF_%s_%s, "
 			    ".frames_n = %d, "
 			    ".frame_idx = 0, "
 			    ".stay_cnt = 0, "
 			    ".active = %d, "
 			    "};\n",
-			    anim->name, anim->name, n, anim->active
+			    image_name, anim->name,
+			    image_name, anim->name, n, anim->active
 			);
 		}
 	}
@@ -1201,16 +1221,14 @@ chk_write_scenes_header(layer_ctx_t *ctx)
 	scene_layer_t *scn_layer;
 
 	if (f_scenes != NULL) {
-		fprintf(f_scenes, "/* -------------------------------------------------------------------------- */\n");
-		fprintf(f_scenes, "/* Scene: %s */\n", image_name);
-		fprintf(f_scenes, "/* -------------------------------------------------------------------------- */\n");
+		fprintf(f_scenes, SCENE_COMMENT, image_name);
 
 		/*
 		 * Iterate over scene layers to write down header files for
 		 * static images.
 		 */
-		for (uint32_t i = 0; i < _scene_layers_n; i++) {
-			scn_layer = &_scene_layers[i];
+		for (uint32_t i = 0; i < scene_layers_n; i++) {
+			scn_layer = &scene_layers[i];
 
 			if (scn_layer->obj_type == OT_IMAGE) {
 				fprintf(f_scenes,
@@ -1231,8 +1249,8 @@ chk_write_scenes_header(layer_ctx_t *ctx)
 		/* Write scene layers down. */
 		fprintf(f_scenes, "xg_layer_t XG_SCNL_%s[] = {\n",
 		    image_name);
-		for (uint32_t i = 0; i < _scene_layers_n; i++) {
-			scn_layer = &_scene_layers[i];
+		for (uint32_t i = 0; i < scene_layers_n; i++) {
+			scn_layer = &scene_layers[i];
 
 			if (scn_layer->obj_type == OT_IMAGE) {
 				fprintf(f_scenes, "\t /* %u */ { "
@@ -1244,9 +1262,9 @@ chk_write_scenes_header(layer_ctx_t *ctx)
 				    scn_layer->base_pt.y);
 			} else {
 				fprintf(f_scenes, "\t /* %u */ { "
-				    ".obj = &XG_ANM_%s, "
+				    ".obj = &XG_ANM_%s_%s, "
 				    ".obj_type = XG_OT_ANIM },\n",
-				    i, scn_layer->name);
+				    i, image_name, scn_layer->name);
 			}
 		}
 		fprintf(f_scenes, "};\n\n");
@@ -1263,7 +1281,7 @@ chk_write_scenes_header(layer_ctx_t *ctx)
 		    "};\n\n",
 		    image_name,
 		    image_name,
-		    _scene_layers_n,
+		    scene_layers_n,
 		    kbd_cbk_name
 		);
 	}
