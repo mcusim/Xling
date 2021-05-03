@@ -29,6 +29,8 @@
 #define PHEIGHT			8 /* bits */
 #define PAGES			8 /* in graphic RAM */
 #define MAX_CACHED_LAYERS	64
+#define SPEECH_DELAY_CYCLES	(1u)
+#define LINE_HEIGHT		(12u) /* px */
 #define NOT(u8)			((uint8_t)(~(u8)))
 #define PGM(a)			((uint8_t)(pgm_read_byte_far((a))))
 
@@ -75,35 +77,92 @@ static xg_point_t cache_pts[MAX_CACHED_LAYERS];
 static uint8_t cached_layers = 0;
 static cache_state_e cache_state = CACHE_INVALID;
 
-/*
- * Prints text on the canvas at the given coordinates.
- */
+/* Prints text on the canvas at the given coordinates. */
 int
 xg_print(xg_canvas_t *canvas, const xg_text_t *text, xg_point_t pt)
 {
 	const size_t len = strlen(text->text);
 	const xg_font_t *font = text->font;
-	xg_image_t image;
-	char ch;
-	int rc;
+	xg_image_t glyph;
+	int glyph_idx, rc;
 
 	/* Draw characters on the canvas. */
 	for (uint32_t i = 0; i < len; i++) {
-		/* Obtain the current character. */
-		ch = text->text[i];
+		/* Obtain an index of the current glyph. */
+		glyph_idx = text->text[i] - 0x20;
 
-		/* Obtain image of the current glyph. */
-		image.data = font->glyphs[ch-0x20].data;
-		image.alpha = NULL;
-		image.width = font->glyphs[ch-0x20].width;
-		image.height = font->glyphs[ch-0x20].height;
-		image.data_size = font->glyphs[ch-0x20].data_size;
+		/* Obtain the current glyph. */
+		glyph.alpha = NULL;
+		glyph.data = font->glyphs[glyph_idx].data;
+		glyph.width = font->glyphs[glyph_idx].width;
+		glyph.height = font->glyphs[glyph_idx].height;
+		glyph.data_size = font->glyphs[glyph_idx].data_size;
 
-		rc = xg_draw_pf(canvas, &image, pt);
-		pt.x += image.width > INT16_MAX ? 0 : (int16_t)image.width;
+		/* Draw the glyph. */
+		rc = xg_draw_pf(canvas, &glyph, pt);
 		if (rc != 0) {
 			break;
 		}
+
+		/* Move the text cursor forward. */
+		pt.x += glyph.width > INT16_MAX ? 0 : (int16_t) glyph.width;
+	}
+
+	return rc;
+}
+
+int
+xg_draw_speech(xg_canvas_t *canvas, xg_text_t *text)
+{
+	const xg_font_t *font = text->font;
+	const size_t text_len = strlen(text->text);
+	size_t drawn_len = text->drawn_len;
+	xg_point_t drawn_pt = text->drawn_pt;
+	xg_image_t glyph;
+	int glyph_idx;
+	int rc = XG_SPM_MORE;
+
+	if (drawn_len >= text_len) {
+		rc = XG_SPM_STOP;
+	}
+
+	if (text->skip_cycles == SPEECH_DELAY_CYCLES && rc != XG_SPM_STOP) {
+		text->skip_cycles = 0;
+
+		/* Obtain an index of the current glyph. */
+		glyph_idx = text->text[drawn_len] - 0x20;
+
+		/* Obtain the current glyph. */
+		glyph.alpha = NULL;
+		glyph.data = font->glyphs[glyph_idx].data;
+		glyph.width = font->glyphs[glyph_idx].width;
+		glyph.height = font->glyphs[glyph_idx].height;
+		glyph.data_size = font->glyphs[glyph_idx].data_size;
+
+		/* Move cursor to a new line if needed. */
+		if (drawn_pt.x + (glyph.width > INT16_MAX
+		    ? 0 : (int16_t) glyph.width) > canvas->width) {
+			drawn_pt.x = 0;
+			drawn_pt.y += LINE_HEIGHT;
+		}
+
+		/* Draw the glyph. */
+		rc = xg_draw_pf(canvas, &glyph, drawn_pt);
+		if (rc != 0) {
+			/* break; */
+		}
+
+		/* Move the text cursor forward. */
+		drawn_pt.x += glyph.width > INT16_MAX
+		    ? 0 : (int16_t) glyph.width;
+		drawn_len++;
+
+		text->drawn_pt = drawn_pt;
+		text->drawn_len = drawn_len;
+	} else if (rc != XG_SPM_STOP) {
+		text->skip_cycles++;
+	} else {
+		/* Nothing to do here. */
 	}
 
 	return rc;

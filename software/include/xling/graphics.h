@@ -41,6 +41,17 @@ typedef enum xg_object_t {
 	XG_OT_ANIM,
 } xg_object_t;
 
+typedef enum xg_scene_mode_t {
+	XG_SM_SCENE = 0,
+	XG_SM_SPEECH,
+} xg_scene_mode_t;
+
+typedef enum xg_speech_mode_t {
+	XG_SPM_STOP = 0,
+	XG_SPM_MORE,
+	XG_SPM_PAUSE
+} xg_speech_mode_t;
+
 typedef struct xg_point_t {
 	int16_t			 x;
 	int16_t			 y;
@@ -137,9 +148,12 @@ typedef struct xg_font_t {
 } xg_font_t;
 
 typedef struct xg_text_t {
+	xg_point_t		 drawn_pt;
 	const xg_font_t		*font;
 	char			*text;
 	size_t			 text_sz;
+	size_t			 drawn_len;
+	uint8_t			 skip_cycles;
 } xg_text_t;
 
 /* Scene context. */
@@ -151,10 +165,12 @@ typedef struct xg_scene_ctx_t {
 	uint16_t		 bat_lvl;
 	uint16_t		 bat_stat;
 	xm_btn_state_t		 btn_stat;
+	xg_scene_mode_t		 scene_mode;
 } xg_scene_ctx_t;
 
 /* Xling graphics API */
 int	xg_print(xg_canvas_t *canvas, const xg_text_t *text, xg_point_t p);
+int	xg_draw_speech(xg_canvas_t *canvas, xg_text_t *text);
 int	xg_draw_pf(xg_canvas_t *canvas, const xg_image_t *image, xg_point_t p);
 int	xg_draw_scene(xg_canvas_t *canvas, const xg_scene_t *scene);
 int	xg_cache_canvas(xg_canvas_t *canvas);

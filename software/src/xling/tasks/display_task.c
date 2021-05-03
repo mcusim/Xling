@@ -75,7 +75,7 @@
  * Local variables.
  ******************************************************************************/
 /* Configuration of the OLED display driver. */
-static const MSIM_SH1106DrvConf_t _driver_conf = {
+static const MSIM_SH1106DrvConf_t driver_conf = {
 	.port_spi = &PORTB,		/* I/O port with SPI. */
 	.ddr_spi = &DDRB,		/* DDR for the I/O port with SPI. */
 	.mosi = PB5,			/* OLED SPI pin. */
@@ -84,7 +84,7 @@ static const MSIM_SH1106DrvConf_t _driver_conf = {
 };
 
 /* Configuration of the OLED display. */
-static const MSIM_SH1106Conf_t _display_conf = {
+static const MSIM_SH1106Conf_t display_conf = {
 	.rst_port = &PORTC,
 	.rst_ddr = &DDRC,
 	.cs_port = &PORTC,
@@ -96,37 +96,40 @@ static const MSIM_SH1106Conf_t _display_conf = {
 	.dc = PC5,			/* OLED Data/Command pin. */
 };
 
-static volatile TaskHandle_t _task_handle;
+static volatile TaskHandle_t thandle;
 
 /*
  * NOTE: 1024 bytes is enough to describe a monochrome image for OLED display
  *       which resolution is 128x64 px.
  */
-static uint8_t _display_buffer[1024];
-static uint8_t _cache_buffer[1024];
-static xg_canvas_t _canvas = {
-	.data = _display_buffer, .width = 128, .height = 64, .data_size = 8,
+static uint8_t display_buffer[1024];
+static uint8_t cache_buffer[1024];
+static xg_canvas_t canvas = {
+	.data = display_buffer, .width = 128, .height = 64, .data_size = 8,
 };
-static xg_canvas_t _cache_canvas = {
-	.data = _cache_buffer, .width = 128, .height = 64, .data_size = 8,
+static xg_canvas_t cache_canvas = {
+	.data = cache_buffer, .width = 128, .height = 64, .data_size = 8,
 };
-static char _text_buf[TEXT_BUFSZ];
-static xg_text_t _text = {
+static char text_buf[TEXT_BUFSZ];
+static xg_text_t text = {
 	.font = &XG_FONT_Alagard_12pt,
-	.text = &_text_buf[0],
+	.text = &text_buf[0],
 	.text_sz = TEXT_BUFSZ,
 };
-static xg_scene_ctx_t _scene_ctx = {
+static xg_scene_ctx_t scene_ctx = {
 	//.scene = &XG_SCN_walking_01,
 	//.scene = &XG_SCN_smoking_02,
 	//.scene = &XG_SCN_test_brick,
 	.scene = &XG_SCN_peasant_house,
 	//.scene = &XG_SCN_forest,
-	.canvas = &_canvas,
-	.text = &_text,
+	//.scene = &XG_SCN_town_street,
+	//.scene = &XG_SCN_dungeon,
+	.canvas = &canvas,
+	.text = &text,
 	.frame_delay = 0,
 	.bat_lvl = 100,
 	.bat_stat = 0,
+	.scene_mode = XG_SM_SCENE
 };
 
 /******************************************************************************
@@ -152,16 +155,16 @@ xt_init_display(xt_args_t *args, UBaseType_t prio, TaskHandle_t *task_handle)
 	 */
 	{
 		/* Keep CS high. Display isn't selected by default. */
-		SET_BIT(PORTC, _display_conf.cs);
+		SET_BIT(PORTC, display_conf.cs);
 
 		/* Power On the display. */
-		CLEAR_BIT(PORTC, _display_conf.rst);
+		CLEAR_BIT(PORTC, display_conf.rst);
 		_delay_ms(1);
-		SET_BIT(PORTC, _display_conf.rst);
+		SET_BIT(PORTC, display_conf.rst);
 		_delay_ms(10);
 
 		/* Start the driver for SH1106-based displays. */
-		MSIM_SH1106__drvStart(&_driver_conf);
+		MSIM_SH1106__drvStart(&driver_conf);
 	}
 
 	/* Create the display task. */
@@ -173,7 +176,7 @@ xt_init_display(xt_args_t *args, UBaseType_t prio, TaskHandle_t *task_handle)
 		rc = 1;
 	} else {
 		/* Task has been created successfully. */
-		_task_handle = (*task_handle);
+		thandle = (*task_handle);
 	}
 
 	return rc;
@@ -183,7 +186,7 @@ static void
 display_task(void *arg)
 {
 	const xt_args_t * const args = (xt_args_t *) arg;
-	MSIM_SH1106_t * const display = MSIM_SH1106_Init(&_display_conf);
+	MSIM_SH1106_t * const display = MSIM_SH1106_Init(&display_conf);
 	TickType_t ticks;
 	TickType_t last_wake;
 
@@ -208,7 +211,7 @@ display_task(void *arg)
 	last_wake = xTaskGetTickCount();
 
 	/* Setup a canvas for cache */
-	xg_cache_canvas(&_cache_canvas);
+	xg_cache_canvas(&cache_canvas);
 
 	/* Task loop */
 	while (1) {
@@ -223,26 +226,38 @@ display_task(void *arg)
 		 * display queue at the moment.
 		 */
 		receive_msgs(args->display_info.queue_handle, display,
-		    &_scene_ctx);
+		    &scene_ctx);
 
 		/* Clear the canvas. */
-		memset(_display_buffer, 0x00, 1024);
-
-		/* Process keyboard events. */
-		if (_scene_ctx.scene->kbd_cbk != NULL) {
-			_scene_ctx.scene->kbd_cbk(&_scene_ctx);
+		if (scene_ctx.scene_mode == XG_SM_SCENE) {
+			memset(display_buffer, 0x00, 1024);
 		}
 
-		xg_draw_scene(&_canvas, _scene_ctx.scene);
+		/* Process keyboard events. */
+		if (scene_ctx.scene->kbd_cbk != NULL) {
+			scene_ctx.scene->kbd_cbk(&scene_ctx);
+		}
+
+		switch (scene_ctx.scene_mode) {
+		case XG_SM_SCENE:
+			xg_draw_scene(&canvas, scene_ctx.scene);
+			break;
+		case XG_SM_SPEECH:
+			xg_draw_speech(&canvas, scene_ctx.text);
+			break;
+		default:
+			/* Shouldn't reach here. */
+			break;
+		}
 
 		/* Transfer canvas buffer to the display. */
-		xg_transfer_canvas(display, &_canvas);
+		xg_transfer_canvas(display, &canvas);
 
 		/*
 		 * Calculate a delay to receive a message from the queue and
 		 * draw an animation frame.
 		 */
-		_scene_ctx.frame_delay = xTaskGetTickCount() - ticks;
+		scene_ctx.frame_delay = xTaskGetTickCount() - ticks;
 	}
 
 	/*
@@ -295,8 +310,7 @@ receive_msgs(const QueueHandle_t q, MSIM_SH1106_t * const display,
 				 * Block the task indefinitely to wait
 				 * for a notification.
 				 */
-				xTaskNotifyWait(0, 0, NULL,
-				                portMAX_DELAY);
+				xTaskNotifyWait(0, 0, NULL, portMAX_DELAY);
 
 				/* Switch the display back on. */
 				MSIM_SH1106_bufClear(display);
